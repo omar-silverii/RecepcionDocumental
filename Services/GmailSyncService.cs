@@ -107,7 +107,8 @@ namespace RecepcionDocumental.Services
                     {
                         var processed = await ProcessMessageAsync(client.Service, account.Id, batch.MessageIds[index], result);
                         attachmentsFound = processed.AttachmentsFound;
-                        if (batch.IsInitial && index == 0) batch.CompletionHistoryId = processed.HistoryId;
+                        if (batch.IsInitial && string.IsNullOrWhiteSpace(batch.CompletionHistoryId) && !string.IsNullOrWhiteSpace(processed.HistoryId))
+                            batch.CompletionHistoryId = processed.HistoryId;
                     }
                     catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.NotFound)
                     {

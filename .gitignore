@@ -10,6 +10,9 @@
 *.userosscache
 *.sln.docstates
 
+# Local operational configuration (may contain secrets)
+RecepcionDocumental.ini
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

@@ -6,11 +6,33 @@ Aplicación ASP.NET WebForms en C# para .NET Framework 4.8, Visual Studio 2022 y
 
 ## Hitos
 
-- H1A: validado. Interfaz inicial y tablas `GmailCuenta`, `GmailMensaje` y `GmailAdjunto`.
-- H1B: validado. OAuth de servidor para Google Workspace/Gmail API, conexión y reconexión de cuenta.
-- H1C: implementado, pendiente de validación manual. La primera sincronización consulta adjuntos de los últimos 30 días con máximo 100 mensajes; las siguientes usan `historyId` como cursor incremental y hacen fallback controlado si vence.
-- Los adjuntos se guardan fuera del sitio en la carpeta configurable `AdjuntosRootPath` (localmente `C:\RecepcionDocumental\Adjuntos\`).
-- No hay clasificación, OCR ni IA.
+### H1A — VALIDADO
+
+- Aplicación ASP.NET WebForms sobre .NET Framework 4.8.
+- SQL Server, `DefaultConnection` y estructura base de cuentas, mensajes y adjuntos.
+
+### H1B — VALIDADO
+
+- OAuth interno de Google Workspace.
+- Scope único `gmail.readonly`.
+- Refresh token protegido antes de persistirlo.
+
+### H1C — VALIDADO
+
+- Sincronización incremental mediante `historyId`.
+- Full sync inicial limitado a 30 días y 100 mensajes.
+- MIME recursivo y soporte para `AttachmentId` y `Body.Data`.
+- Almacenamiento físico configurable y hash SHA-256.
+- Idempotencia por `GmailMensajeId + GmailPartId`.
+- Un 404 individual de mensaje se omite sin bloquear el cursor; un 404 por `historyId` vencido activa el fallback inicial.
+- Logs diarios separados `Proc`/`Error` y timeout WebForms de 600 segundos.
+- Prueba real validada con PDF, JPG y XLSX; repetición validada sin redescarga.
+
+Los adjuntos se guardan fuera del sitio en la carpeta configurable `AdjuntosRootPath` (localmente `C:\RecepcionDocumental\Adjuntos\`).
+
+## Siguiente hito
+
+La clasificación documental todavía no está implementada. Tampoco hay OCR ni IA.
 
 ## Configuración operativa y logs
 
