@@ -135,6 +135,7 @@
     <Content Include="Database\001_EstructuraInicial.sql" />
     <Content Include="Database\002_GmailOAuth.sql" />
     <Content Include="Database\003_GmailSync.sql" />
+    <Content Include="Database\004_GmailAttachmentIdentity.sql" />
     <Content Include="docs\PROJECT_STATUS.md" />
     <Content Include="Gmail_Bandeja.aspx" />
     <Content Include="Gmail_Config.aspx" />
@@ -247,6 +248,7 @@
     </Compile>
     <Compile Include="Gmail_Config.aspx.cs">
       <DependentUpon>Gmail_Config.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Gmail_Config.aspx.designer.cs">
       <DependentUpon>Gmail_Config.aspx</DependentUpon>

@@ -99,14 +99,13 @@ namespace RecepcionDocumental.Data
             }
         }
 
-        public static string GetDownloadedAttachmentPath(long messageId, string attachmentId, string partId)
+        public static string GetDownloadedAttachmentPath(long messageId, string partId)
         {
-            const string sql = @"SELECT TOP (1) RutaLocal FROM dbo.GmailAdjunto WHERE GmailMensajeId=@MensajeId AND ((@AttachmentId IS NOT NULL AND GmailAttachmentId=@AttachmentId) OR (@AttachmentId IS NULL AND GmailAttachmentId IS NULL AND GmailPartId=@PartId)) AND Estado=N'Descargado' AND RutaLocal IS NOT NULL;";
+            const string sql = @"SELECT TOP (1) RutaLocal FROM dbo.GmailAdjunto WHERE GmailMensajeId=@MensajeId AND GmailPartId=@PartId AND Estado=N'Descargado' AND RutaLocal IS NOT NULL ORDER BY Id;";
             using (var cn = new SqlConnection(ConnectionString))
             using (var cmd = new SqlCommand(sql, cn))
             {
                 cmd.Parameters.Add("@MensajeId", SqlDbType.BigInt).Value = messageId;
-                cmd.Parameters.Add("@AttachmentId", SqlDbType.NVarChar, 255).Value = DbValue(attachmentId);
                 cmd.Parameters.Add("@PartId", SqlDbType.NVarChar, 255).Value = DbValue(partId);
                 cn.Open(); var value = cmd.ExecuteScalar(); return value == null || value == DBNull.Value ? null : Convert.ToString(value);
             }
@@ -114,24 +113,34 @@ namespace RecepcionDocumental.Data
 
         public static void SaveAttachment(long messageId, GmailAttachmentRecord attachment)
         {
-            const string sql = @"
-UPDATE dbo.GmailAdjunto SET NombreOriginal=@Nombre, MimeType=@Mime, TamanioBytes=@Tamanio, RutaLocal=@Ruta, HashSha256=@Hash, FechaDescargaUtc=@Fecha, Estado=@Estado
-WHERE GmailMensajeId=@MensajeId AND ((@AttachmentId IS NOT NULL AND GmailAttachmentId=@AttachmentId) OR (@AttachmentId IS NULL AND GmailAttachmentId IS NULL AND GmailPartId=@PartId));
-IF @@ROWCOUNT=0 INSERT dbo.GmailAdjunto (GmailMensajeId,GmailAttachmentId,GmailPartId,NombreOriginal,MimeType,TamanioBytes,RutaLocal,HashSha256,FechaDescargaUtc,Estado)
-VALUES (@MensajeId,@AttachmentId,@PartId,@Nombre,@Mime,@Tamanio,@Ruta,@Hash,@Fecha,@Estado);";
-            using (var cn = new SqlConnection(ConnectionString))
-            using (var cmd = new SqlCommand(sql, cn))
+            if (string.IsNullOrWhiteSpace(attachment.GmailPartId)) throw new ArgumentException("GmailPartId es obligatorio para persistir un adjunto.", "attachment");
+            try { ExecuteAttachmentUpsert(messageId, attachment); }
+            catch (SqlException ex) when (ex.Number == 2601 || ex.Number == 2627)
             {
-                cmd.Parameters.Add("@MensajeId", SqlDbType.BigInt).Value = messageId;
-                cmd.Parameters.Add("@AttachmentId", SqlDbType.NVarChar, 255).Value = DbValue(attachment.GmailAttachmentId);
-                cmd.Parameters.Add("@PartId", SqlDbType.NVarChar, 255).Value = DbValue(attachment.GmailPartId);
-                cmd.Parameters.Add("@Nombre", SqlDbType.NVarChar, 500).Value = attachment.OriginalName;
-                cmd.Parameters.Add("@Mime", SqlDbType.NVarChar, 255).Value = DbValue(attachment.MimeType);
-                cmd.Parameters.Add("@Tamanio", SqlDbType.BigInt).Value = attachment.SizeBytes.HasValue ? (object)attachment.SizeBytes.Value : DBNull.Value;
-                cmd.Parameters.Add("@Ruta", SqlDbType.NVarChar, 2000).Value = DbValue(attachment.LocalPath);
-                cmd.Parameters.Add("@Hash", SqlDbType.Char, 64).Value = DbValue(attachment.HashSha256);
-                cmd.Parameters.Add("@Fecha", SqlDbType.DateTime2).Value = attachment.DownloadedUtc.HasValue ? (object)attachment.DownloadedUtc.Value : DBNull.Value;
-                cmd.Parameters.Add("@Estado", SqlDbType.NVarChar, 50).Value = attachment.Status;
+                ExecuteAttachmentUpdate(messageId, attachment);
+            }
+        }
+
+        private static void ExecuteAttachmentUpsert(long messageId, GmailAttachmentRecord attachment)
+        {
+            const string sql = @"SET XACT_ABORT ON; BEGIN TRANSACTION;
+UPDATE dbo.GmailAdjunto WITH (UPDLOCK, SERIALIZABLE) SET GmailAttachmentId=@AttachmentId,NombreOriginal=@Nombre,MimeType=@Mime,TamanioBytes=@Tamanio,RutaLocal=@Ruta,HashSha256=@Hash,FechaDescargaUtc=@Fecha,Estado=@Estado WHERE GmailMensajeId=@MensajeId AND GmailPartId=@PartId;
+IF @@ROWCOUNT=0 INSERT dbo.GmailAdjunto (GmailMensajeId,GmailAttachmentId,GmailPartId,NombreOriginal,MimeType,TamanioBytes,RutaLocal,HashSha256,FechaDescargaUtc,Estado) VALUES (@MensajeId,@AttachmentId,@PartId,@Nombre,@Mime,@Tamanio,@Ruta,@Hash,@Fecha,@Estado);
+COMMIT TRANSACTION;";
+            ExecuteAttachmentCommand(sql, messageId, attachment);
+        }
+
+        private static void ExecuteAttachmentUpdate(long messageId, GmailAttachmentRecord attachment)
+        {
+            const string sql = @"UPDATE dbo.GmailAdjunto SET GmailAttachmentId=@AttachmentId,NombreOriginal=@Nombre,MimeType=@Mime,TamanioBytes=@Tamanio,RutaLocal=@Ruta,HashSha256=@Hash,FechaDescargaUtc=@Fecha,Estado=@Estado WHERE GmailMensajeId=@MensajeId AND GmailPartId=@PartId;";
+            ExecuteAttachmentCommand(sql, messageId, attachment);
+        }
+
+        private static void ExecuteAttachmentCommand(string sql, long messageId, GmailAttachmentRecord attachment)
+        {
+            using (var cn = new SqlConnection(ConnectionString)) using (var cmd = new SqlCommand(sql, cn))
+            {
+                cmd.Parameters.Add("@MensajeId", SqlDbType.BigInt).Value=messageId; cmd.Parameters.Add("@AttachmentId",SqlDbType.NVarChar,255).Value=DbValue(attachment.GmailAttachmentId); cmd.Parameters.Add("@PartId",SqlDbType.NVarChar,255).Value=attachment.GmailPartId; cmd.Parameters.Add("@Nombre",SqlDbType.NVarChar,500).Value=attachment.OriginalName; cmd.Parameters.Add("@Mime",SqlDbType.NVarChar,255).Value=DbValue(attachment.MimeType); cmd.Parameters.Add("@Tamanio",SqlDbType.BigInt).Value=attachment.SizeBytes.HasValue?(object)attachment.SizeBytes.Value:DBNull.Value; cmd.Parameters.Add("@Ruta",SqlDbType.NVarChar,2000).Value=DbValue(attachment.LocalPath); cmd.Parameters.Add("@Hash",SqlDbType.Char,64).Value=DbValue(attachment.HashSha256); cmd.Parameters.Add("@Fecha",SqlDbType.DateTime2).Value=attachment.DownloadedUtc.HasValue?(object)attachment.DownloadedUtc.Value:DBNull.Value; cmd.Parameters.Add("@Estado",SqlDbType.NVarChar,50).Value=attachment.Status;
                 cn.Open(); cmd.ExecuteNonQuery();
             }
         }
