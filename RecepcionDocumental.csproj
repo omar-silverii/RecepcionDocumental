@@ -61,6 +61,18 @@
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="Google.Apis">
+      <HintPath>packages\Google.Apis.1.75.0\lib\net462\Google.Apis.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Auth">
+      <HintPath>packages\Google.Apis.Auth.1.75.0\lib\net462\Google.Apis.Auth.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Core">
+      <HintPath>packages\Google.Apis.Core.1.75.0\lib\net462\Google.Apis.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Gmail.v1">
+      <HintPath>packages\Google.Apis.Gmail.v1.1.75.0.4225\lib\net462\Google.Apis.Gmail.v1.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>packages\Microsoft.Web.Infrastructure.2.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
@@ -75,7 +87,7 @@
       <HintPath>packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
@@ -120,9 +132,12 @@
     <Content Include="Content\Site.css" />
     <Content Include="Default.aspx" />
     <Content Include="Database\001_EstructuraInicial.sql" />
+    <Content Include="Database\002_GmailOAuth.sql" />
+    <Content Include="docs\PROJECT_STATUS.md" />
     <Content Include="Gmail_Bandeja.aspx" />
     <Content Include="Gmail_Config.aspx" />
     <Content Include="Gmail_Mensaje_Ver.aspx" />
+    <Content Include="Gmail_OAuthCallback.aspx" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -211,6 +226,9 @@
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Data\GmailRepository.cs" />
+    <Compile Include="Security\RefreshTokenProtector.cs" />
+    <Compile Include="Services\GmailOAuthService.cs" />
+    <Compile Include="Services\GoogleOAuthSettings.cs" />
     <Compile Include="Gmail_Bandeja.aspx.cs">
       <DependentUpon>Gmail_Bandeja.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -230,6 +248,13 @@
     </Compile>
     <Compile Include="Gmail_Mensaje_Ver.aspx.designer.cs">
       <DependentUpon>Gmail_Mensaje_Ver.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Gmail_OAuthCallback.aspx.cs">
+      <DependentUpon>Gmail_OAuthCallback.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Gmail_OAuthCallback.aspx.designer.cs">
+      <DependentUpon>Gmail_OAuthCallback.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
