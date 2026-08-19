@@ -34,7 +34,7 @@ namespace RecepcionDocumental.Services
             if (explicitInvoice) return Review("PDF_TEXTO", "Factura explícita con señales fiscales insuficientes.", 55);
             if (fiscalCount >= 3) return Review("PDF_TEXTO", "Se detectaron " + fiscalCount + " señales fiscales sin tipo de factura explícito.", 45);
             if (!string.IsNullOrEmpty(negative)) return Discard("PDF_TEXTO", "Documento identificado como " + negative + ".");
-            return Discard("PDF_TEXTO", "PDF con texto suficiente sin evidencia de factura.");
+            return Review("PDF_TEXTO_NO_CONCLUYENTE", "El texto obtenido no permite clasificar el documento con seguridad.", null);
         }
 
         public static InvoiceSelection SelectNonPdf(string fileName)

@@ -14,6 +14,13 @@ namespace RecepcionDocumental.Data
         public byte? Confianza { get; set; } public string Motivo { get; set; } public string OrigenTipo { get; set; }
     }
 
+    public sealed class MessageDocumentInfo
+    {
+        public string NombreOriginal { get; set; } public string Clasificacion { get; set; }
+        public string MetodoDeteccion { get; set; } public byte? Confianza { get; set; }
+        public string OrigenTipo { get; set; } public string RutaInternaContenedor { get; set; }
+    }
+
     public static class DocumentRepository
     {
         private static string ConnectionString { get { return ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString; } }
@@ -48,6 +55,18 @@ WHERE NOT EXISTS (SELECT 1 FROM dbo.DocumentoRecepcion WITH (UPDLOCK,SERIALIZABL
             using (var cn = new SqlConnection(ConnectionString)) using (var cmd = new SqlCommand(sql, cn))
             {
                 cmd.Parameters.Add("@Classification",SqlDbType.NVarChar,20).Value=Db(classification); cn.Open(); using(var r=cmd.ExecuteReader()) while(r.Read()) result.Add(new DocumentInfo { Id=r.GetInt64(0),Fecha=r.GetDateTime(1),Remitente=r.GetString(2),Asunto=r.IsDBNull(3)?"(Sin asunto)":r.GetString(3),NombreOriginal=r.GetString(4),Clasificacion=r.GetString(5),MetodoDeteccion=r.GetString(6),Confianza=r.IsDBNull(7)?(byte?)null:r.GetByte(7),Motivo=r.IsDBNull(8)?null:r.GetString(8),OrigenTipo=r.GetString(9) });
+            }
+            return result;
+        }
+
+        public static IList<MessageDocumentInfo> ListByMessage(long messageId)
+        {
+            var result = new List<MessageDocumentInfo>();
+            const string sql = @"SELECT NombreOriginal,Clasificacion,MetodoDeteccion,Confianza,OrigenTipo,RutaInternaContenedor FROM dbo.DocumentoRecepcion WHERE GmailMensajeId=@MessageId ORDER BY Id;";
+            using (var cn = new SqlConnection(ConnectionString)) using (var cmd = new SqlCommand(sql, cn))
+            {
+                cmd.Parameters.Add("@MessageId", SqlDbType.BigInt).Value = messageId; cn.Open();
+                using (var r = cmd.ExecuteReader()) while (r.Read()) result.Add(new MessageDocumentInfo { NombreOriginal=r.GetString(0),Clasificacion=r.GetString(1),MetodoDeteccion=r.GetString(2),Confianza=r.IsDBNull(3)?(byte?)null:r.GetByte(3),OrigenTipo=r.GetString(4),RutaInternaContenedor=r.IsDBNull(5)?null:r.GetString(5) });
             }
             return result;
         }

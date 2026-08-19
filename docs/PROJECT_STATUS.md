@@ -40,6 +40,8 @@ Los adjuntos se guardan fuera del sitio en la carpeta configurable `AdjuntosRoot
 - ZIP controlado contra Zip Slip, colisiones, entradas, tamaño individual, expansión total y profundidad.
 - Idempotencia documental por `GmailMensajeId + GmailPartId + OrigenHash`.
 - PDF sin texto útil e imágenes se conservan en `REVISAR` para OCR futuro.
+- Un PDF con texto aparentemente útil pero sin evidencia inequívoca se conserva como `REVISAR / PDF_TEXTO_NO_CONCLUYENTE`; sólo señales explícitas de otro tipo documental permiten descartarlo.
+- La bandeja y el detalle Gmail priorizan `DocumentoRecepcion` para mensajes H1D y mantienen el fallback histórico a `GmailAdjunto` sin sumar ambos modelos.
 - No se implementaron OCR, QR, IA, ML, rasterización ni integración ARCA.
 
 La implementación requiere validación real con documentos representativos antes de avanzar a H1D1B.
