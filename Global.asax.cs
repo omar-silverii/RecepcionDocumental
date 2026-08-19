@@ -12,6 +12,7 @@ namespace RecepcionDocumental
         void Application_Start(object sender, EventArgs e)
         {
             var configuracion = ConfiguracionIni.CargarDesdeRaizAplicacion();
+            configuracion.PrepararRutasOperativas();
             ConfiguracionSistema.Inicializar(configuracion);
             Logs.Inicializar(configuracion);
             Logs.LogProc("Aplicación iniciada. Configuración y logging inicializados.");

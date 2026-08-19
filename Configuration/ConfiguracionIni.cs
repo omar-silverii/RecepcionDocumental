@@ -48,7 +48,11 @@ namespace RecepcionDocumental.Configuration
                 valores.Add(claveCompleta, valor);
             }
 
-            return new ConfiguracionAplicacion(Obtener(valores, "General/NombreProyecto"), Obtener(valores, "Rutas/Logs"));
+            return new ConfiguracionAplicacion(
+                Obtener(valores, "General/NombreProyecto"), Obtener(valores, "Rutas/Logs"),
+                Obtener(valores, "Rutas/Trabajo"), Obtener(valores, "Rutas/Facturas"), Obtener(valores, "Rutas/Revisar"),
+                ObtenerEntero(valores, "Zip/MaxEntradas"), ObtenerLong(valores, "Zip/MaxBytesPorArchivo"),
+                ObtenerLong(valores, "Zip/MaxBytesDescomprimidos"), ObtenerEntero(valores, "Zip/MaxProfundidad"));
         }
 
         private static string Obtener(IDictionary<string, string> valores, string clave)
@@ -57,6 +61,12 @@ namespace RecepcionDocumental.Configuration
             if (!valores.TryGetValue(clave, out valor) || string.IsNullOrWhiteSpace(valor)) throw new ConfiguracionAplicacionException("Falta la clave obligatoria " + clave + ".");
             return valor;
         }
+
+        private static int ObtenerEntero(IDictionary<string, string> valores, string clave)
+        { int valor; if (!int.TryParse(Obtener(valores, clave), out valor)) throw new ConfiguracionAplicacionException(clave + " debe ser un entero válido."); return valor; }
+
+        private static long ObtenerLong(IDictionary<string, string> valores, string clave)
+        { long valor; if (!long.TryParse(Obtener(valores, clave), out valor)) throw new ConfiguracionAplicacionException(clave + " debe ser un entero válido."); return valor; }
 
         private static ConfiguracionAplicacionException ErrorLinea(int indice, string detalle)
         { return new ConfiguracionAplicacionException("INI inválido en la línea " + (indice + 1) + ". " + detalle); }

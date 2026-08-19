@@ -32,7 +32,7 @@ namespace RecepcionDocumental
                 var result = await GmailSyncService.SynchronizeAsync();
                 pnlResultado.Visible = true;
                 pnlResultado.CssClass = result.Errores == 0 ? "alert alert-success" : "alert alert-warning";
-                litEncontrados.Text = result.MensajesEncontrados.ToString(); litNuevos.Text = result.MensajesNuevos.ToString(); litDescargados.Text = result.AdjuntosDescargados.ToString(); litExistentes.Text = result.AdjuntosExistentes.ToString(); litErrores.Text = result.Errores.ToString();
+                litEncontrados.Text = result.MensajesEncontrados.ToString(); litNuevos.Text = result.MensajesNuevos.ToString(); litAnalizados.Text = result.AdjuntosAnalizados.ToString(); litFacturas.Text = result.FacturasDetectadas.ToString(); litRevisar.Text = result.ParaRevisar.ToString(); litDescartados.Text = result.Descartados.ToString(); litDocumentosExistentes.Text = result.DocumentosExistentes.ToString(); litErrores.Text = result.Errores.ToString();
                 var notices = result.UsoFallbackInicial ? "<p class=\"mt-2 mb-0\">El cursor de Gmail había vencido; se aplicó la búsqueda inicial limitada.</p>" : string.Empty;
                 if (result.Errores > 0) notices += "<p class=\"mt-2 mb-0\">El cursor no se avanzó para permitir reintentar los elementos con error.</p>";
                 litFallback.Text = notices;

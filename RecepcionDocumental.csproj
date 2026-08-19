@@ -44,6 +44,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mdoc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0c139646c0764c09">
+      <HintPath>Lib\Mdoc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
+      <HintPath>Lib\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
@@ -136,6 +144,8 @@
     <Content Include="Database\002_GmailOAuth.sql" />
     <Content Include="Database\003_GmailSync.sql" />
     <Content Include="Database\004_GmailAttachmentIdentity.sql" />
+    <Content Include="Database\005_SelectorFacturaBase.sql" />
+    <Content Include="Documentos.aspx" />
     <Content Include="docs\PROJECT_STATUS.md" />
     <Content Include="Gmail_Bandeja.aspx" />
     <Content Include="Gmail_Config.aspx" />
@@ -229,6 +239,7 @@
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Data\GmailRepository.cs" />
+    <Compile Include="Data\DocumentRepository.cs" />
     <Compile Include="Configuration\ConfiguracionAplicacion.cs" />
     <Compile Include="Configuration\ConfiguracionIni.cs" />
     <Compile Include="Configuration\ConfiguracionSistema.cs" />
@@ -238,6 +249,11 @@
     <Compile Include="Services\GmailOAuthService.cs" />
     <Compile Include="Services\GmailSyncService.cs" />
     <Compile Include="Services\AttachmentStorage.cs" />
+    <Compile Include="Services\AttachmentWorkspace.cs" />
+    <Compile Include="Services\DocumentAnalysisService.cs" />
+    <Compile Include="Services\DocumentStorage.cs" />
+    <Compile Include="Services\InvoiceSelector.cs" />
+    <Compile Include="Services\MdocPdfTextExtractor.cs" />
     <Compile Include="Services\GoogleOAuthSettings.cs" />
     <Compile Include="Gmail_Bandeja.aspx.cs">
       <DependentUpon>Gmail_Bandeja.aspx</DependentUpon>
@@ -245,6 +261,13 @@
     </Compile>
     <Compile Include="Gmail_Bandeja.aspx.designer.cs">
       <DependentUpon>Gmail_Bandeja.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Documentos.aspx.cs">
+      <DependentUpon>Documentos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Documentos.aspx.designer.cs">
+      <DependentUpon>Documentos.aspx</DependentUpon>
     </Compile>
     <Compile Include="Gmail_Config.aspx.cs">
       <DependentUpon>Gmail_Config.aspx</DependentUpon>

@@ -6,8 +6,8 @@
         <section class="row g-4" aria-label="Resumen">
             <div class="col-sm-6 col-xl-3"><article class="summary-card"><span>Cuenta Gmail</span><strong><asp:Literal ID="litCuentaGmail" runat="server" Text="0" /></strong><a href="Gmail_Config.aspx">Ver configuración</a></article></div>
             <div class="col-sm-6 col-xl-3"><article class="summary-card"><span>Mensajes recibidos</span><strong><asp:Literal ID="litMensajes" runat="server" Text="0" /></strong><a href="Gmail_Bandeja.aspx">Ver bandeja</a></article></div>
-            <div class="col-sm-6 col-xl-3"><article class="summary-card"><span>Adjuntos descargados</span><strong><asp:Literal ID="litAdjuntos" runat="server" Text="0" /></strong><span class="muted-link">Próximo hito</span></article></div>
-            <div class="col-sm-6 col-xl-3" id="documentos"><article class="summary-card"><span>Documentos pendientes</span><strong>0</strong><span class="muted-link">Clasificación no implementada</span></article></div>
+            <div class="col-sm-6 col-xl-3"><article class="summary-card"><span>Facturas</span><strong><asp:Literal ID="litFacturas" runat="server" Text="0" /></strong><a href="Documentos.aspx?clasificacion=FACTURA">Ver facturas</a></article></div>
+            <div class="col-sm-6 col-xl-3" id="documentos"><article class="summary-card"><span>Para revisar</span><strong><asp:Literal ID="litRevisar" runat="server" Text="0" /></strong><a href="Documentos.aspx?clasificacion=REVISAR">Ver documentos</a></article></div>
         </section>
     </main>
 </asp:Content>

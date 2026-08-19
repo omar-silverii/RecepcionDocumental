@@ -14,7 +14,7 @@ namespace RecepcionDocumental
             {
                 litCuentaGmail.Text = resumen.CuentasActivas.ToString();
                 litMensajes.Text = resumen.Mensajes.ToString();
-                litAdjuntos.Text = resumen.Adjuntos.ToString();
+                try { int facturas, revisar; DocumentRepository.GetCounts(out facturas, out revisar); litFacturas.Text=facturas.ToString(); litRevisar.Text=revisar.ToString(); } catch (System.Data.SqlClient.SqlException) { }
             }
             else pnlDatabaseWarning.Visible = true;
         }

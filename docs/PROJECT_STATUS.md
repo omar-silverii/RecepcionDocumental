@@ -30,13 +30,23 @@ Aplicación ASP.NET WebForms en C# para .NET Framework 4.8, Visual Studio 2022 y
 
 Los adjuntos se guardan fuera del sitio en la carpeta configurable `AdjuntosRootPath` (localmente `C:\RecepcionDocumental\Adjuntos\`).
 
-## Siguiente hito
+### H1D1A — IMPLEMENTADO / PENDIENTE VALIDACIÓN REAL
 
-La clasificación documental todavía no está implementada. Tampoco hay OCR ni IA.
+- Selector base con persistencia selectiva: sólo `FACTURA` y `REVISAR`; `DESCARTAR` no genera archivo definitivo ni fila documental.
+- `Mdoc.dll` local, assembly `Mdoc` versión `2.0.0.0`, para lectura prudente de contenido PDF.
+- `ICSharpCode.SharpZipLib.dll` local, assembly `ICSharpCode.SharpZipLib` versión `0.86.0.518`, para ZIP y ZIP anidado hasta el límite configurado.
+- Workspaces aislados por attachment en `Trabajo`, siempre eliminados al finalizar.
+- Almacenamiento definitivo separado en `Facturas` y `Revisar`.
+- ZIP controlado contra Zip Slip, colisiones, entradas, tamaño individual, expansión total y profundidad.
+- Idempotencia documental por `GmailMensajeId + GmailPartId + OrigenHash`.
+- PDF sin texto útil e imágenes se conservan en `REVISAR` para OCR futuro.
+- No se implementaron OCR, QR, IA, ML, rasterización ni integración ARCA.
+
+La implementación requiere validación real con documentos representativos antes de avanzar a H1D1B.
 
 ## Configuración operativa y logs
 
-La aplicación carga una vez `RecepcionDocumental.ini` desde la raíz física al iniciar. El INI define el nombre del proyecto y la ruta absoluta de logs; el archivo real está excluido de Git y se proporciona `RecepcionDocumental.ini.example`.
+La aplicación carga una vez `RecepcionDocumental.ini` desde la raíz física al iniciar. El INI define el nombre del proyecto, las rutas absolutas `Logs`, `Trabajo`, `Facturas` y `Revisar`, y los límites ZIP. El archivo real está excluido de Git y se proporciona `RecepcionDocumental.ini.example`.
 
 El logger centralizado genera archivos diarios `RecepcionDocumental_Proc_yyyyMMdd.txt` y `RecepcionDocumental_Error_yyyyMMdd.txt`. Las rutas operativas nuevas no deben hardcodearse y los logs nunca deben contener secretos, tokens, connection strings, cuerpos de correo ni contenido de adjuntos.
 

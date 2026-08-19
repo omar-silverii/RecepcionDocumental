@@ -23,6 +23,13 @@ namespace RecepcionDocumental.Services
         public int AdjuntosExistentes { get; set; }
         public int Errores { get; set; }
         public int MensajesOmitidosNotFound { get; set; }
+        public int AdjuntosAnalizados { get; set; }
+        public int ContenedoresZip { get; set; }
+        public int ArchivosZipAnalizados { get; set; }
+        public int FacturasDetectadas { get; set; }
+        public int ParaRevisar { get; set; }
+        public int Descartados { get; set; }
+        public int DocumentosExistentes { get; set; }
         public bool UsoFallbackInicial { get; set; }
     }
 
@@ -134,7 +141,7 @@ namespace RecepcionDocumental.Services
                     cursorEstado = string.IsNullOrWhiteSpace(batch.CompletionHistoryId) ? "actualizado a NULL" : "avanzado";
                 }
                 total.Stop();
-                Logs.LogProc("GmailSyncService | Fin sincronización | MensajesEncontrados=" + result.MensajesEncontrados + " | MensajesOmitidosNotFound=" + result.MensajesOmitidosNotFound + " | MensajesNuevos=" + result.MensajesNuevos + " | AdjuntosDescargados=" + result.AdjuntosDescargados + " | AdjuntosExistentes=" + result.AdjuntosExistentes + " | Errores=" + result.Errores + " | DuracionMs=" + total.ElapsedMilliseconds + " | Cursor=" + cursorEstado);
+                Logs.LogProc("GmailSyncService | Fin sincronización | MensajesEncontrados=" + result.MensajesEncontrados + " | MensajesOmitidosNotFound=" + result.MensajesOmitidosNotFound + " | MensajesNuevos=" + result.MensajesNuevos + " | AdjuntosAnalizados=" + result.AdjuntosAnalizados + " | Facturas=" + result.FacturasDetectadas + " | Revisar=" + result.ParaRevisar + " | Descartados=" + result.Descartados + " | DocumentosExistentes=" + result.DocumentosExistentes + " | Errores=" + result.Errores + " | DuracionMs=" + total.ElapsedMilliseconds + " | Cursor=" + cursorEstado);
             }
             return result;
         }
@@ -191,19 +198,10 @@ namespace RecepcionDocumental.Services
             if (parts.Count == 0) return new MessageProcessResult { HistoryId = messageHistoryId, AttachmentsFound = 0 };
 
             var record = MapMessage(message);
-            bool created;
-            var databaseMessageId = GmailSyncRepository.EnsureMessage(accountId, record, out created);
-            if (created) result.MensajesNuevos++;
+            long? databaseMessageId = null;
 
             foreach (var part in parts)
             {
-                var downloadedPath = GmailSyncRepository.GetDownloadedAttachmentPath(databaseMessageId, part.PartId);
-                if (!string.IsNullOrWhiteSpace(downloadedPath) && File.Exists(downloadedPath))
-                {
-                    result.AdjuntosExistentes++;
-                    Logs.LogProc("GmailSyncService | GmailMessageId=" + Logs.SanitizarMensaje(message.Id) + " | PartId=" + Logs.SanitizarMensaje(part.PartId) + " | Estado=Existente");
-                    continue;
-                }
                 try
                 {
                     var data = part.InlineData;
@@ -213,18 +211,42 @@ namespace RecepcionDocumental.Services
                         data = attachment.Data;
                     }
                     var bytes = DecodeBase64Url(data);
-                    var identity = "part:" + part.PartId;
-                    var stored = AttachmentStorage.Save(bytes, record.MessageDateUtc, message.Id, part.FileName, identity);
-                    GmailSyncRepository.SaveAttachment(databaseMessageId, new GmailAttachmentRecord { GmailAttachmentId = part.AttachmentId, GmailPartId = part.PartId, OriginalName = part.FileName, MimeType = part.MimeType, SizeBytes = stored.Size, LocalPath = stored.FullPath, HashSha256 = stored.HashSha256, DownloadedUtc = DateTime.UtcNow, Status = "Descargado" });
-                    result.AdjuntosDescargados++;
-                    Logs.LogProc("GmailSyncService | GmailMessageId=" + Logs.SanitizarMensaje(message.Id) + " | PartId=" + Logs.SanitizarMensaje(part.PartId) + " | Estado=Descargado");
+                    result.AdjuntosAnalizados++;
+                    using (var workspace = new AttachmentWorkspace())
+                    {
+                        var analysis = DocumentAnalysisService.Analyze(bytes, part.FileName, part.MimeType, workspace);
+                        result.ContenedoresZip += analysis.ContainersZip;
+                        result.ArchivosZipAnalizados += analysis.ZipFilesAnalyzed;
+                        result.Descartados += analysis.Discarded;
+                        if (analysis.Candidates.Count == 0) continue;
+                        if (!databaseMessageId.HasValue)
+                        {
+                            bool created; databaseMessageId = GmailSyncRepository.EnsureMessage(accountId, record, out created);
+                            if (created) result.MensajesNuevos++;
+                        }
+                        foreach (var candidate in analysis.Candidates)
+                        {
+                            if (DocumentRepository.Exists(databaseMessageId.Value, part.PartId, candidate.OriginHash))
+                            {
+                                result.DocumentosExistentes++; result.AdjuntosExistentes++;
+                                Logs.LogProc("DocumentAnalysis | Documento conservado | GmailMessageId=" + Logs.SanitizarMensaje(message.Id) + " | PartId=" + Logs.SanitizarMensaje(part.PartId) + " | Estado=Existente");
+                                continue;
+                            }
+                            var stored = DocumentStorage.Save(candidate.SourcePath, candidate.Selection.Classification, record.MessageDateUtc, message.Id, candidate.OriginalName, candidate.OriginHash);
+                            if (DocumentRepository.Save(databaseMessageId.Value, part.PartId, candidate, stored))
+                            {
+                                result.AdjuntosDescargados++;
+                                if (candidate.Selection.Classification == "FACTURA") result.FacturasDetectadas++; else result.ParaRevisar++;
+                                Logs.LogProc("DocumentAnalysis | Documento conservado | GmailMessageId=" + Logs.SanitizarMensaje(message.Id) + " | PartId=" + Logs.SanitizarMensaje(part.PartId) + " | Clasificacion=" + candidate.Selection.Classification);
+                            }
+                            else { result.DocumentosExistentes++; result.AdjuntosExistentes++; }
+                        }
+                    }
                 }
                 catch (Exception ex) when (ex is GoogleApiException || ex is IOException || ex is UnauthorizedAccessException || ex is FormatException || ex is System.Data.SqlClient.SqlException)
                 {
                     result.Errores++;
                     Logs.LogError("GmailSyncService | Operación=ProcesarAdjunto | GmailMessageId=" + Logs.SanitizarMensaje(message.Id) + " | PartId=" + Logs.SanitizarMensaje(part.PartId) + " | Estado=Error | " + Logs.DescribirExcepcion(ex));
-                    try { GmailSyncRepository.SaveAttachment(databaseMessageId, new GmailAttachmentRecord { GmailAttachmentId = part.AttachmentId, GmailPartId = part.PartId, OriginalName = part.FileName, MimeType = part.MimeType, SizeBytes = part.DeclaredSize, Status = "Error" }); }
-                    catch (System.Data.SqlClient.SqlException saveException) { Logs.LogError("GmailSyncService | Operación=RegistrarErrorAdjunto | GmailMessageId=" + Logs.SanitizarMensaje(message.Id) + " | PartId=" + Logs.SanitizarMensaje(part.PartId) + " | Estado=Error | " + Logs.DescribirExcepcion(saveException)); }
                 }
             }
             return new MessageProcessResult { HistoryId = messageHistoryId, AttachmentsFound = parts.Count };

@@ -3,3 +3,12 @@ NombreProyecto=RecepcionDocumental
 
 [Rutas]
 Logs=C:\RecepcionDocumental\Logs
+Trabajo=C:\RecepcionDocumental\Trabajo
+Facturas=C:\RecepcionDocumental\Facturas
+Revisar=C:\RecepcionDocumental\Revisar
+
+[Zip]
+MaxEntradas=200
+MaxBytesPorArchivo=52428800
+MaxBytesDescomprimidos=262144000
+MaxProfundidad=2
