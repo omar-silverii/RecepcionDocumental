@@ -1,0 +1,7 @@
+<%@ Page Title="Configuración Gmail" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Gmail_Config.aspx.cs" Inherits="RecepcionDocumental.Gmail_Config" %>
+<asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server"><main>
+<header class="page-header"><p class="eyebrow">Gmail</p><h1>Configuración de cuenta</h1></header>
+<asp:Panel ID="pnlDatabaseWarning" runat="server" Visible="false" CssClass="alert alert-warning">No se pudo consultar la estructura inicial. Ejecutá <strong>Database/001_EstructuraInicial.sql</strong>.</asp:Panel>
+<asp:Panel ID="pnlSinCuenta" runat="server" CssClass="empty-state"><h2>Cuenta Gmail no configurada</h2><p class="text-secondary">La vinculación con Google se incorporará en el próximo hito.</p><button type="button" class="btn btn-primary" disabled>Conectar con Gmail</button><p class="small text-secondary mt-2">Conexión todavía no implementada en H1A.</p></asp:Panel>
+<asp:Panel ID="pnlCuenta" runat="server" Visible="false" CssClass="card"><div class="card-body"><h2 class="h5">Cuenta registrada</h2><dl class="row detail-list"><dt class="col-sm-3">Email</dt><dd class="col-sm-9"><asp:Literal ID="litEmail" runat="server" /></dd><dt class="col-sm-3">Estado</dt><dd class="col-sm-9"><asp:Literal ID="litEstado" runat="server" /></dd><dt class="col-sm-3">Última consulta UTC</dt><dd class="col-sm-9"><asp:Literal ID="litUltimaConsulta" runat="server" /></dd></dl><p class="small text-secondary mb-0">OAuth todavía no está implementado en H1A.</p></div></asp:Panel>
+</main></asp:Content>

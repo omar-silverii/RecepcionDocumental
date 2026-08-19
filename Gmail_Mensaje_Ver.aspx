@@ -1,0 +1,6 @@
+<%@ Page Title="Detalle de mensaje" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Gmail_Mensaje_Ver.aspx.cs" Inherits="RecepcionDocumental.Gmail_Mensaje_Ver" %>
+<asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server"><main>
+<header class="page-header"><p class="eyebrow">Gmail</p><h1>Detalle del mensaje</h1></header>
+<asp:Panel ID="pnlAviso" runat="server" CssClass="alert alert-info"><asp:Literal ID="litAviso" runat="server" /></asp:Panel>
+<asp:Panel ID="pnlMensaje" runat="server" Visible="false" CssClass="card"><div class="card-body"><h2 class="h4"><asp:Literal ID="litAsunto" runat="server" /></h2><dl class="row detail-list mt-4"><dt class="col-sm-3">Remitente</dt><dd class="col-sm-9"><asp:Literal ID="litRemitente" runat="server" /></dd><dt class="col-sm-3">Cuenta</dt><dd class="col-sm-9"><asp:Literal ID="litCuenta" runat="server" /></dd><dt class="col-sm-3">Fecha UTC</dt><dd class="col-sm-9"><asp:Literal ID="litFecha" runat="server" /></dd><dt class="col-sm-3">ID Gmail</dt><dd class="col-sm-9"><asp:Literal ID="litGmailId" runat="server" /></dd><dt class="col-sm-3">Resumen</dt><dd class="col-sm-9"><asp:Literal ID="litSnippet" runat="server" /></dd></dl></div></asp:Panel><p class="mt-3"><a href="Gmail_Bandeja.aspx">← Volver a la bandeja</a></p>
+</main></asp:Content>

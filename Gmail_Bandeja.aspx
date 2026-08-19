@@ -1,0 +1,7 @@
+<%@ Page Title="Bandeja Gmail" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Gmail_Bandeja.aspx.cs" Inherits="RecepcionDocumental.Gmail_Bandeja" %>
+<asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server"><main>
+<header class="page-header d-flex justify-content-between align-items-end"><div><p class="eyebrow">Gmail</p><h1>Bandeja de entrada</h1></div><a href="Gmail_Config.aspx" class="btn btn-outline-primary">Configurar cuenta</a></header>
+<asp:Panel ID="pnlDatabaseWarning" runat="server" Visible="false" CssClass="alert alert-warning">No se pudo consultar la estructura inicial. Ejecutá <strong>Database/001_EstructuraInicial.sql</strong>.</asp:Panel>
+<asp:Panel ID="pnlSinMensajes" runat="server" CssClass="empty-state"><h2>Todavía no se recibieron mensajes desde Gmail.</h2><p class="text-secondary mb-0">La sincronización se implementará en un próximo hito.</p></asp:Panel>
+<asp:Repeater ID="rptMensajes" runat="server"><HeaderTemplate><div class="list-group"></HeaderTemplate><ItemTemplate><a class="list-group-item list-group-item-action" href='<%# "Gmail_Mensaje_Ver.aspx?id=" + Eval("Id") %>'><div class="d-flex justify-content-between"><strong><%#: Eval("Asunto") %></strong><small><%#: Eval("FechaMensajeUtc", "{0:dd/MM/yyyy HH:mm}") %> UTC</small></div><div><%#: Eval("Remitente") %></div><small class="text-secondary"><%#: Eval("Snippet") %></small></a></ItemTemplate><FooterTemplate></div></FooterTemplate></asp:Repeater>
+</main></asp:Content>

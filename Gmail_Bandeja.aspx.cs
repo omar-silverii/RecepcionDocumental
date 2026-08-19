@@ -1,0 +1,2 @@
+using System; using System.Collections.Generic; using System.Web.UI; using RecepcionDocumental.Data;
+namespace RecepcionDocumental { public partial class Gmail_Bandeja : Page { protected void Page_Load(object sender, EventArgs e) { if (IsPostBack) return; IList<GmailMensajeInfo> mensajes; if (!GmailRepository.TryGetMensajes(out mensajes)) { pnlDatabaseWarning.Visible = true; return; } pnlSinMensajes.Visible = mensajes.Count == 0; rptMensajes.DataSource = mensajes; rptMensajes.DataBind(); } } }

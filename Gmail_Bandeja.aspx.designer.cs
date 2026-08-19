@@ -1,0 +1,1 @@
+namespace RecepcionDocumental { public partial class Gmail_Bandeja { protected global::System.Web.UI.WebControls.Panel pnlDatabaseWarning; protected global::System.Web.UI.WebControls.Panel pnlSinMensajes; protected global::System.Web.UI.WebControls.Repeater rptMensajes; } }
