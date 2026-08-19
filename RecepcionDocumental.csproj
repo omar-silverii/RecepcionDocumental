@@ -133,6 +133,7 @@
     <Content Include="Default.aspx" />
     <Content Include="Database\001_EstructuraInicial.sql" />
     <Content Include="Database\002_GmailOAuth.sql" />
+    <Content Include="Database\003_GmailSync.sql" />
     <Content Include="docs\PROJECT_STATUS.md" />
     <Content Include="Gmail_Bandeja.aspx" />
     <Content Include="Gmail_Config.aspx" />
@@ -226,8 +227,11 @@
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Data\GmailRepository.cs" />
+    <Compile Include="Data\GmailSyncRepository.cs" />
     <Compile Include="Security\RefreshTokenProtector.cs" />
     <Compile Include="Services\GmailOAuthService.cs" />
+    <Compile Include="Services\GmailSyncService.cs" />
+    <Compile Include="Services\AttachmentStorage.cs" />
     <Compile Include="Services\GoogleOAuthSettings.cs" />
     <Compile Include="Gmail_Bandeja.aspx.cs">
       <DependentUpon>Gmail_Bandeja.aspx</DependentUpon>

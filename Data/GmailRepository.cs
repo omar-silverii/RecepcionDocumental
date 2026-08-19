@@ -8,7 +8,7 @@ namespace RecepcionDocumental.Data
 {
     public sealed class DashboardResumen { public int CuentasActivas { get; set; } public int Mensajes { get; set; } public int Adjuntos { get; set; } }
     public sealed class GmailCuentaInfo { public int Id { get; set; } public string Email { get; set; } public bool Activo { get; set; } public DateTime? UltimaConsultaUtc { get; set; } public bool TieneRefreshToken { get; set; } }
-    public sealed class GmailMensajeInfo { public long Id { get; set; } public string GmailMessageId { get; set; } public DateTime FechaMensajeUtc { get; set; } public string Remitente { get; set; } public string Asunto { get; set; } public string Snippet { get; set; } public string CuentaEmail { get; set; } }
+    public sealed class GmailMensajeInfo { public long Id { get; set; } public string GmailMessageId { get; set; } public DateTime FechaMensajeUtc { get; set; } public string Remitente { get; set; } public string Asunto { get; set; } public string Snippet { get; set; } public string CuentaEmail { get; set; } public int CantidadAdjuntos { get; set; } public string Estado { get; set; } }
 
     public static class GmailRepository
     {
@@ -79,7 +79,7 @@ END;";
         public static bool TryGetMensajes(out IList<GmailMensajeInfo> mensajes)
         {
             mensajes = new List<GmailMensajeInfo>();
-            const string sql = @"SELECT m.Id, m.GmailMessageId, m.FechaMensajeUtc, m.Remitente, m.Asunto, m.Snippet, c.Email FROM dbo.GmailMensaje m INNER JOIN dbo.GmailCuenta c ON c.Id = m.GmailCuentaId ORDER BY m.FechaMensajeUtc DESC, m.Id DESC;";
+            const string sql = @"SELECT m.Id,m.GmailMessageId,m.FechaMensajeUtc,m.Remitente,m.Asunto,m.Snippet,c.Email,(SELECT COUNT(*) FROM dbo.GmailAdjunto a WHERE a.GmailMensajeId=m.Id),CASE WHEN EXISTS(SELECT 1 FROM dbo.GmailAdjunto a WHERE a.GmailMensajeId=m.Id AND a.Estado=N'Error') THEN N'Con errores' WHEN EXISTS(SELECT 1 FROM dbo.GmailAdjunto a WHERE a.GmailMensajeId=m.Id AND a.Estado=N'Descargado') THEN N'Descargado' ELSE N'Pendiente' END FROM dbo.GmailMensaje m INNER JOIN dbo.GmailCuenta c ON c.Id=m.GmailCuentaId ORDER BY m.FechaMensajeUtc DESC,m.Id DESC;";
             try { using (var cn = new SqlConnection(ConnectionString)) using (var cmd = new SqlCommand(sql, cn)) { cn.Open(); using (var r = cmd.ExecuteReader()) while (r.Read()) mensajes.Add(MapMensaje(r)); } return true; }
             catch (SqlException) { return false; }
         }
@@ -87,14 +87,14 @@ END;";
         public static bool TryGetMensaje(long id, out GmailMensajeInfo mensaje)
         {
             mensaje = null;
-            const string sql = @"SELECT m.Id, m.GmailMessageId, m.FechaMensajeUtc, m.Remitente, m.Asunto, m.Snippet, c.Email FROM dbo.GmailMensaje m INNER JOIN dbo.GmailCuenta c ON c.Id = m.GmailCuentaId WHERE m.Id = @Id;";
+            const string sql = @"SELECT m.Id,m.GmailMessageId,m.FechaMensajeUtc,m.Remitente,m.Asunto,m.Snippet,c.Email,(SELECT COUNT(*) FROM dbo.GmailAdjunto a WHERE a.GmailMensajeId=m.Id),CASE WHEN EXISTS(SELECT 1 FROM dbo.GmailAdjunto a WHERE a.GmailMensajeId=m.Id AND a.Estado=N'Error') THEN N'Con errores' WHEN EXISTS(SELECT 1 FROM dbo.GmailAdjunto a WHERE a.GmailMensajeId=m.Id AND a.Estado=N'Descargado') THEN N'Descargado' ELSE N'Pendiente' END FROM dbo.GmailMensaje m INNER JOIN dbo.GmailCuenta c ON c.Id=m.GmailCuentaId WHERE m.Id=@Id;";
             try { using (var cn = new SqlConnection(ConnectionString)) using (var cmd = new SqlCommand(sql, cn)) { cmd.Parameters.Add("@Id", SqlDbType.BigInt).Value = id; cn.Open(); using (var r = cmd.ExecuteReader()) if (r.Read()) mensaje = MapMensaje(r); } return true; }
             catch (SqlException) { return false; }
         }
 
         private static GmailMensajeInfo MapMensaje(SqlDataReader r)
         {
-            return new GmailMensajeInfo { Id = r.GetInt64(0), GmailMessageId = r.GetString(1), FechaMensajeUtc = r.GetDateTime(2), Remitente = r.GetString(3), Asunto = r.IsDBNull(4) ? "(Sin asunto)" : r.GetString(4), Snippet = r.IsDBNull(5) ? null : r.GetString(5), CuentaEmail = r.GetString(6) };
+            return new GmailMensajeInfo { Id = r.GetInt64(0), GmailMessageId = r.GetString(1), FechaMensajeUtc = r.GetDateTime(2), Remitente = r.GetString(3), Asunto = r.IsDBNull(4) ? "(Sin asunto)" : r.GetString(4), Snippet = r.IsDBNull(5) ? null : r.GetString(5), CuentaEmail = r.GetString(6), CantidadAdjuntos = r.GetInt32(7), Estado = r.GetString(8) };
         }
 
         private static GmailCuentaInfo MapCuenta(SqlDataReader r)

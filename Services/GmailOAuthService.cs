@@ -60,6 +60,23 @@ namespace RecepcionDocumental.Services
             using (var random = RandomNumberGenerator.Create()) random.GetBytes(bytes);
             return Convert.ToBase64String(bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_');
         }
+
+        public static GmailAuthorizedClient CreateAuthorizedClient(GoogleOAuthSettings settings, string email, string refreshToken)
+        {
+            if (string.IsNullOrWhiteSpace(refreshToken)) throw new InvalidOperationException("La cuenta no tiene un refresh token disponible.");
+            var flow = CreateFlow(settings);
+            var credential = new UserCredential(flow, email, new TokenResponse { RefreshToken = refreshToken });
+            var service = new GmailService(new BaseClientService.Initializer { HttpClientInitializer = credential, ApplicationName = "RecepcionDocumental" });
+            return new GmailAuthorizedClient(flow, service);
+        }
+    }
+
+    public sealed class GmailAuthorizedClient : IDisposable
+    {
+        private readonly GoogleAuthorizationCodeFlow _flow;
+        public GmailService Service { get; private set; }
+        public GmailAuthorizedClient(GoogleAuthorizationCodeFlow flow, GmailService service) { _flow = flow; Service = service; }
+        public void Dispose() { Service.Dispose(); _flow.Dispose(); }
     }
 
     public sealed class OAuthResult
