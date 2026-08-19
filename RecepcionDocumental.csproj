@@ -215,17 +215,22 @@
       <DependentUpon>Gmail_Bandeja.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Gmail_Bandeja.aspx.designer.cs"><DependentUpon>Gmail_Bandeja.aspx</DependentUpon></Compile>
+    <Compile Include="Gmail_Bandeja.aspx.designer.cs">
+      <DependentUpon>Gmail_Bandeja.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Gmail_Config.aspx.cs">
       <DependentUpon>Gmail_Config.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Gmail_Config.aspx.designer.cs"><DependentUpon>Gmail_Config.aspx</DependentUpon></Compile>
+    <Compile Include="Gmail_Config.aspx.designer.cs">
+      <DependentUpon>Gmail_Config.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Gmail_Mensaje_Ver.aspx.cs">
       <DependentUpon>Gmail_Mensaje_Ver.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Gmail_Mensaje_Ver.aspx.designer.cs"><DependentUpon>Gmail_Mensaje_Ver.aspx</DependentUpon></Compile>
+    <Compile Include="Gmail_Mensaje_Ver.aspx.designer.cs">
+      <DependentUpon>Gmail_Mensaje_Ver.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -239,12 +244,14 @@
     </Compile>
     <Compile Include="Site.Mobile.Master.cs">
       <DependentUpon>Site.Mobile.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Site.Mobile.Master.designer.cs">
       <DependentUpon>Site.Mobile.Master</DependentUpon>
     </Compile>
     <Compile Include="ViewSwitcher.ascx.cs">
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="ViewSwitcher.ascx.designer.cs">
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>

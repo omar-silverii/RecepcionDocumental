@@ -1,0 +1,1 @@
+namespace RecepcionDocumental { public partial class Gmail_OAuthCallback { protected global::System.Web.UI.WebControls.Panel pnlResultado; protected global::System.Web.UI.WebControls.Literal litResultado; } }
