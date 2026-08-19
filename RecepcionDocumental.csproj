@@ -131,6 +131,7 @@
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Default.aspx" />
+    <Content Include="RecepcionDocumental.ini.example" />
     <Content Include="Database\001_EstructuraInicial.sql" />
     <Content Include="Database\002_GmailOAuth.sql" />
     <Content Include="Database\003_GmailSync.sql" />
@@ -227,6 +228,10 @@
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Data\GmailRepository.cs" />
+    <Compile Include="Configuration\ConfiguracionAplicacion.cs" />
+    <Compile Include="Configuration\ConfiguracionIni.cs" />
+    <Compile Include="Configuration\ConfiguracionSistema.cs" />
+    <Compile Include="Infrastructure\Logs.cs" />
     <Compile Include="Data\GmailSyncRepository.cs" />
     <Compile Include="Security\RefreshTokenProtector.cs" />
     <Compile Include="Services\GmailOAuthService.cs" />

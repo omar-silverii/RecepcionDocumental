@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -9,6 +10,7 @@ using Google;
 using Google.Apis.Gmail.v1;
 using Google.Apis.Gmail.v1.Data;
 using RecepcionDocumental.Data;
+using RecepcionDocumental.Infrastructure;
 using RecepcionDocumental.Security;
 
 namespace RecepcionDocumental.Services
@@ -38,6 +40,13 @@ namespace RecepcionDocumental.Services
         public IList<string> MessageIds { get; set; }
         public string CompletionHistoryId { get; set; }
         public bool IsInitial { get; set; }
+        public int HistoryPages { get; set; }
+    }
+
+    internal sealed class MessageProcessResult
+    {
+        public string HistoryId { get; set; }
+        public int AttachmentsFound { get; set; }
     }
 
     public static class GmailSyncService
@@ -46,6 +55,17 @@ namespace RecepcionDocumental.Services
         private const int HistoryPageSize = 100;
 
         public static async Task<GmailSyncResult> SynchronizeAsync()
+        {
+            var total = Stopwatch.StartNew();
+            try { return await SynchronizeCoreAsync(total); }
+            catch (Exception ex)
+            {
+                Logs.LogError("GmailSyncService | Operación=Sincronización | " + Logs.DescribirExcepcion(ex));
+                throw;
+            }
+        }
+
+        private static async Task<GmailSyncResult> SynchronizeCoreAsync(Stopwatch total)
         {
             var account = GmailSyncRepository.GetActiveAccount();
             if (account == null) throw new InvalidOperationException("No hay una cuenta Gmail activa.");
@@ -56,6 +76,7 @@ namespace RecepcionDocumental.Services
             if (!GoogleOAuthSettings.TryLoad(out settings, out configurationError)) throw new InvalidOperationException(configurationError);
             var refreshToken = RefreshTokenProtector.Unprotect(account.ProtectedRefreshToken);
             var result = new GmailSyncResult();
+            Logs.LogProc("GmailSyncService | Inicio sincronización | CuentaId=" + account.Id + " | Modo=" + (string.IsNullOrWhiteSpace(account.LastHistoryId) ? "Inicial" : "Incremental"));
 
             using (var client = GmailOAuthService.CreateAuthorizedClient(settings, account.Email, refreshToken))
             {
@@ -67,26 +88,46 @@ namespace RecepcionDocumental.Services
                     catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.NotFound)
                     {
                         result.UsoFallbackInicial = true;
+                        Logs.LogProc("GmailSyncService | HistoryId vencido (404) | CuentaId=" + account.Id + " | Fallback=Inicial");
                         batch = await GetInitialMessageIdsAsync(client.Service);
                     }
                 }
 
                 result.MensajesEncontrados = batch.MessageIds.Count;
+                Logs.LogProc("GmailSyncService | Consulta completada | Modo=" + (batch.IsInitial ? "Inicial" : "Incremental") + " | Ids=" + batch.MessageIds.Count + " | PaginasHistory=" + batch.HistoryPages);
                 for (var index = 0; index < batch.MessageIds.Count; index++)
                 {
+                    var messageStopwatch = Stopwatch.StartNew();
+                    var downloadedBefore = result.AdjuntosDescargados;
+                    var existingBefore = result.AdjuntosExistentes;
+                    var errorsBefore = result.Errores;
+                    var attachmentsFound = 0;
                     try
                     {
-                        var messageHistoryId = await ProcessMessageAsync(client.Service, account.Id, batch.MessageIds[index], result);
-                        if (batch.IsInitial && index == 0) batch.CompletionHistoryId = messageHistoryId;
+                        var processed = await ProcessMessageAsync(client.Service, account.Id, batch.MessageIds[index], result);
+                        attachmentsFound = processed.AttachmentsFound;
+                        if (batch.IsInitial && index == 0) batch.CompletionHistoryId = processed.HistoryId;
                     }
-                    catch (GoogleApiException) { result.Errores++; }
-                    catch (IOException) { result.Errores++; }
-                    catch (UnauthorizedAccessException) { result.Errores++; }
-                    catch (System.Data.SqlClient.SqlException) { result.Errores++; }
-                    catch (FormatException) { result.Errores++; }
+                    catch (Exception ex) when (ex is GoogleApiException || ex is IOException || ex is UnauthorizedAccessException || ex is System.Data.SqlClient.SqlException || ex is FormatException)
+                    {
+                        result.Errores++;
+                        Logs.LogError("GmailSyncService | Operación=ProcesarMensaje | GmailMessageId=" + Logs.SanitizarMensaje(batch.MessageIds[index]) + " | " + Logs.DescribirExcepcion(ex));
+                    }
+                    finally
+                    {
+                        messageStopwatch.Stop();
+                        Logs.LogProc("GmailSyncService | Mensaje " + (index + 1) + "/" + batch.MessageIds.Count + " | GmailMessageId=" + Logs.SanitizarMensaje(batch.MessageIds[index]) + " | DuracionMs=" + messageStopwatch.ElapsedMilliseconds + " | Adjuntos=" + attachmentsFound + " | Descargados=" + (result.AdjuntosDescargados - downloadedBefore) + " | Existentes=" + (result.AdjuntosExistentes - existingBefore) + " | Errores=" + (result.Errores - errorsBefore));
+                    }
                 }
 
-                if (result.Errores == 0) GmailSyncRepository.CompleteSync(account.Id, batch.CompletionHistoryId);
+                var cursorEstado = "conservado";
+                if (result.Errores == 0)
+                {
+                    GmailSyncRepository.CompleteSync(account.Id, batch.CompletionHistoryId);
+                    cursorEstado = string.IsNullOrWhiteSpace(batch.CompletionHistoryId) ? "actualizado a NULL" : "avanzado";
+                }
+                total.Stop();
+                Logs.LogProc("GmailSyncService | Fin sincronización | MensajesEncontrados=" + result.MensajesEncontrados + " | MensajesNuevos=" + result.MensajesNuevos + " | AdjuntosDescargados=" + result.AdjuntosDescargados + " | AdjuntosExistentes=" + result.AdjuntosExistentes + " | Errores=" + result.Errores + " | DuracionMs=" + total.ElapsedMilliseconds + " | Cursor=" + cursorEstado);
             }
             return result;
         }
@@ -96,6 +137,7 @@ namespace RecepcionDocumental.Services
             var request = service.Users.Messages.List("me");
             request.Q = "has:attachment newer_than:30d";
             request.MaxResults = MaxMessages;
+            Logs.LogProc("GmailSyncService | Consulta inicial | UltimosDias=30 | Limite=" + MaxMessages);
             var response = await request.ExecuteAsync();
             return new GmailSyncBatch
             {
@@ -111,6 +153,7 @@ namespace RecepcionDocumental.Services
             var ids = new HashSet<string>(StringComparer.Ordinal);
             string pageToken = null;
             string completionHistoryId = null;
+            var pages = 0;
             do
             {
                 var request = service.Users.History.List("me");
@@ -119,6 +162,7 @@ namespace RecepcionDocumental.Services
                 request.MaxResults = HistoryPageSize;
                 request.PageToken = pageToken;
                 var response = await request.ExecuteAsync();
+                pages++;
                 foreach (var history in response.History ?? new List<History>())
                     foreach (var added in history.MessagesAdded ?? new List<HistoryMessageAdded>())
                         if (added.Message != null && !string.IsNullOrWhiteSpace(added.Message.Id)) ids.Add(added.Message.Id);
@@ -126,10 +170,10 @@ namespace RecepcionDocumental.Services
                 if (string.IsNullOrEmpty(pageToken) && response.HistoryId.HasValue) completionHistoryId = response.HistoryId.Value.ToString();
             } while (!string.IsNullOrEmpty(pageToken));
             if (string.IsNullOrWhiteSpace(completionHistoryId)) throw new InvalidOperationException("Gmail no devolvió el cursor final de la sincronización incremental.");
-            return new GmailSyncBatch { IsInitial = false, MessageIds = ids.ToList(), CompletionHistoryId = completionHistoryId };
+            return new GmailSyncBatch { IsInitial = false, MessageIds = ids.ToList(), CompletionHistoryId = completionHistoryId, HistoryPages = pages };
         }
 
-        private static async Task<string> ProcessMessageAsync(GmailService service, int accountId, string messageId, GmailSyncResult result)
+        private static async Task<MessageProcessResult> ProcessMessageAsync(GmailService service, int accountId, string messageId, GmailSyncResult result)
         {
             var get = service.Users.Messages.Get("me", messageId);
             get.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
@@ -137,7 +181,7 @@ namespace RecepcionDocumental.Services
             var parts = new List<AttachmentPart>();
             CollectAttachmentParts(message.Payload, parts, "0");
             var messageHistoryId = message.HistoryId.HasValue ? message.HistoryId.Value.ToString() : null;
-            if (parts.Count == 0) return messageHistoryId;
+            if (parts.Count == 0) return new MessageProcessResult { HistoryId = messageHistoryId, AttachmentsFound = 0 };
 
             var record = MapMessage(message);
             bool created;
@@ -165,11 +209,12 @@ namespace RecepcionDocumental.Services
                 catch (Exception ex) when (ex is GoogleApiException || ex is IOException || ex is UnauthorizedAccessException || ex is FormatException || ex is System.Data.SqlClient.SqlException)
                 {
                     result.Errores++;
+                    Logs.LogError("GmailSyncService | Operación=ProcesarAdjunto | GmailMessageId=" + Logs.SanitizarMensaje(message.Id) + " | " + Logs.DescribirExcepcion(ex));
                     try { GmailSyncRepository.SaveAttachment(databaseMessageId, new GmailAttachmentRecord { GmailAttachmentId = part.AttachmentId, GmailPartId = part.PartId, OriginalName = part.FileName, MimeType = part.MimeType, SizeBytes = part.DeclaredSize, Status = "Error" }); }
-                    catch (System.Data.SqlClient.SqlException) { }
+                    catch (System.Data.SqlClient.SqlException saveException) { Logs.LogError("GmailSyncService | Operación=RegistrarErrorAdjunto | GmailMessageId=" + Logs.SanitizarMensaje(message.Id) + " | " + Logs.DescribirExcepcion(saveException)); }
                 }
             }
-            return messageHistoryId;
+            return new MessageProcessResult { HistoryId = messageHistoryId, AttachmentsFound = parts.Count };
         }
 
         private static void CollectAttachmentParts(MessagePart part, IList<AttachmentPart> result, string traversalPath)

@@ -1,0 +1,5 @@
+[General]
+NombreProyecto=RecepcionDocumental
+
+[Rutas]
+Logs=C:\RecepcionDocumental\Logs

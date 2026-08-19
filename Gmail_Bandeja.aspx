@@ -1,4 +1,4 @@
-<%@ Page Title="Bandeja Gmail" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" Async="true" CodeBehind="Gmail_Bandeja.aspx.cs" Inherits="RecepcionDocumental.Gmail_Bandeja" %>
+<%@ Page Title="Bandeja Gmail" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" Async="true" AsyncTimeout="600" CodeBehind="Gmail_Bandeja.aspx.cs" Inherits="RecepcionDocumental.Gmail_Bandeja" %>
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server"><main>
 <header class="page-header d-flex justify-content-between align-items-end"><div><p class="eyebrow">Gmail</p><h1>Bandeja de entrada</h1></div><div><asp:Button ID="btnBuscar" runat="server" Text="Buscar nuevos correos" CssClass="btn btn-primary me-2" UseSubmitBehavior="false" OnClientClick="this.disabled=true;this.value='Buscando…';" OnClick="Buscar_Click" /><a href="Gmail_Config.aspx" class="btn btn-outline-primary">Configurar cuenta</a></div></header>
 <asp:Panel ID="pnlDatabaseWarning" runat="server" Visible="false" CssClass="alert alert-warning"><asp:Literal ID="litDatabaseWarning" runat="server" /></asp:Panel>

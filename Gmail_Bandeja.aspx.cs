@@ -12,7 +12,11 @@ namespace RecepcionDocumental
     {
         private const string SyncSessionKey = "GmailSync.Running";
 
-        protected void Page_Load(object sender, EventArgs e) { if (!IsPostBack) LoadPageData(); }
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            Server.ScriptTimeout = 600;
+            if (!IsPostBack) LoadPageData();
+        }
 
         protected void Buscar_Click(object sender, EventArgs e)
         {

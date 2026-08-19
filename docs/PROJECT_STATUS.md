@@ -12,6 +12,12 @@ Aplicación ASP.NET WebForms en C# para .NET Framework 4.8, Visual Studio 2022 y
 - Los adjuntos se guardan fuera del sitio en la carpeta configurable `AdjuntosRootPath` (localmente `C:\RecepcionDocumental\Adjuntos\`).
 - No hay clasificación, OCR ni IA.
 
+## Configuración operativa y logs
+
+La aplicación carga una vez `RecepcionDocumental.ini` desde la raíz física al iniciar. El INI define el nombre del proyecto y la ruta absoluta de logs; el archivo real está excluido de Git y se proporciona `RecepcionDocumental.ini.example`.
+
+El logger centralizado genera archivos diarios `RecepcionDocumental_Proc_yyyyMMdd.txt` y `RecepcionDocumental_Error_yyyyMMdd.txt`. Las rutas operativas nuevas no deben hardcodearse y los logs nunca deben contener secretos, tokens, connection strings, cuerpos de correo ni contenido de adjuntos.
+
 ## OAuth local
 
 Scope único: `https://www.googleapis.com/auth/gmail.readonly`.
