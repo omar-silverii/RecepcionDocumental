@@ -33,9 +33,17 @@ namespace RecepcionDocumental.Services
         public int? DeclaredSize { get; set; }
     }
 
+    internal sealed class GmailSyncBatch
+    {
+        public IList<string> MessageIds { get; set; }
+        public string CompletionHistoryId { get; set; }
+        public bool IsInitial { get; set; }
+    }
+
     public static class GmailSyncService
     {
         private const int MaxMessages = 100;
+        private const int HistoryPageSize = 100;
 
         public static async Task<GmailSyncResult> SynchronizeAsync()
         {
@@ -51,22 +59,26 @@ namespace RecepcionDocumental.Services
 
             using (var client = GmailOAuthService.CreateAuthorizedClient(settings, account.Email, refreshToken))
             {
-                IList<string> messageIds;
-                if (string.IsNullOrWhiteSpace(account.LastHistoryId)) messageIds = await GetInitialMessageIdsAsync(client.Service);
+                GmailSyncBatch batch;
+                if (string.IsNullOrWhiteSpace(account.LastHistoryId)) batch = await GetInitialMessageIdsAsync(client.Service);
                 else
                 {
-                    try { messageIds = await GetHistoryMessageIdsAsync(client.Service, account.LastHistoryId); }
+                    try { batch = await GetHistoryMessageIdsAsync(client.Service, account.LastHistoryId); }
                     catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.NotFound)
                     {
                         result.UsoFallbackInicial = true;
-                        messageIds = await GetInitialMessageIdsAsync(client.Service);
+                        batch = await GetInitialMessageIdsAsync(client.Service);
                     }
                 }
 
-                result.MensajesEncontrados = messageIds.Count;
-                foreach (var messageId in messageIds.Take(MaxMessages))
+                result.MensajesEncontrados = batch.MessageIds.Count;
+                for (var index = 0; index < batch.MessageIds.Count; index++)
                 {
-                    try { await ProcessMessageAsync(client.Service, account.Id, messageId, result); }
+                    try
+                    {
+                        var messageHistoryId = await ProcessMessageAsync(client.Service, account.Id, batch.MessageIds[index], result);
+                        if (batch.IsInitial && index == 0) batch.CompletionHistoryId = messageHistoryId;
+                    }
                     catch (GoogleApiException) { result.Errores++; }
                     catch (IOException) { result.Errores++; }
                     catch (UnauthorizedAccessException) { result.Errores++; }
@@ -74,52 +86,58 @@ namespace RecepcionDocumental.Services
                     catch (FormatException) { result.Errores++; }
                 }
 
-                var profile = await client.Service.Users.GetProfile("me").ExecuteAsync();
-                if (!profile.HistoryId.HasValue) throw new InvalidOperationException("Gmail no devolvió un historyId válido.");
-                if (result.Errores == 0) GmailSyncRepository.CompleteSync(account.Id, profile.HistoryId.Value.ToString());
+                if (result.Errores == 0) GmailSyncRepository.CompleteSync(account.Id, batch.CompletionHistoryId);
             }
             return result;
         }
 
-        private static async Task<IList<string>> GetInitialMessageIdsAsync(GmailService service)
+        private static async Task<GmailSyncBatch> GetInitialMessageIdsAsync(GmailService service)
         {
             var request = service.Users.Messages.List("me");
             request.Q = "has:attachment newer_than:30d";
             request.MaxResults = MaxMessages;
             var response = await request.ExecuteAsync();
-            return (response.Messages ?? new List<Message>()).Where(x => !string.IsNullOrWhiteSpace(x.Id)).Select(x => x.Id).Distinct().Take(MaxMessages).ToList();
+            return new GmailSyncBatch
+            {
+                IsInitial = true,
+                MessageIds = (response.Messages ?? new List<Message>()).Where(x => !string.IsNullOrWhiteSpace(x.Id)).Select(x => x.Id).Distinct().Take(MaxMessages).ToList()
+            };
         }
 
-        private static async Task<IList<string>> GetHistoryMessageIdsAsync(GmailService service, string historyId)
+        private static async Task<GmailSyncBatch> GetHistoryMessageIdsAsync(GmailService service, string historyId)
         {
             ulong startHistoryId;
             if (!ulong.TryParse(historyId, out startHistoryId)) throw new InvalidOperationException("El historyId almacenado no es válido.");
             var ids = new HashSet<string>(StringComparer.Ordinal);
             string pageToken = null;
+            string completionHistoryId = null;
             do
             {
                 var request = service.Users.History.List("me");
                 request.StartHistoryId = startHistoryId;
                 request.HistoryTypes = UsersResource.HistoryResource.ListRequest.HistoryTypesEnum.MessageAdded;
-                request.MaxResults = MaxMessages;
+                request.MaxResults = HistoryPageSize;
                 request.PageToken = pageToken;
                 var response = await request.ExecuteAsync();
                 foreach (var history in response.History ?? new List<History>())
                     foreach (var added in history.MessagesAdded ?? new List<HistoryMessageAdded>())
                         if (added.Message != null && !string.IsNullOrWhiteSpace(added.Message.Id)) ids.Add(added.Message.Id);
                 pageToken = response.NextPageToken;
-            } while (!string.IsNullOrEmpty(pageToken) && ids.Count < MaxMessages);
-            return ids.Take(MaxMessages).ToList();
+                if (string.IsNullOrEmpty(pageToken) && response.HistoryId.HasValue) completionHistoryId = response.HistoryId.Value.ToString();
+            } while (!string.IsNullOrEmpty(pageToken));
+            if (string.IsNullOrWhiteSpace(completionHistoryId)) throw new InvalidOperationException("Gmail no devolvió el cursor final de la sincronización incremental.");
+            return new GmailSyncBatch { IsInitial = false, MessageIds = ids.ToList(), CompletionHistoryId = completionHistoryId };
         }
 
-        private static async Task ProcessMessageAsync(GmailService service, int accountId, string messageId, GmailSyncResult result)
+        private static async Task<string> ProcessMessageAsync(GmailService service, int accountId, string messageId, GmailSyncResult result)
         {
             var get = service.Users.Messages.Get("me", messageId);
             get.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
             var message = await get.ExecuteAsync();
             var parts = new List<AttachmentPart>();
             CollectAttachmentParts(message.Payload, parts, "0");
-            if (parts.Count == 0) return;
+            var messageHistoryId = message.HistoryId.HasValue ? message.HistoryId.Value.ToString() : null;
+            if (parts.Count == 0) return messageHistoryId;
 
             var record = MapMessage(message);
             bool created;
@@ -151,6 +169,7 @@ namespace RecepcionDocumental.Services
                     catch (System.Data.SqlClient.SqlException) { }
                 }
             }
+            return messageHistoryId;
         }
 
         private static void CollectAttachmentParts(MessagePart part, IList<AttachmentPart> result, string traversalPath)

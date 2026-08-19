@@ -140,7 +140,7 @@ VALUES (@MensajeId,@AttachmentId,@PartId,@Nombre,@Mime,@Tamanio,@Ruta,@Hash,@Fec
         {
             const string sql = @"UPDATE dbo.GmailCuenta SET UltimoHistoryId=@HistoryId, UltimaConsultaUtc=SYSUTCDATETIME(), FechaModificacion=SYSUTCDATETIME() WHERE Id=@Id;";
             using (var cn = new SqlConnection(ConnectionString)) using (var cmd = new SqlCommand(sql, cn))
-            { cmd.Parameters.Add("@Id", SqlDbType.Int).Value = accountId; cmd.Parameters.Add("@HistoryId", SqlDbType.NVarChar, 50).Value = historyId; cn.Open(); cmd.ExecuteNonQuery(); }
+            { cmd.Parameters.Add("@Id", SqlDbType.Int).Value = accountId; cmd.Parameters.Add("@HistoryId", SqlDbType.NVarChar, 50).Value = string.IsNullOrWhiteSpace(historyId) ? (object)DBNull.Value : historyId; cn.Open(); cmd.ExecuteNonQuery(); }
         }
 
         public static IList<GmailAttachmentInfo> GetAttachments(long messageId)
