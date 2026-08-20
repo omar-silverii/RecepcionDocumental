@@ -4,9 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using ICSharpCode.SharpZipLib.Zip;
 using RecepcionDocumental.Configuration;
 using RecepcionDocumental.Infrastructure;
+using SharpCompress.Common;
+using SharpCompress.Readers;
 
 namespace RecepcionDocumental.Services
 {
@@ -41,46 +42,46 @@ namespace RecepcionDocumental.Services
             var extension = Path.GetExtension(fileName ?? string.Empty);
             var rootPath = workspace.CreatePath(extension); File.WriteAllBytes(rootPath, bytes);
             var result = new AttachmentAnalysis();
-            if (IsZip(fileName, mimeType, bytes))
+            if (IsContainer(fileName, mimeType, bytes))
             {
-                Logs.LogProc("DocumentAnalysis | ZIP detectado | Profundidad=1");
-                AnalyzeZip(rootPath, fileName, mimeType, fileName, 1, workspace, new ZipBudget(), result, true);
+                Logs.LogProc("DocumentAnalysis | Contenedor detectado | Profundidad=1");
+                AnalyzeContainer(rootPath, fileName, mimeType, fileName, 1, workspace, new ZipBudget(), result, true);
             }
             else AnalyzeDocument(rootPath, fileName, mimeType, "DIRECTO", null, HashFile(rootPath), result);
             return result;
         }
 
-        private static void AnalyzeZip(string zipPath, string zipName, string mimeType, string chain, int depth, AttachmentWorkspace workspace, ZipBudget budget, AttachmentAnalysis result, bool root)
+        private static void AnalyzeContainer(string containerPath, string containerName, string mimeType, string chain, int depth, AttachmentWorkspace workspace, ZipBudget budget, AttachmentAnalysis result, bool root)
         {
             result.ContainersZip++;
             var candidateStart = result.Candidates.Count;
             var discardedStart = result.Discarded;
             var filesStart = result.ZipFilesAnalyzed;
             var config = ConfiguracionSistema.Actual;
-            if (depth > config.ZipMaxProfundidad) { AddUnanalyzableZip(zipPath, zipName, mimeType, chain, root, "ZIP anidado supera la profundidad permitida.", result); return; }
+            if (depth > config.ZipMaxProfundidad) { AddUnanalyzableContainer(containerPath, containerName, mimeType, chain, root, "El contenedor anidado supera la profundidad permitida.", result); return; }
             try
             {
-                using (var input = File.OpenRead(zipPath))
-                using (var zip = new ZipInputStream(input))
+                using (var reader = ReaderFactory.OpenReader(containerPath))
                 {
-                    zip.IsStreamOwner = false; ZipEntry entry;
-                    var extractionRoot = Path.Combine(workspace.RootPath, "zip-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(extractionRoot);
+                    var extractionRoot = Path.Combine(workspace.RootPath, "container-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(extractionRoot);
                     var extractionPrefix = Path.GetFullPath(extractionRoot).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
-                    while ((entry = zip.GetNextEntry()) != null)
+                    while (reader.MoveToNextEntry())
                     {
-                        if (++budget.Entries > config.ZipMaxEntradas) throw new InvalidDataException("El ZIP supera MaxEntradas.");
+                        var entry = reader.Entry;
+                        if (++budget.Entries > config.ZipMaxEntradas) throw new InvalidDataException("El contenedor supera MaxEntradas.");
                         if (entry.IsDirectory) continue;
-                        if (!entry.IsFile || entry.IsCrypted || !entry.CanDecompress) throw new InvalidDataException("Entrada ZIP no soportada o protegida.");
-                        var entryName = (entry.Name ?? string.Empty).Replace('/', Path.DirectorySeparatorChar);
-                        if (string.IsNullOrWhiteSpace(entryName) || Path.IsPathRooted(entryName) || entryName.IndexOf(':') >= 0) throw new InvalidDataException("Ruta absoluta o inválida dentro del ZIP.");
+                        if (entry.IsEncrypted || !string.IsNullOrEmpty(entry.LinkTarget)) throw new InvalidDataException("Entrada de contenedor no soportada, enlazada o protegida.");
+                        var entryName = (entry.Key ?? string.Empty).Replace('/', Path.DirectorySeparatorChar);
+                        if (string.IsNullOrWhiteSpace(entryName) || Path.IsPathRooted(entryName) || entryName.IndexOf(':') >= 0) throw new InvalidDataException("Ruta absoluta o inválida dentro del contenedor.");
                         var destination = Path.GetFullPath(Path.Combine(extractionRoot, entryName));
-                        if (!destination.StartsWith(extractionPrefix, StringComparison.OrdinalIgnoreCase)) throw new InvalidDataException("Se bloqueó una entrada Zip Slip.");
-                        if (File.Exists(destination)) throw new InvalidDataException("El ZIP contiene rutas en colisión.");
+                        if (!destination.StartsWith(extractionPrefix, StringComparison.OrdinalIgnoreCase)) throw new InvalidDataException("Se bloqueó una entrada con path traversal.");
+                        if (File.Exists(destination) || Directory.Exists(destination)) throw new InvalidDataException("El contenedor contiene rutas en colisión.");
                         Directory.CreateDirectory(Path.GetDirectoryName(destination));
                         long entryBytes = 0; var buffer = new byte[81920]; int read;
+                        using (var entryStream = reader.OpenEntryStream())
                         using (var output = new FileStream(destination, FileMode.CreateNew, FileAccess.Write, FileShare.None))
                         {
-                            while ((read = zip.Read(buffer, 0, buffer.Length)) > 0)
+                            while ((read = entryStream.Read(buffer, 0, buffer.Length)) > 0)
                             {
                                 entryBytes += read; budget.TotalBytes += read;
                                 if (entryBytes > config.ZipMaxBytesPorArchivo) throw new InvalidDataException("Una entrada supera MaxBytesPorArchivo.");
@@ -90,19 +91,19 @@ namespace RecepcionDocumental.Services
                             output.Flush(true);
                         }
                         result.ZipFilesAnalyzed++;
-                        var nestedChain = chain + "!/" + entry.Name;
+                        var nestedChain = chain + "!/" + entry.Key;
                         if (nestedChain.Length > 2000) throw new InvalidDataException("La cadena de origen supera la longitud permitida.");
-                        if (IsZipFile(destination, entry.Name)) AnalyzeZip(destination, entry.Name, "application/zip", nestedChain, depth + 1, workspace, budget, result, false);
-                        else AnalyzeDocument(destination, Path.GetFileName(entry.Name), GuessMime(entry.Name), "ZIP", nestedChain, StableZipOriginHash(nestedChain, destination), result);
+                        if (IsContainerFile(destination, entry.Key)) AnalyzeContainer(destination, entry.Key, GuessMime(entry.Key), nestedChain, depth + 1, workspace, budget, result, false);
+                        else AnalyzeDocument(destination, Path.GetFileName(entry.Key), GuessMime(entry.Key), "ZIP", nestedChain, StableZipOriginHash(nestedChain, destination), result);
                     }
                 }
-                Logs.LogProc("DocumentAnalysis | ZIP entradas analizadas | Entradas=" + budget.Entries + " | Bytes=" + budget.TotalBytes);
+                Logs.LogProc("DocumentAnalysis | Contenedor entradas analizadas | Entradas=" + budget.Entries + " | Bytes=" + budget.TotalBytes);
             }
-            catch (Exception ex) when (ex is IOException || ex is InvalidDataException || ex is ZipException || ex is ArgumentException)
+            catch (Exception ex) when (IsContainerException(ex))
             {
                 while (result.Candidates.Count > candidateStart) result.Candidates.RemoveAt(result.Candidates.Count - 1);
                 result.Discarded = discardedStart; result.ZipFilesAnalyzed = filesStart;
-                AddUnanalyzableZip(zipPath, zipName, mimeType, chain, root, ex.Message, result);
+                AddUnanalyzableContainer(containerPath, containerName, mimeType, chain, root, ex.Message, result);
             }
         }
 
@@ -120,28 +121,41 @@ namespace RecepcionDocumental.Services
             result.Candidates.Add(new DocumentCandidate { SourcePath = path, OriginalName = SafeOriginalName(name), MimeType = mime, OriginType = originType, InternalContainerPath = internalPath, OriginHash = originHash, SizeBytes = new FileInfo(path).Length, Selection = selection });
         }
 
-        private static void AddUnanalyzableZip(string path, string name, string mime, string chain, bool root, string reason, AttachmentAnalysis result)
+        private static void AddUnanalyzableContainer(string path, string name, string mime, string chain, bool root, string reason, AttachmentAnalysis result)
         {
-            result.Candidates.Add(new DocumentCandidate { SourcePath = path, OriginalName = SafeOriginalName(name), MimeType = mime ?? "application/zip", OriginType = root ? "DIRECTO" : "ZIP", InternalContainerPath = root ? null : chain, OriginHash = root ? HashFile(path) : StableZipOriginHash(chain, path), SizeBytes = new FileInfo(path).Length, Selection = InvoiceSelector.Review("ZIP_NO_ANALIZABLE", "ZIP no analizable: " + SafeReason(reason), null) });
+            result.Candidates.Add(new DocumentCandidate { SourcePath = path, OriginalName = SafeOriginalName(name), MimeType = mime ?? GuessMime(name) ?? "application/octet-stream", OriginType = root ? "DIRECTO" : "ZIP", InternalContainerPath = root ? null : chain, OriginHash = root ? HashFile(path) : StableZipOriginHash(chain, path), SizeBytes = new FileInfo(path).Length, Selection = InvoiceSelector.Review("ZIP_NO_ANALIZABLE", "Contenedor no analizable: " + SafeReason(reason), null) });
             Logs.LogProc("DocumentAnalysis | Documento clasificado | Clasificacion=REVISAR | Metodo=ZIP_NO_ANALIZABLE");
         }
 
-        private static bool IsZip(string name, string mime, byte[] bytes)
+        private static bool IsContainer(string name, string mime, byte[] bytes)
         {
-            if (string.Equals(Path.GetExtension(name ?? string.Empty), ".zip", StringComparison.OrdinalIgnoreCase) || string.Equals(mime, "application/zip", StringComparison.OrdinalIgnoreCase)) return true;
-            return bytes != null && bytes.Length >= 4 && bytes[0] == 0x50 && bytes[1] == 0x4b && (bytes[2] == 3 || bytes[2] == 5 || bytes[2] == 7) && (bytes[3] == 4 || bytes[3] == 6 || bytes[3] == 8);
+            var extension = Path.GetExtension(name ?? string.Empty);
+            if (new[] { ".zip", ".rar", ".7z" }.Contains(extension, StringComparer.OrdinalIgnoreCase)) return true;
+            if (new[] { "application/zip", "application/x-zip-compressed", "application/vnd.rar", "application/x-rar-compressed", "application/x-7z-compressed" }.Contains(mime, StringComparer.OrdinalIgnoreCase)) return true;
+            return HasZipSignature(bytes) || HasRarSignature(bytes) || HasSevenZipSignature(bytes);
         }
-        private static bool IsZipFile(string path, string name)
+        private static bool IsContainerFile(string path, string name)
         {
-            if (IsZip(name, null, null)) return true;
-            using (var stream = File.OpenRead(path)) { var header = new byte[4]; return stream.Read(header, 0, 4) == 4 && IsZip(name, null, header); }
+            if (IsContainer(name, null, null)) return true;
+            using (var stream = File.OpenRead(path)) { var header = new byte[8]; var count = stream.Read(header, 0, header.Length); return IsContainer(name, null, header.Take(count).ToArray()); }
         }
-        private static string GuessMime(string name) { return string.Equals(Path.GetExtension(name), ".pdf", StringComparison.OrdinalIgnoreCase) ? "application/pdf" : null; }
+        private static bool HasZipSignature(byte[] value) { return value != null && value.Length >= 4 && value[0] == 0x50 && value[1] == 0x4b && (value[2] == 3 || value[2] == 5 || value[2] == 7) && (value[3] == 4 || value[3] == 6 || value[3] == 8); }
+        private static bool HasRarSignature(byte[] value) { return value != null && value.Length >= 7 && value[0] == 0x52 && value[1] == 0x61 && value[2] == 0x72 && value[3] == 0x21 && value[4] == 0x1a && value[5] == 0x07 && (value[6] == 0x00 || (value[6] == 0x01 && value.Length >= 8 && value[7] == 0x00)); }
+        private static bool HasSevenZipSignature(byte[] value) { return value != null && value.Length >= 6 && value[0] == 0x37 && value[1] == 0x7a && value[2] == 0xbc && value[3] == 0xaf && value[4] == 0x27 && value[5] == 0x1c; }
+        private static bool IsContainerException(Exception ex) { return ex is IOException || ex is InvalidDataException || ex is ArgumentException || ex is NotSupportedException || (ex.GetType().Namespace ?? string.Empty).StartsWith("SharpCompress", StringComparison.Ordinal); }
+        private static string GuessMime(string name)
+        {
+            var extension = Path.GetExtension(name ?? string.Empty);
+            if (string.Equals(extension, ".pdf", StringComparison.OrdinalIgnoreCase)) return "application/pdf";
+            if (string.Equals(extension, ".zip", StringComparison.OrdinalIgnoreCase)) return "application/zip";
+            if (string.Equals(extension, ".rar", StringComparison.OrdinalIgnoreCase)) return "application/vnd.rar";
+            return string.Equals(extension, ".7z", StringComparison.OrdinalIgnoreCase) ? "application/x-7z-compressed" : null;
+        }
         private static string StableZipOriginHash(string chain, string path) { return HashBytes(Encoding.UTF8.GetBytes((chain ?? string.Empty) + "|" + HashFile(path))); }
         internal static string HashFile(string path) { using (var stream = File.OpenRead(path)) using (var sha = SHA256.Create()) return ToHex(sha.ComputeHash(stream)); }
         private static string HashBytes(byte[] bytes) { using (var sha = SHA256.Create()) return ToHex(sha.ComputeHash(bytes)); }
         private static string ToHex(byte[] bytes) { return BitConverter.ToString(bytes).Replace("-", string.Empty).ToLowerInvariant(); }
-        private static string SafeReason(string value) { var safe = (value ?? "Error de ZIP").Replace('\r', ' ').Replace('\n', ' '); return safe.Length > 300 ? safe.Substring(0, 300) : safe; }
+        private static string SafeReason(string value) { var safe = (value ?? "Error de contenedor").Replace('\r', ' ').Replace('\n', ' '); return safe.Length > 300 ? safe.Substring(0, 300) : safe; }
         private static string SafeOriginalName(string value) { var name = string.IsNullOrWhiteSpace(value) ? "documento" : value; return name.Length > 500 ? name.Substring(0, 500) : name; }
     }
 }

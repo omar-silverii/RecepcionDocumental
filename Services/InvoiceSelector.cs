@@ -21,19 +21,23 @@ namespace RecepcionDocumental.Services
             new[] { "COMP NRO", "COMPROBANTE", "NRO COMPROBANTE" }, new[] { "IMPORTE TOTAL", "TOTAL" },
             new[] { "IVA" }, new[] { "FECHA DE EMISION" }
         };
-        private static readonly string[] NegativeSignals = { "REMITO", "NOTA DE CREDITO", "NOTA DE DEBITO", "ORDEN DE COMPRA", "PRESUPUESTO", "RECIBO", "NOTA DE PEDIDO" };
+        private static readonly string[] NegativeSignals = { "REMITO", "NOTA DE CREDITO", "NOTA DE DEBITO", "ORDEN DE COMPRA", "PRESUPUESTO", "RECIBO", "NOTA DE PEDIDO", "CREDENCIAL DE PAGO", "EXTRACTO DE CUENTAS", "RESUMEN DE OPERACIONES" };
+        private static readonly string[] InvoiceLetters = { "A", "B", "C", "M", "E" };
 
         public static InvoiceSelection SelectPdf(string text, bool hasUsefulText)
         {
             if (!hasUsefulText) return Review("PDF_SIN_TEXTO", "Requiere OCR futuro.", null);
             var normalized = Normalize(text);
-            var explicitInvoice = ExplicitInvoices.Any(x => ContainsPhrase(normalized, x));
-            var fiscalCount = FiscalSignals.Count(group => group.Any(x => ContainsPhrase(normalized, x)));
-            var negative = NegativeSignals.FirstOrDefault(x => ContainsPhrase(normalized, x));
+            var compact = Compact(normalized);
+            var explicitInvoice = ExplicitInvoices.Any(x => ContainsSignal(normalized, compact, x))
+                || (ContainsPhrase(normalized, "FACTURA") && InvoiceLetters.Any(x => ContainsPhrase(normalized, x)));
+            var fiscalCount = FiscalSignals.Count(group => group.Any(x => ContainsSignal(normalized, compact, x)));
+            var negative = NegativeSignals.FirstOrDefault(x => ContainsSignal(normalized, compact, x));
+            if (!string.IsNullOrEmpty(negative) && (!explicitInvoice || !string.Equals(negative, "REMITO", StringComparison.Ordinal)))
+                return Discard("PDF_TEXTO", "Documento identificado como " + negative + ".");
             if (explicitInvoice && fiscalCount >= 3) return new InvoiceSelection { Classification = "FACTURA", DetectionMethod = "PDF_TEXTO", Confidence = (byte)Math.Min(95, 70 + fiscalCount * 4), Reason = "Factura explícita y " + fiscalCount + " señales fiscales." };
             if (explicitInvoice) return Review("PDF_TEXTO", "Factura explícita con señales fiscales insuficientes.", 55);
             if (fiscalCount >= 3) return Review("PDF_TEXTO", "Se detectaron " + fiscalCount + " señales fiscales sin tipo de factura explícito.", 45);
-            if (!string.IsNullOrEmpty(negative)) return Discard("PDF_TEXTO", "Documento identificado como " + negative + ".");
             return Review("PDF_TEXTO_NO_CONCLUYENTE", "El texto obtenido no permite clasificar el documento con seguridad.", null);
         }
 
@@ -64,5 +68,19 @@ namespace RecepcionDocumental.Services
 
         private static bool ContainsPhrase(string normalizedText, string phrase)
         { return (" " + normalizedText + " ").IndexOf(" " + phrase + " ", StringComparison.Ordinal) >= 0; }
+
+        private static bool ContainsSignal(string normalizedText, string compactText, string phrase)
+        {
+            if (ContainsPhrase(normalizedText, phrase)) return true;
+            return phrase.IndexOf(' ') >= 0 && compactText.IndexOf(Compact(phrase), StringComparison.Ordinal) >= 0;
+        }
+
+        private static string Compact(string value)
+        {
+            var builder = new StringBuilder((value ?? string.Empty).Length);
+            foreach (var c in value ?? string.Empty)
+                if (char.IsLetterOrDigit(c)) builder.Append(c);
+            return builder.ToString();
+        }
     }
 }

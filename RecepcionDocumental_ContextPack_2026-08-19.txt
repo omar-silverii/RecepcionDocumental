@@ -1,0 +1,554 @@
+CONTEXTPACK — RECEPCIÓN DOCUMENTAL
+Fecha de cierre: 2026-08-19
+
+============================================================
+1. PROYECTO
+============================================================
+
+Nombre funcional:
+Recepción Documental
+
+Solución / proyecto / base:
+RecepcionDocumental
+
+Stack definitivo:
+- Visual Studio 2022
+- C#
+- ASP.NET WebForms
+- .NET Framework 4.8
+- SQL Server / SQL Express
+- IIS Express en desarrollo
+- DefaultConnection como conexión SQL
+- Aplicación local/intranet; no depender de servicios externos salvo Gmail/Google OAuth para recepción.
+
+Ubicación local típica:
+C:\Users\omard\source\repos\RecepcionDocumental\RecepcionDocumental\
+
+Servidor SQL:
+OMARD\SQLEXPRESS
+
+Base:
+RecepcionDocumental
+
+Repositorio GitHub:
+omar-silverii/RecepcionDocumental
+Rama de trabajo: main
+
+Método de trabajo permanente:
+- El ZIP completo más reciente entregado por Omar es la única fuente de verdad del código.
+- Antes de proponer cambios hay que inspeccionar los archivos reales del ZIP.
+- No inventar tablas, handlers, clases, controles ni dependencias.
+- No reescribir arquitectura si no es necesario.
+- Preservar lo ya validado.
+- Omar puede definir una necesidad funcional mínima; el asistente debe actuar como ingeniero del sistema y proponer el camino profesional.
+- Codex modifica el proyecto local y puede ejecutar scripts SQL.
+- Antes de una prueba importante, revisar el ZIP generado por Codex.
+
+============================================================
+2. H1A — BASE WEBFORMS / SQL
+============================================================
+
+ESTADO: VALIDADO
+
+Se creó la base WebForms con:
+- Default.aspx
+- Gmail_Config.aspx
+- Gmail_Bandeja.aspx
+- Gmail_Mensaje_Ver.aspx
+- Data/GmailRepository.cs
+- Database/001_EstructuraInicial.sql
+- conexión DefaultConnection
+- Site.Master / navegación
+
+Tablas iniciales:
+- GmailCuenta
+- GmailMensaje
+- GmailAdjunto
+
+La aplicación base funcionó correctamente bajo IIS Express.
+
+============================================================
+3. H1B — GOOGLE OAUTH / GMAIL
+============================================================
+
+ESTADO: VALIDADO
+
+Google Workspace:
+- dominio empresarial edi-sa.com
+- Google Cloud project: RecepcionDocumental
+- Project ID: recepciondocumental
+- Gmail API habilitada
+- Audience: Internal
+- scope único:
+  https://www.googleapis.com/auth/gmail.readonly
+
+OAuth:
+- Web application
+- redirect local:
+  https://localhost:44320/Gmail_OAuthCallback.aspx
+
+Variables de entorno Windows:
+- RECEPCIONDOCUMENTAL_GOOGLE_CLIENT_ID
+- RECEPCIONDOCUMENTAL_GOOGLE_CLIENT_SECRET
+
+No almacenar Client Secret en repo.
+No pedirle a Omar que comparta secretos/tokens.
+
+Implementación:
+- Google.Apis.Auth / Gmail.v1 oficiales
+- GoogleAuthorizationCodeFlow server-side
+- state seguro en Session
+- access_type=offline
+- refresh token protegido con MachineKey.Protect
+- access token no persistente
+- email real obtenido con Gmail profile "me"
+- Database/002_GmailOAuth.sql
+
+Prueba real validada:
+- cuenta Gmail conectada
+- refresh token protegido presente en SQL
+- configuración activa
+
+============================================================
+4. H1C — SINCRONIZACIÓN / DESCARGA GMAIL
+============================================================
+
+ESTADO: VALIDADO Y CERRADO
+
+Diseño:
+- primera sincronización limitada: has:attachment newer_than:30d, máximo 100 mensajes
+- sincronización incremental por Gmail historyId
+- paginación completa de history.list
+- UltimaConsultaUtc sólo para auditoría/UI
+- UltimoHistoryId como cursor técnico
+
+Correcciones importantes validadas:
+1. No usar GetProfile().HistoryId para avanzar cursor.
+2. Guardar cursor incremental sólo luego de procesar correctamente el lote.
+3. 404 de historyId vencido => fallback a sincronización inicial.
+4. 404 de mensaje individual => "Mensaje omitido", no Error y no bloquea cursor.
+5. Caso borde de full-sync: tomar el primer HistoryId válido de un mensaje realmente procesado.
+6. Timeout WebForms: AsyncTimeout=600 y Server.ScriptTimeout=600.
+
+Idempotencia de attachments:
+- identidad durable: GmailMensajeId + GmailPartId
+- GmailAttachmentId sólo se usa como locator para attachments.get
+- Database/004_GmailAttachmentIdentity.sql
+- índice único por GmailMensajeId + GmailPartId
+- duplicados SQL de la prueba fueron consolidados
+
+Prueba real de idempotencia:
+- correo "PRUEBA RECEPCION DOCUMENTAL"
+- JPG + XLSX + PDF
+- inicialmente hubo bug y se descargaron 3 veces
+- después del fix: Adjuntos descargados 0 / Adjuntos ya existentes 3 / Errores 0
+- siguiente sincronización: Mensajes encontrados 0 / Adjuntos descargados 0 / Errores 0
+- cursor historyId confirmado avanzando correctamente
+
+Logging:
+- RecepcionDocumental.ini local, fuera de Git
+- RecepcionDocumental.ini.example versionado
+- logs diarios Proc/Error en C:\RecepcionDocumental\Logs
+- nunca registrar secretos, tokens, cuerpos completos ni contenido de adjuntos
+
+H1C quedó formalmente cerrado.
+
+============================================================
+5. CAMBIO DE REQUISITO DE NEGOCIO
+============================================================
+
+La empresa indicó que POR AHORA sólo interesan FACTURAS.
+
+No interesa conservar:
+- remitos
+- órdenes de compra
+- presupuestos
+- notas de pedido
+- archivos irrelevantes
+- otros adjuntos que no sean factura
+
+Por eso se definió H1D — Selector de Facturas.
+
+Regla general:
+Gmail attachment -> analizar -> FACTURA / REVISAR / DESCARTAR
+
+FACTURA:
+- conservar físicamente
+- guardar en SQL
+
+REVISAR:
+- conservar físicamente en carpeta Revisar
+- guardar en SQL
+
+DESCARTAR:
+- no conservar físicamente
+- no guardar en SQL
+
+Decisión explícita:
+NO llenar SQL con adjuntos descartados. Sólo persistir facturas y dudosos.
+
+Consecuencia aceptada:
+si alguna vez vence historyId y se hace fallback, un descartado podría volver a analizarse.
+
+============================================================
+6. CARPETAS OPERATIVAS H1D
+============================================================
+
+C:\RecepcionDocumental\Trabajo
+C:\RecepcionDocumental\Facturas
+C:\RecepcionDocumental\Revisar
+
+Trabajo:
+- carpeta temporal
+- un workspace por attachment/proceso: Trabajo\<GUID>\
+- debe limpiarse siempre mediante finally
+- nunca mezclar procesos concurrentes
+
+Facturas:
+- destino definitivo de documentos clasificados FACTURA
+
+Revisar:
+- destino de documentos dudosos
+
+Si un documento de Revisar luego se confirma como factura:
+- se moverá a Facturas
+- se actualizará SQL
+
+Si se confirma que NO es factura:
+- se eliminará archivo
+- se eliminará registro SQL
+
+La UI manual de estos botones todavía NO está implementada. Eso queda para H1D3.
+
+============================================================
+7. ZIP — DECISIÓN FUNCIONAL
+============================================================
+
+ZIP es un CONTENEDOR.
+
+Flujo:
+attachment ZIP
+  -> Trabajo\<GUID>
+  -> descomprimir
+  -> recorrer todos los documentos
+  -> clasificar cada documento individualmente
+  -> conservar sólo FACTURA / REVISAR
+  -> descartar el resto
+  -> eliminar completamente el workspace
+
+Un ZIP puede producir 0, 1 o varias facturas y/o documentos a Revisar.
+
+El ZIP original normalmente NO se conserva después de procesarse bien.
+
+Si el ZIP está corrupto, no puede abrirse, supera límites o es inseguro:
+=> REVISAR / ZIP_NO_ANALIZABLE
+
+ZIP anidado:
+- soportado con profundidad controlada
+- ejemplo: Proveedor.zip!/Documentos.zip!/Factura.pdf
+
+No usar rutas internas del ZIP directamente como ruta física.
+
+============================================================
+8. LIBRERÍAS CORPORATIVAS DEFINITIVAS
+============================================================
+
+PDF:
+Lib\Mdoc.dll
+- assembly Mdoc
+- versión 2.0.0.0
+- namespaces: Mdoc.text / Mdoc.text.pdf
+
+ZIP:
+Lib\ICSharpCode.SharpZipLib.dll
+- assembly ICSharpCode.SharpZipLib
+- versión 0.86.0.518
+
+Decisión permanente:
+- usar Mdoc.dll para PDF
+- usar ICSharpCode.SharpZipLib para ZIP
+- NO introducir PdfPig
+- NO introducir iText
+- NO introducir PDFsharp
+- NO usar System.IO.Compression para esta función
+salvo cambio expreso de criterio.
+
+Código real de empresa inspeccionado:
+- SharpZipLib: FastZip.ExtractZip(...) existe en código legado.
+- Para RecepcionDocumental Codex usa ZipInputStream entrada por entrada para aplicar controles de seguridad.
+- Mdoc: PdfReader, NumberOfPages, GetPageContent(...), objetos PDF/imágenes embebidas.
+
+Advertencia:
+GetPageContent no garantiza texto limpio para PDFs externos de proveedores.
+Por eso una lectura parcial/codificada NO debe ser motivo para DESCARTAR una posible factura.
+
+============================================================
+9. H1D1A — SELECTOR BASE
+============================================================
+
+ESTADO:
+IMPLEMENTADO POR CODEX
+CORREGIDO EN PREVALIDACIÓN
+PENDIENTE VALIDACIÓN REAL
+
+Último ZIP revisado antes de prueba:
+061dad6b-8fff-429f-8671-8ce49cc198f0.zip
+
+Verificado:
+- Mdoc.dll local utilizada
+- SharpZipLib local utilizada
+- no PdfPig
+- no System.IO.Compression
+- carpetas Trabajo / Facturas / Revisar
+- soporte ZIP y ZIP anidado
+- límites de seguridad
+- nueva persistencia documental
+- nueva página Documentos
+- dashboard con Facturas / Para revisar
+
+Modelo:
+Database/005_SelectorFacturaBase.sql
+Nueva tabla: dbo.DocumentoRecepcion
+
+GmailAdjunto queda como histórico H1C.
+DocumentoRecepcion representa documentos H1D conservados.
+
+DocumentoRecepcion sólo permite:
+- FACTURA
+- REVISAR
+
+NO insertar DESCARTAR.
+
+Idempotencia documental:
+GmailMensajeId + GmailPartId + OrigenHash
+
+Un único GmailPartId puede contener varias facturas dentro de un ZIP, por eso GmailAdjunto no alcanza como entidad documental.
+
+============================================================
+10. REGLAS H1D1A
+============================================================
+
+Señal explícita de factura:
+- FACTURA A
+- FACTURA B
+- FACTURA C
+- FACTURA M
+- FACTURA E
+- FACTURA DE CREDITO ELECTRONICA
+
+Señales fiscales:
+- CUIT
+- CAE
+- CAEA
+- PUNTO DE VENTA / PTO VTA
+- COMP NRO / COMPROBANTE / NRO COMPROBANTE
+- IMPORTE TOTAL / TOTAL
+- IVA
+- FECHA DE EMISION
+
+Señales claras de otros documentos:
+- REMITO
+- NOTA DE CREDITO
+- NOTA DE DEBITO
+- ORDEN DE COMPRA
+- PRESUPUESTO
+- RECIBO
+- NOTA DE PEDIDO
+
+Reglas conservadoras:
+A) FACTURA explícita + >=3 señales fiscales => FACTURA
+B) FACTURA explícita + señales insuficientes => REVISAR
+C) >=3 señales fiscales fuertes sin factura explícita => REVISAR
+D) señal fuerte de otro documento y sin evidencia fuerte de factura => DESCARTAR
+E) PDF con texto pero no concluyente => REVISAR / PDF_TEXTO_NO_CONCLUYENTE
+F) PDF sin texto útil => REVISAR / PDF_SIN_TEXTO
+
+La palabra FACTURA sola NO alcanza.
+Si hay evidencia fuerte de factura y también aparece REMITO, gana FACTURA.
+Un PDF multipágina que contenga una factura se conserva completo.
+
+============================================================
+11. ARCHIVOS NO PDF
+============================================================
+
+ZIP:
+- contenedor
+- se expande y analiza contenido
+
+JPG/JPEG/PNG/TIF/TIFF/BMP:
+- mientras no exista OCR => REVISAR / IMAGEN_SIN_OCR
+
+Otros formatos no analizables:
+- si el nombre sugiere claramente factura => REVISAR
+- si no => DESCARTAR
+
+============================================================
+12. SEGURIDAD ZIP
+============================================================
+
+Codex implementó extracción con SharpZipLib ZipInputStream entrada por entrada.
+
+Límites configurados:
+[Zip]
+MaxEntradas=200
+MaxBytesPorArchivo=52428800
+MaxBytesDescomprimidos=262144000
+MaxProfundidad=2
+
+Objetivos:
+- evitar Zip Slip
+- rechazar ../ y rutas absolutas
+- nombres inválidos/reservados
+- evitar colisiones
+- limitar entradas
+- limitar tamaño por archivo
+- limitar total expandido
+- limitar ZIP anidado
+- contar bytes reales copiados
+
+ZIP inseguro/no analizable => REVISAR / ZIP_NO_ANALIZABLE
+
+============================================================
+13. CORRECCIÓN PREVALIDACIÓN IMPORTANTE
+============================================================
+
+Primera implementación peligrosa:
+Mdoc recupera >=30 caracteres + no encuentra FACTURA => DESCARTAR
+
+Se corrigió porque GetPageContent puede producir contenido parcial/codificado.
+
+Nueva regla:
+PDF con texto aparentemente útil pero NO concluyente => REVISAR
+NO DESCARTAR.
+
+Sólo descartar automáticamente cuando hay evidencia positiva clara de otro tipo documental.
+
+Principio actual:
+preferir falsos REVISAR antes que falsos DESCARTAR.
+
+============================================================
+14. CORRECCIÓN UI GMAIL
+============================================================
+
+Se corrigió para que la UI entienda DocumentoRecepcion.
+
+Si existen DocumentoRecepcion para un GmailMensaje:
+- Gmail_Bandeja muestra esos documentos
+- Gmail_Mensaje_Ver muestra DocumentoRecepcion
+
+Si NO existen DocumentoRecepcion:
+- comportamiento histórico con GmailAdjunto
+
+No sumar ambos conjuntos ciegamente para evitar doble conteo histórico.
+
+============================================================
+15. ESTADO DE PRUEBA REAL AL CIERRE
+============================================================
+
+Se inició la preparación de la primera prueba real H1D1A.
+
+Última captura visible:
+Dashboard de Recepción Documental con:
+- Cuenta Gmail: 1
+- Mensajes recibidos: 89
+- Facturas: 0
+- Para revisar: 0
+
+Navegación visible:
+- Inicio
+- Gmail
+- Facturas
+- Para revisar
+
+IMPORTANTE:
+NO se recibió/registró todavía una captura posterior con el resultado de la sincronización H1D1A.
+
+Por lo tanto:
+H1D1A NO debe marcarse VALIDADO todavía.
+
+Prueba pendiente:
+enviar correo nuevo, posterior al cursor actual, con:
+1. factura PDF real de proveedor
+2. remito PDF real
+3. imagen JPG cualquiera
+4. ZIP con otra factura PDF real + otro remito PDF + archivo irrelevante TXT/XLSX
+
+Resultado esperado:
+- Factura directa => FACTURA o REVISAR según lectura Mdoc
+- Remito => DESCARTAR si Mdoc reconoce REMITO; si no, REVISAR
+- JPG => REVISAR / IMAGEN_SIN_OCR
+- ZIP => abrir, analizar cada archivo, conservar sólo FACTURA/REVISAR
+- Trabajo => quedar vacío después del proceso
+- SQL => sólo FACTURA/REVISAR
+- NO guardar descartados
+
+Después revisar:
+- Gmail_Bandeja
+- Facturas
+- Para revisar
+- carpetas Facturas/Revisar/Trabajo
+- logs Proc/Error
+- qué texto recupera realmente Mdoc de facturas reales
+
+============================================================
+16. QR / OCR / IA — TODAVÍA NO
+============================================================
+
+Orden de decisión ideal posterior:
+1. QR ARCA
+2. texto nativo PDF
+3. OCR si no hay texto suficiente
+4. reglas de clasificación
+5. IA sólo si aporta valor medible
+
+QR ARCA:
+- candidato para H1D1B
+- todavía NO implementado
+
+OCR:
+- candidato inicial: Tesseract local/offline
+- todavía NO implementado
+- sólo usar cuando no haya texto nativo útil
+- medir con documentos reales de empresa
+
+IA:
+- NO implementada
+- primero medir QR + texto + OCR + reglas
+- incorporar sólo si quedan familias difíciles
+
+============================================================
+17. PRÓXIMO PASO EXACTO
+============================================================
+
+NO programar más antes de terminar la prueba H1D1A.
+
+Próxima sesión:
+1. Leer este ContextPack.
+2. Recibir el ZIP completo más reciente de RecepcionDocumental.
+3. Inspeccionarlo antes de asumir estado.
+4. Retomar la prueba real H1D1A.
+5. Revisar resultado Gmail_Bandeja / Facturas / Para revisar / carpetas / logs.
+6. Determinar qué tan bien Mdoc lee facturas reales.
+7. Corregir sólo bugs observados.
+8. Si H1D1A queda validado, recién entonces H1D1B QR ARCA.
+9. Después H1D2 OCR.
+10. H1D3 revisión humana: Es factura / No es factura.
+
+NO avanzar automáticamente a QR/OCR/IA sin cerrar primero H1D1A con prueba real.
+
+============================================================
+18. REGLAS DE COLABORACIÓN
+============================================================
+
+- Respuestas compactas, profesionales y concretas.
+- Causa / fix exacto / dónde.
+- No teoría extensa si no hace falta.
+- No inventar código no inspeccionado.
+- Fuente de verdad: ZIP completo más reciente.
+- Insistir si existe un camino profesional mejor.
+- Preservar lo validado.
+- No introducir nuevas librerías PDF/ZIP sin acuerdo.
+- Mdoc + SharpZipLib son las librerías corporativas actuales.
+- Los documentos descartados no se guardan en SQL.
+- Los dudosos sí se guardan en Revisar.
+- Un ZIP es contenedor, no documento final.

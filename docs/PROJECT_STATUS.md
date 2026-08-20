@@ -34,7 +34,7 @@ Los adjuntos se guardan fuera del sitio en la carpeta configurable `AdjuntosRoot
 
 - Selector base con persistencia selectiva: sólo `FACTURA` y `REVISAR`; `DESCARTAR` no genera archivo definitivo ni fila documental.
 - `Mdoc.dll` local, assembly `Mdoc` versión `2.0.0.0`, para lectura prudente de contenido PDF.
-- `ICSharpCode.SharpZipLib.dll` local, assembly `ICSharpCode.SharpZipLib` versión `0.86.0.518`, para ZIP y ZIP anidado hasta el límite configurado.
+- `SharpCompress` 0.50.4 administrado por NuGet, para ZIP, RAR y 7Z, incluidos contenedores anidados hasta el límite configurado.
 - Workspaces aislados por attachment en `Trabajo`, siempre eliminados al finalizar.
 - Almacenamiento definitivo separado en `Facturas` y `Revisar`.
 - ZIP controlado contra Zip Slip, colisiones, entradas, tamaño individual, expansión total y profundidad.

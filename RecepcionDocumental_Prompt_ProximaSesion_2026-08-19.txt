@@ -1,0 +1,109 @@
+PROMPT DE ARRANQUE — RECEPCIÓN DOCUMENTAL
+Próxima sesión
+
+Buen día. Vamos a continuar el proyecto RecepcionDocumental.
+
+Primero leé completo el ContextPack que te voy a adjuntar.
+
+MÉTODO OBLIGATORIO:
+- No asumas el estado del código por memoria o por este prompt.
+- Esperá el ZIP completo más reciente de RecepcionDocumental.
+- El ZIP más reciente será la única fuente de verdad.
+- Inspeccioná los archivos reales del ZIP antes de proponer cualquier cambio.
+- No inventes tablas, clases, métodos, páginas, controles ni referencias.
+- Preservá H1A, H1B y H1C ya validados.
+- No hagas arquitectura nueva si no hay evidencia de que sea necesaria.
+- Antes de implementar, explicame brevemente causa / propuesta / orden de trabajo.
+
+ESTADO FUNCIONAL:
+- H1A VALIDADO.
+- H1B OAuth Gmail VALIDADO.
+- H1C Gmail incremental + idempotencia + logs VALIDADO Y CERRADO.
+- H1D1A Selector de Facturas está IMPLEMENTADO pero PENDIENTE DE VALIDACIÓN REAL.
+
+REQUISITO ACTUAL DE EMPRESA:
+Sólo interesan facturas.
+
+Clasificaciones:
+- FACTURA => conservar archivo + SQL
+- REVISAR => conservar archivo en Revisar + SQL
+- DESCARTAR => no archivo + no SQL
+
+No guardar basura ni historial de descartados.
+
+LIBRERÍAS CORPORATIVAS OBLIGATORIAS:
+- Lib\Mdoc.dll — Mdoc 2.0.0.0
+- Lib\ICSharpCode.SharpZipLib.dll — 0.86.0.518
+
+NO introducir:
+- PdfPig
+- iText
+- PDFsharp
+- System.IO.Compression para ZIP
+salvo cambio expreso de criterio.
+
+ZIP:
+- es un contenedor
+- se descomprime en Trabajo\<GUID>
+- se analiza cada documento
+- se conservan sólo FACTURA/REVISAR
+- se descarta el resto
+- se elimina el workspace al finalizar
+- ZIP corrupto/inseguro => REVISAR / ZIP_NO_ANALIZABLE
+- soportar ZIP anidado con límites
+
+Carpetas:
+C:\RecepcionDocumental\Trabajo
+C:\RecepcionDocumental\Facturas
+C:\RecepcionDocumental\Revisar
+
+IMPORTANTE SOBRE MDOC:
+GetPageContent no garantiza texto limpio para PDFs externos.
+Por eso la regla conservadora actual es:
+- evidencia fuerte de FACTURA => FACTURA
+- evidencia fuerte de otro documento => DESCARTAR
+- texto no concluyente => REVISAR
+- PDF sin texto => REVISAR
+Nunca descartar una posible factura sólo porque Mdoc devolvió muchos caracteres.
+
+PRUEBA QUE QUEDÓ PENDIENTE:
+Enviar un correo nuevo con:
+1. factura PDF real
+2. remito PDF real
+3. JPG
+4. ZIP con factura + remito + archivo irrelevante
+
+Última captura visible antes de esa prueba:
+- Cuenta Gmail: 1
+- Mensajes recibidos: 89
+- Facturas: 0
+- Para revisar: 0
+
+No existe todavía una validación final visible del resultado H1D1A.
+
+AL RETOMAR:
+1. leer ContextPack
+2. esperar ZIP más reciente
+3. inspeccionar ZIP real
+4. continuar la prueba H1D1A
+5. revisar Gmail_Bandeja / Facturas / Para revisar
+6. revisar Trabajo / Facturas / Revisar
+7. revisar logs
+8. medir qué texto obtiene realmente Mdoc de facturas reales
+9. corregir sólo bugs observados
+10. cerrar H1D1A si la prueba pasa
+
+NO avanzar a:
+- QR ARCA
+- OCR
+- Tesseract
+- IA
+hasta cerrar H1D1A.
+
+Una vez H1D1A validado:
+- H1D1B = QR ARCA
+- H1D2 = OCR
+- H1D3 = revisión humana (Es factura / No es factura)
+
+Quiero respuestas breves y concretas, sin teoría innecesaria.
+Si encontrás un camino mejor, decímelo e insistí con fundamento.
