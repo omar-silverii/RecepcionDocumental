@@ -21,6 +21,8 @@ namespace RecepcionDocumental.Services
         public string OriginHash { get; set; }
         public long SizeBytes { get; set; }
         public InvoiceSelection Selection { get; set; }
+        public bool QrDetected { get; set; }
+        public int? TipoComprobanteArca { get; set; }
     }
 
     public sealed class AttachmentAnalysis
@@ -35,6 +37,14 @@ namespace RecepcionDocumental.Services
 
     public static class DocumentAnalysisService
     {
+        private static readonly string[] ContainerExtensions = { ".zip", ".rar", ".7z" };
+        private static readonly string[] PackagedDocumentExtensions = {
+            ".docx", ".docm", ".dotx", ".dotm",
+            ".xlsx", ".xlsm", ".xltx", ".xltm",
+            ".pptx", ".pptm", ".potx", ".potm", ".ppsx", ".ppsm",
+            ".odt", ".ods", ".odp"
+        };
+
         public static AttachmentAnalysis Analyze(byte[] bytes, string fileName, string mimeType, AttachmentWorkspace workspace)
         {
             if (bytes == null) throw new ArgumentNullException("bytes");
@@ -110,15 +120,20 @@ namespace RecepcionDocumental.Services
         private static void AnalyzeDocument(string path, string name, string mime, string originType, string internalPath, string originHash, AttachmentAnalysis result)
         {
             InvoiceSelection selection;
+            var qr = new ArcaQrEvidence();
             if (string.Equals(Path.GetExtension(name), ".pdf", StringComparison.OrdinalIgnoreCase))
             {
-                var pdf = MdocPdfTextExtractor.Extract(path); selection = InvoiceSelector.SelectPdf(pdf.Text, pdf.HasUsefulText);
-                if (!string.IsNullOrEmpty(pdf.FailureReason)) selection.Reason = pdf.FailureReason + " Requiere OCR futuro.";
+                qr = MdocPdfQrDetector.Detect(path);
+                Logs.LogProc("DocumentAnalysis | QR detectado=" + (qr.QrDetected ? "Sí" : "No") + " | QR ARCA válido=" + (qr.IsValid ? "Sí" : "No") + (qr.IsValid ? " | Versión=1 | TipoCmp=" + qr.TipoComprobante.Value : string.Empty));
+                var pdf = MdocPdfTextExtractor.Extract(path);
+                var textSelection = InvoiceSelector.SelectPdf(pdf.Text, pdf.HasUsefulText);
+                selection = ArcaQrDecoder.Combine(qr, textSelection);
+                if (!qr.IsValid && !string.IsNullOrEmpty(pdf.FailureReason)) selection.Reason = pdf.FailureReason + " Requiere OCR futuro.";
             }
             else selection = InvoiceSelector.SelectNonPdf(name);
             Logs.LogProc("DocumentAnalysis | Documento clasificado | Clasificacion=" + selection.Classification + " | Metodo=" + selection.DetectionMethod);
             if (selection.Classification == "DESCARTAR") { result.Discarded++; Logs.LogProc("DocumentAnalysis | Documento descartado | Metodo=" + selection.DetectionMethod); return; }
-            result.Candidates.Add(new DocumentCandidate { SourcePath = path, OriginalName = SafeOriginalName(name), MimeType = mime, OriginType = originType, InternalContainerPath = internalPath, OriginHash = originHash, SizeBytes = new FileInfo(path).Length, Selection = selection });
+            result.Candidates.Add(new DocumentCandidate { SourcePath = path, OriginalName = SafeOriginalName(name), MimeType = mime, OriginType = originType, InternalContainerPath = internalPath, OriginHash = originHash, SizeBytes = new FileInfo(path).Length, Selection = selection, QrDetected = qr.QrDetected, TipoComprobanteArca = qr.IsValid ? qr.TipoComprobante : null });
         }
 
         private static void AddUnanalyzableContainer(string path, string name, string mime, string chain, bool root, string reason, AttachmentAnalysis result)
@@ -130,7 +145,8 @@ namespace RecepcionDocumental.Services
         private static bool IsContainer(string name, string mime, byte[] bytes)
         {
             var extension = Path.GetExtension(name ?? string.Empty);
-            if (new[] { ".zip", ".rar", ".7z" }.Contains(extension, StringComparer.OrdinalIgnoreCase)) return true;
+            if (ContainerExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase)) return true;
+            if (PackagedDocumentExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase)) return false;
             if (new[] { "application/zip", "application/x-zip-compressed", "application/vnd.rar", "application/x-rar-compressed", "application/x-7z-compressed" }.Contains(mime, StringComparer.OrdinalIgnoreCase)) return true;
             return HasZipSignature(bytes) || HasRarSignature(bytes) || HasSevenZipSignature(bytes);
         }

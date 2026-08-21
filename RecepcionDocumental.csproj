@@ -129,6 +129,10 @@
       <Private>True</Private>
       <HintPath>packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
     </Reference>
+    <Reference Include="zxing, Version=0.16.11.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>packages\ZXing.Net.0.16.11\lib\net48\zxing.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Antlr3.Runtime">
       <Private>True</Private>
       <HintPath>packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
@@ -278,10 +282,12 @@
     <Compile Include="Services\GmailSyncService.cs" />
     <Compile Include="Services\AttachmentStorage.cs" />
     <Compile Include="Services\AttachmentWorkspace.cs" />
+    <Compile Include="Services\ArcaQrDecoder.cs" />
     <Compile Include="Services\DocumentAnalysisService.cs" />
     <Compile Include="Services\DocumentStorage.cs" />
     <Compile Include="Services\InvoiceSelector.cs" />
     <Compile Include="Services\MdocPdfTextExtractor.cs" />
+    <Compile Include="Services\MdocPdfQrDetector.cs" />
     <Compile Include="Services\GoogleOAuthSettings.cs" />
     <Compile Include="Gmail_Bandeja.aspx.cs">
       <DependentUpon>Gmail_Bandeja.aspx</DependentUpon>

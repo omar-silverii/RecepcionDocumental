@@ -30,7 +30,7 @@ Aplicación ASP.NET WebForms en C# para .NET Framework 4.8, Visual Studio 2022 y
 
 Los adjuntos se guardan fuera del sitio en la carpeta configurable `AdjuntosRootPath` (localmente `C:\RecepcionDocumental\Adjuntos\`).
 
-### H1D1A — IMPLEMENTADO / PENDIENTE VALIDACIÓN REAL
+### H1D1A — VALIDADO Y CERRADO
 
 - Selector base con persistencia selectiva: sólo `FACTURA` y `REVISAR`; `DESCARTAR` no genera archivo definitivo ni fila documental.
 - `Mdoc.dll` local, assembly `Mdoc` versión `2.0.0.0`, para lectura prudente de contenido PDF.
@@ -44,7 +44,7 @@ Los adjuntos se guardan fuera del sitio en la carpeta configurable `AdjuntosRoot
 - La bandeja y el detalle Gmail priorizan `DocumentoRecepcion` para mensajes H1D y mantienen el fallback histórico a `GmailAdjunto` sin sumar ambos modelos.
 - No se implementaron OCR, QR, IA, ML, rasterización ni integración ARCA.
 
-La implementación requiere validación real con documentos representativos antes de avanzar a H1D1B.
+Validación funcional real completada para adjuntos directos, ZIP, RAR y ZIP anidado dentro de RAR. El soporte 7Z está implementado y queda pendiente de validación física con un archivo real 7Z.
 
 ## Configuración operativa y logs
 
