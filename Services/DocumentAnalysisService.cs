@@ -44,6 +44,7 @@ namespace RecepcionDocumental.Services
             ".pptx", ".pptm", ".potx", ".potm", ".ppsx", ".ppsm",
             ".odt", ".ods", ".odp"
         };
+        private static readonly string[] ImageExtensions = { ".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff" };
 
         public static AttachmentAnalysis Analyze(byte[] bytes, string fileName, string mimeType, AttachmentWorkspace workspace)
         {
@@ -126,14 +127,46 @@ namespace RecepcionDocumental.Services
                 qr = MdocPdfQrDetector.Detect(path);
                 Logs.LogProc("DocumentAnalysis | QR detectado=" + (qr.QrDetected ? "Sí" : "No") + " | QR ARCA válido=" + (qr.IsValid ? "Sí" : "No") + (qr.IsValid ? " | Versión=1 | TipoCmp=" + qr.TipoComprobante.Value : string.Empty));
                 var pdf = MdocPdfTextExtractor.Extract(path);
-                var textSelection = InvoiceSelector.SelectPdf(pdf.Text, pdf.HasUsefulText);
+                InvoiceSelection textSelection;
+                if (pdf.HasUsefulText) textSelection = InvoiceSelector.SelectPdf(pdf.Text, true);
+                else textSelection = AnalyzePdfWithOcr(path, pdf);
                 selection = ArcaQrDecoder.Combine(qr, textSelection);
-                if (!qr.IsValid && !string.IsNullOrEmpty(pdf.FailureReason)) selection.Reason = pdf.FailureReason + " Requiere OCR futuro.";
             }
+            else if (IsImage(name)) selection = AnalyzeImageWithOcr(path, Path.GetExtension(name));
             else selection = InvoiceSelector.SelectNonPdf(name);
             Logs.LogProc("DocumentAnalysis | Documento clasificado | Clasificacion=" + selection.Classification + " | Metodo=" + selection.DetectionMethod);
             if (selection.Classification == "DESCARTAR") { result.Discarded++; Logs.LogProc("DocumentAnalysis | Documento descartado | Metodo=" + selection.DetectionMethod); return; }
             result.Candidates.Add(new DocumentCandidate { SourcePath = path, OriginalName = SafeOriginalName(name), MimeType = mime, OriginType = originType, InternalContainerPath = internalPath, OriginHash = originHash, SizeBytes = new FileInfo(path).Length, Selection = selection, QrDetected = qr.QrDetected, TipoComprobanteArca = qr.IsValid ? qr.TipoComprobante : null });
+        }
+
+        private static InvoiceSelection AnalyzePdfWithOcr(string path, PdfTextResult pdf)
+        {
+            var extraction = MdocPdfImageExtractor.Extract(path);
+            if (extraction.LimitExceeded)
+                return InvoiceSelector.Review("OCR_LIMITE", extraction.FailureReason, null);
+            if (extraction.Images.Count == 0)
+                return InvoiceSelector.Review("OCR_NO_DISPONIBLE", extraction.FailureReason ?? pdf.FailureReason ?? "Mdoc no suministró una imagen procesable para OCR.", null);
+            return SelectOcr(extraction.Images, "PDF");
+        }
+
+        private static InvoiceSelection AnalyzeImageWithOcr(string path, string extension)
+        {
+            var ocr = DocumentOcrService.RecognizeImageFile(path);
+            return SelectOcrResult(ocr, string.IsNullOrWhiteSpace(extension) ? "IMAGEN" : extension.TrimStart('.').ToUpperInvariant());
+        }
+
+        private static InvoiceSelection SelectOcr(IEnumerable<OcrImageData> images, string type)
+        { return SelectOcrResult(DocumentOcrService.Recognize(images), type); }
+
+        private static InvoiceSelection SelectOcrResult(OcrResult ocr, string type)
+        {
+            Logs.LogProc("DocumentAnalysis | OCR ejecutado=Sí | Tipo=" + type + " | Imagenes=" + ocr.ImagesProcessed + " | DuracionMs=" + ocr.DurationMilliseconds + " | TextoCaracteres=" + (ocr.Text ?? string.Empty).Length);
+            if (!ocr.Success)
+            {
+                if (ocr.SystemFailure) Logs.LogError("DocumentAnalysis | Operación=OCR | Error=" + (ocr.FailureReason ?? "Fallo estructural del motor OCR."));
+                return InvoiceSelector.Review("OCR_ERROR", ocr.FailureReason ?? "El OCR no pudo procesar el documento.", null);
+            }
+            return InvoiceSelector.SelectOcrText(ocr.Text, ocr.HasUsefulText);
         }
 
         private static void AddUnanalyzableContainer(string path, string name, string mime, string chain, bool root, string reason, AttachmentAnalysis result)
@@ -165,8 +198,13 @@ namespace RecepcionDocumental.Services
             if (string.Equals(extension, ".pdf", StringComparison.OrdinalIgnoreCase)) return "application/pdf";
             if (string.Equals(extension, ".zip", StringComparison.OrdinalIgnoreCase)) return "application/zip";
             if (string.Equals(extension, ".rar", StringComparison.OrdinalIgnoreCase)) return "application/vnd.rar";
+            if (string.Equals(extension, ".jpg", StringComparison.OrdinalIgnoreCase) || string.Equals(extension, ".jpeg", StringComparison.OrdinalIgnoreCase)) return "image/jpeg";
+            if (string.Equals(extension, ".png", StringComparison.OrdinalIgnoreCase)) return "image/png";
+            if (string.Equals(extension, ".bmp", StringComparison.OrdinalIgnoreCase)) return "image/bmp";
+            if (string.Equals(extension, ".tif", StringComparison.OrdinalIgnoreCase) || string.Equals(extension, ".tiff", StringComparison.OrdinalIgnoreCase)) return "image/tiff";
             return string.Equals(extension, ".7z", StringComparison.OrdinalIgnoreCase) ? "application/x-7z-compressed" : null;
         }
+        private static bool IsImage(string name) { return ImageExtensions.Contains(Path.GetExtension(name ?? string.Empty), StringComparer.OrdinalIgnoreCase); }
         private static string StableZipOriginHash(string chain, string path) { return HashBytes(Encoding.UTF8.GetBytes((chain ?? string.Empty) + "|" + HashFile(path))); }
         internal static string HashFile(string path) { using (var stream = File.OpenRead(path)) using (var sha = SHA256.Create()) return ToHex(sha.ComputeHash(stream)); }
         private static string HashBytes(byte[] bytes) { using (var sha = SHA256.Create()) return ToHex(sha.ComputeHash(bytes)); }

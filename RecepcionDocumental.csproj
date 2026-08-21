@@ -80,6 +80,10 @@
       <HintPath>packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Tesseract, Version=5.2.0.0, Culture=neutral, PublicKeyToken=null, processorArchitecture=MSIL">
+      <HintPath>packages\Tesseract.5.2.0\lib\net48\Tesseract.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
@@ -152,6 +156,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="About.aspx" />
+    <Content Include="App_Data\Tessdata\LICENSE-tessdata_fast.txt" />
+    <Content Include="App_Data\Tessdata\spa.traineddata" />
     <Content Include="Contact.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
@@ -179,6 +185,7 @@
     <Content Include="Database\005_SelectorFacturaBase.sql" />
     <Content Include="Documentos.aspx" />
     <Content Include="docs\PROJECT_STATUS.md" />
+    <Content Include="docs\THIRD_PARTY_NOTICES.md" />
     <Content Include="Gmail_Bandeja.aspx" />
     <Content Include="Gmail_Config.aspx" />
     <Content Include="Gmail_Mensaje_Ver.aspx" />
@@ -284,10 +291,12 @@
     <Compile Include="Services\AttachmentWorkspace.cs" />
     <Compile Include="Services\ArcaQrDecoder.cs" />
     <Compile Include="Services\DocumentAnalysisService.cs" />
+    <Compile Include="Services\DocumentOcrService.cs" />
     <Compile Include="Services\DocumentStorage.cs" />
     <Compile Include="Services\InvoiceSelector.cs" />
     <Compile Include="Services\MdocPdfTextExtractor.cs" />
     <Compile Include="Services\MdocPdfQrDetector.cs" />
+    <Compile Include="Services\MdocPdfImageExtractor.cs" />
     <Compile Include="Services\GoogleOAuthSettings.cs" />
     <Compile Include="Gmail_Bandeja.aspx.cs">
       <DependentUpon>Gmail_Bandeja.aspx</DependentUpon>
@@ -369,6 +378,7 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="packages\Tesseract.5.2.0\build\Tesseract.targets" Condition="Exists('packages\Tesseract.5.2.0\build\Tesseract.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
   <ProjectExtensions>
@@ -394,6 +404,7 @@
       <ErrorText>Este proyecto hace referencia a los paquetes NuGet que faltan en este equipo. Use la restauración de paquetes NuGet para descargarlos. Para obtener más información, consulte http://go.microsoft.com/fwlink/?LinkID=322105. El archivo que falta es {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('packages\Tesseract.5.2.0\build\Tesseract.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Tesseract.5.2.0\build\Tesseract.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

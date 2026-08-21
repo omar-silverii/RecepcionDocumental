@@ -51,6 +51,14 @@ namespace RecepcionDocumental.Services
                 : Discard("TIPO_NO_ADMITIDO", "Formato sin evidencia de factura.");
         }
 
+        public static InvoiceSelection SelectOcrText(string text, bool hasUsefulText)
+        {
+            if (!hasUsefulText) return Review("OCR_NO_CONCLUYENTE", "El OCR no produjo texto utilizable para clasificar el documento.", null);
+            var selection = SelectPdf(text, true);
+            selection.DetectionMethod = "OCR";
+            return selection;
+        }
+
         public static InvoiceSelection Review(string method, string reason, byte? confidence)
         { return new InvoiceSelection { Classification = "REVISAR", DetectionMethod = method, Confidence = confidence, Reason = reason }; }
 

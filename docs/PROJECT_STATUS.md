@@ -46,6 +46,21 @@ Los adjuntos se guardan fuera del sitio en la carpeta configurable `AdjuntosRoot
 
 Validación funcional real completada para adjuntos directos, ZIP, RAR y ZIP anidado dentro de RAR. El soporte 7Z está implementado y queda pendiente de validación física con un archivo real 7Z.
 
+### H1D1B — QR ARCA BEST-EFFORT
+
+- ZXing se utiliza exclusivamente sobre imágenes que Mdoc puede extraer del PDF.
+- La ausencia de un QR extraíble no cambia por sí sola la clasificación; el texto Mdoc conserva prioridad como evidencia documental.
+- No se incorporó ningún renderer PDF adicional.
+
+### H1D2 — OCR LOCAL/OFFLINE (IMPLEMENTADO, PENDIENTE DE VALIDACIÓN REAL)
+
+- Tesseract 5.2.0 y el modelo oficial `tessdata_fast/spa` se usan como fallback cuando no existe texto nativo útil.
+- Las imágenes JPG/JPEG/PNG/BMP/TIF/TIFF pasan por OCR; TIFF admite hasta cinco frames mediante `System.Drawing`.
+- Los PDF sólo pasan por OCR si Mdoc no obtiene texto útil y puede extraer imágenes compatibles. No se rasterizan páginas con otra biblioteca.
+- El texto OCR alimenta las mismas reglas de `InvoiceSelector`; no se persiste ni se registra el texto completo.
+- Los fallos, límites o resultados no concluyentes se conservan en `REVISAR`.
+- H1D2 no se considera validado hasta completar pruebas con correos y documentos reales.
+
 ## Configuración operativa y logs
 
 La aplicación carga una vez `RecepcionDocumental.ini` desde la raíz física al iniciar. El INI define el nombre del proyecto, las rutas absolutas `Logs`, `Trabajo`, `Facturas` y `Revisar`, y los límites ZIP. El archivo real está excluido de Git y se proporciona `RecepcionDocumental.ini.example`.
