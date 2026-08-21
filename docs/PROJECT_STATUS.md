@@ -42,7 +42,7 @@ Los adjuntos se guardan fuera del sitio en la carpeta configurable `AdjuntosRoot
 - PDF sin texto útil e imágenes se conservan en `REVISAR` para OCR futuro.
 - Un PDF con texto aparentemente útil pero sin evidencia inequívoca se conserva como `REVISAR / PDF_TEXTO_NO_CONCLUYENTE`; sólo señales explícitas de otro tipo documental permiten descartarlo.
 - La bandeja y el detalle Gmail priorizan `DocumentoRecepcion` para mensajes H1D y mantienen el fallback histórico a `GmailAdjunto` sin sumar ambos modelos.
-- No se implementaron OCR, QR, IA, ML, rasterización ni integración ARCA.
+- H1D1A se cerró originalmente sin OCR ni QR. Posteriormente H1D1B incorporó QR ARCA best-effort y H1D2 incorporó OCR local/offline; el proyecto continúa sin IA/ML, sin renderer o rasterizador PDF adicional y sin validación ARCA online.
 
 Validación funcional real completada para adjuntos directos, ZIP, RAR y ZIP anidado dentro de RAR. El soporte 7Z está implementado y queda pendiente de validación física con un archivo real 7Z.
 
@@ -52,14 +52,17 @@ Validación funcional real completada para adjuntos directos, ZIP, RAR y ZIP ani
 - La ausencia de un QR extraíble no cambia por sí sola la clasificación; el texto Mdoc conserva prioridad como evidencia documental.
 - No se incorporó ningún renderer PDF adicional.
 
-### H1D2 — OCR LOCAL/OFFLINE (IMPLEMENTADO, PENDIENTE DE VALIDACIÓN REAL)
+### H1D2 — OCR LOCAL/OFFLINE — VALIDADO Y CERRADO
 
 - Tesseract 5.2.0 y el modelo oficial `tessdata_fast/spa` se usan como fallback cuando no existe texto nativo útil.
 - Las imágenes JPG/JPEG/PNG/BMP/TIF/TIFF pasan por OCR; TIFF admite hasta cinco frames mediante `System.Drawing`.
+- Un segundo pase OCR acotado al encabezado se ejecuta únicamente cuando el primer pase de página completa resulta no concluyente; ambos textos alimentan el mismo `InvoiceSelector`.
 - Los PDF sólo pasan por OCR si Mdoc no obtiene texto útil y puede extraer imágenes compatibles. No se rasterizan páginas con otra biblioteca.
 - El texto OCR alimenta las mismas reglas de `InvoiceSelector`; no se persiste ni se registra el texto completo.
 - Los fallos, límites o resultados no concluyentes se conservan en `REVISAR`.
-- H1D2 no se considera validado hasta completar pruebas con correos y documentos reales.
+- La validación real confirmó una Factura C JPG inicialmente dudosa y luego clasificada como `FACTURA / OCR` mediante el segundo pase, dos extractos bancarios PDF descartados correctamente, cero documentos para revisar y cero errores en esa sincronización.
+- Dos PDF escaneados sin texto nativo quedaron correctamente en `REVISAR / OCR_NO_DISPONIBLE` porque Mdoc no suministró una imagen procesable. Esta limitación es deliberada: Mdoc continúa como única biblioteca PDF y no se incorpora renderer adicional.
+- El camino PDF sin texto → imagen extraíble por Mdoc → OCR está implementado y probado técnicamente, pero todavía no fue recorrido por un caso Gmail real; no se declara validado de manera independiente.
 
 ## Configuración operativa y logs
 

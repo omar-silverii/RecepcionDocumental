@@ -23,6 +23,36 @@ body { background: #f5f7fa; color: #1f2937; }
 .detail-list dd { margin-bottom: 16px; }
 footer { color: #6b7280; font-size: .9rem; }
 
+.documents-page { margin-left: 50%; transform: translateX(-50%); width: min(1720px, calc(100vw - 48px)); }
+.documents-filter { min-width: 160px; }
+.documents-table-card { background: #fff; border-radius: 12px; }
+.documents-table-wrap { background: #fff; }
+.documents-table { min-width: 1540px; table-layout: fixed; }
+.documents-table th { background: #e9eef5; color: #475569; font-size: .75rem; letter-spacing: .025em; text-transform: uppercase; white-space: nowrap; }
+.documents-table th,
+.documents-table td { height: 46px; line-height: 1.2; max-width: 0; padding: .5rem .65rem; vertical-align: middle; white-space: nowrap; }
+.documents-table tbody { font-size: .875rem; }
+.documents-table .col-date { width: 135px; }
+.documents-table .col-sender { width: 230px; }
+.documents-table .col-subject { width: 190px; }
+.documents-table .col-name { width: 315px; }
+.documents-table .col-classification { width: 115px; }
+.documents-table .col-method { width: 190px; }
+.documents-table .col-confidence { width: 85px; }
+.documents-table .col-reason { width: 205px; }
+.documents-table .col-origin { width: 75px; }
+.documents-table .doc-date,
+.documents-table .doc-classification,
+.documents-table .doc-method,
+.documents-table .doc-confidence,
+.documents-table .doc-origin { white-space: nowrap; }
+.documents-table .badge { font-size: .72rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; vertical-align: middle; }
+
+@media screen and (max-width: 575.98px) {
+    .documents-page { width: calc(100vw - 24px); }
+    .documents-filter { width: 100%; }
+}
+
 /* Set widths on the form inputs since otherwise they're 100% wide */
 input,
 select,

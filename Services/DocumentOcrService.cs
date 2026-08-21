@@ -39,8 +39,55 @@ namespace RecepcionDocumental.Services
         private const long MaxTotalPixels = 40000000;
         private const long MaxSourceBytes = 25L * 1024 * 1024;
         private const int MaxTextCharacters = 200000;
+        private const double HeaderLeft = 0.43;
+        private const double HeaderTop = 0.05;
+        private const double HeaderWidth = 0.52;
+        private const double HeaderHeight = 0.12;
 
         public static OcrResult RecognizeImageFile(string path)
+        { return RecognizeImageFile(path, false); }
+
+        public static OcrResult RecognizeImageHeader(string path)
+        { return RecognizeImageFile(path, true); }
+
+        public static OcrResult RecognizeHeader(IEnumerable<OcrImageData> candidates)
+        {
+            try
+            {
+                var headers = new List<OcrImageData>();
+                foreach (var candidate in candidates ?? Enumerable.Empty<OcrImageData>())
+                {
+                    if (candidate == null || candidate.Bytes == null || candidate.Bytes.Length == 0) continue;
+                    using (var stream = new MemoryStream(candidate.Bytes, false))
+                    using (var source = Image.FromStream(stream, false, true))
+                        headers.Add(CropHeader(source));
+                }
+                return Recognize(headers);
+            }
+            catch (Exception ex) when (IsImageException(ex))
+            { return Failure("No se pudo obtener el encabezado para OCR.", false); }
+        }
+
+        public static OcrResult Combine(OcrResult complete, OcrResult header)
+        {
+            if (complete == null) throw new ArgumentNullException("complete");
+            if (header == null) throw new ArgumentNullException("header");
+            var first = complete.Text ?? string.Empty;
+            var second = header.Text ?? string.Empty;
+            var separator = first.Length > 0 && second.Length > 0 ? Environment.NewLine : string.Empty;
+            var combined = first + separator + second;
+            if (combined.Length > MaxTextCharacters) combined = combined.Substring(0, MaxTextCharacters);
+            return new OcrResult {
+                Success = complete.Success,
+                HasUsefulText = HasUsefulText(combined),
+                Text = combined,
+                ImagesProcessed = complete.ImagesProcessed + header.ImagesProcessed,
+                DurationMilliseconds = complete.DurationMilliseconds + header.DurationMilliseconds,
+                MeanConfidence = complete.MeanConfidence
+            };
+        }
+
+        private static OcrResult RecognizeImageFile(string path, bool headerOnly)
         {
             if (new FileInfo(path).Length > MaxSourceBytes)
                 return Failure("La imagen supera el tamaño permitido para OCR.", false);
@@ -60,10 +107,17 @@ namespace RecepcionDocumental.Services
                         totalPixels += pixels;
                         if (pixels <= 0 || pixels > MaxPixelsPerImage || totalPixels > MaxTotalPixels)
                             return Failure("La imagen supera el límite de píxeles para OCR.", false);
-                        using (var stream = new MemoryStream())
+                        if (headerOnly)
                         {
-                            source.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                            images.Add(new OcrImageData { Bytes = stream.ToArray(), Width = source.Width, Height = source.Height });
+                            images.Add(CropHeader(source));
+                        }
+                        else
+                        {
+                            using (var stream = new MemoryStream())
+                            {
+                                source.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                                images.Add(new OcrImageData { Bytes = stream.ToArray(), Width = source.Width, Height = source.Height });
+                            }
                         }
                     }
                 }
@@ -71,6 +125,24 @@ namespace RecepcionDocumental.Services
             }
             catch (Exception ex) when (IsImageException(ex))
             { return Failure("No se pudo abrir la imagen para OCR.", false); }
+        }
+
+        private static OcrImageData CropHeader(Image source)
+        {
+            var left = (int)Math.Floor(source.Width * HeaderLeft);
+            var top = (int)Math.Floor(source.Height * HeaderTop);
+            var width = Math.Min(source.Width - left, Math.Max(1, (int)Math.Ceiling(source.Width * HeaderWidth)));
+            var height = Math.Min(source.Height - top, Math.Max(1, (int)Math.Ceiling(source.Height * HeaderHeight)));
+            var area = new Rectangle(left, top, width, height);
+            using (var output = new Bitmap(width, height, PixelFormat.Format24bppRgb))
+            using (var graphics = Graphics.FromImage(output))
+            using (var stream = new MemoryStream())
+            {
+                graphics.Clear(Color.White);
+                graphics.DrawImage(source, new Rectangle(0, 0, width, height), area, GraphicsUnit.Pixel);
+                output.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                return new OcrImageData { Bytes = stream.ToArray(), Width = width, Height = height };
+            }
         }
 
         public static OcrResult Recognize(IEnumerable<OcrImageData> candidates)

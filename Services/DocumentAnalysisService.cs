@@ -152,21 +152,39 @@ namespace RecepcionDocumental.Services
         private static InvoiceSelection AnalyzeImageWithOcr(string path, string extension)
         {
             var ocr = DocumentOcrService.RecognizeImageFile(path);
-            return SelectOcrResult(ocr, string.IsNullOrWhiteSpace(extension) ? "IMAGEN" : extension.TrimStart('.').ToUpperInvariant());
+            return SelectOcrWithHeaderFallback(ocr, () => DocumentOcrService.RecognizeImageHeader(path), string.IsNullOrWhiteSpace(extension) ? "IMAGEN" : extension.TrimStart('.').ToUpperInvariant());
         }
 
         private static InvoiceSelection SelectOcr(IEnumerable<OcrImageData> images, string type)
-        { return SelectOcrResult(DocumentOcrService.Recognize(images), type); }
+        {
+            var candidates = images == null ? new List<OcrImageData>() : images.ToList();
+            return SelectOcrWithHeaderFallback(DocumentOcrService.Recognize(candidates), () => DocumentOcrService.RecognizeHeader(candidates), type);
+        }
 
-        private static InvoiceSelection SelectOcrResult(OcrResult ocr, string type)
+        private static InvoiceSelection SelectOcrWithHeaderFallback(OcrResult ocr, Func<OcrResult> recognizeHeader, string type)
         {
             Logs.LogProc("DocumentAnalysis | OCR ejecutado=Sí | Tipo=" + type + " | Imagenes=" + ocr.ImagesProcessed + " | DuracionMs=" + ocr.DurationMilliseconds + " | TextoCaracteres=" + (ocr.Text ?? string.Empty).Length);
             if (!ocr.Success)
             {
+                Logs.LogProc("DocumentAnalysis | SegundoPaseEncabezado=No | Tipo=" + type);
                 if (ocr.SystemFailure) Logs.LogError("DocumentAnalysis | Operación=OCR | Error=" + (ocr.FailureReason ?? "Fallo estructural del motor OCR."));
                 return InvoiceSelector.Review("OCR_ERROR", ocr.FailureReason ?? "El OCR no pudo procesar el documento.", null);
             }
-            return InvoiceSelector.SelectOcrText(ocr.Text, ocr.HasUsefulText);
+            var selection = InvoiceSelector.SelectOcrText(ocr.Text, ocr.HasUsefulText);
+            if (!string.Equals(selection.Classification, "REVISAR", StringComparison.Ordinal))
+            {
+                Logs.LogProc("DocumentAnalysis | SegundoPaseEncabezado=No | Tipo=" + type);
+                return selection;
+            }
+            var header = recognizeHeader();
+            Logs.LogProc("DocumentAnalysis | SegundoPaseEncabezado=Sí | Tipo=" + type + " | Imagenes=" + header.ImagesProcessed + " | DuracionMs=" + header.DurationMilliseconds + " | TextoCaracteres=" + (header.Text ?? string.Empty).Length);
+            if (!header.Success)
+            {
+                if (header.SystemFailure) Logs.LogError("DocumentAnalysis | Operación=OCR_Encabezado | Error=" + (header.FailureReason ?? "Fallo estructural del motor OCR."));
+                return selection;
+            }
+            var combined = DocumentOcrService.Combine(ocr, header);
+            return InvoiceSelector.SelectOcrText(combined.Text, combined.HasUsefulText);
         }
 
         private static void AddUnanalyzableContainer(string path, string name, string mime, string chain, bool root, string reason, AttachmentAnalysis result)

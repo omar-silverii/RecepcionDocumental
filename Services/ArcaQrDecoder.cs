@@ -81,9 +81,13 @@ namespace RecepcionDocumental.Services
             {
                 if (string.Equals(textSelection.Classification, "DESCARTAR", StringComparison.Ordinal))
                     return InvoiceSelector.Review("QR_TEXTO_CONFLICTO", "El QR ARCA indica factura, pero el texto identifica inequívocamente otro tipo documental.", 70);
+                var combinedMethod = string.Equals(textSelection.Classification, "FACTURA", StringComparison.Ordinal)
+                    && !string.IsNullOrWhiteSpace(textSelection.DetectionMethod)
+                    ? "QR_ARCA+" + textSelection.DetectionMethod
+                    : "QR_ARCA";
                 return new InvoiceSelection {
                     Classification = "FACTURA",
-                    DetectionMethod = string.Equals(textSelection.Classification, "FACTURA", StringComparison.Ordinal) ? "QR_ARCA+PDF_TEXTO" : "QR_ARCA",
+                    DetectionMethod = combinedMethod,
                     Confidence = 98,
                     Reason = "QR ARCA estructuralmente válido con tipo de comprobante factura. No constituye validación online de autenticidad."
                 };
