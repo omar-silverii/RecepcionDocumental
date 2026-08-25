@@ -26,7 +26,7 @@ namespace RecepcionDocumental.Services
         {
             using (var flow = CreateFlow(settings))
             {
-                var request = (GoogleAuthorizationCodeRequestUrl)flow.CreateAuthorizationCodeRequest(GoogleOAuthSettings.RedirectUri);
+                var request = (GoogleAuthorizationCodeRequestUrl)flow.CreateAuthorizationCodeRequest(settings.RedirectUri);
                 request.AccessType = "offline";
                 request.State = state;
                 return request.Build().AbsoluteUri;
@@ -37,7 +37,7 @@ namespace RecepcionDocumental.Services
         {
             using (var flow = CreateFlow(settings))
             {
-                var token = await flow.ExchangeCodeForTokenAsync("oauth-callback", code, GoogleOAuthSettings.RedirectUri, CancellationToken.None);
+                var token = await flow.ExchangeCodeForTokenAsync("oauth-callback", code, settings.RedirectUri, CancellationToken.None);
                 var credential = new UserCredential(flow, "oauth-callback", token);
                 using (var gmail = new GmailService(new BaseClientService.Initializer
                 {

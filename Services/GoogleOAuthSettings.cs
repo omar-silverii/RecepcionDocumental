@@ -1,14 +1,15 @@
 using System;
 using Google.Apis.Auth.OAuth2;
+using RecepcionDocumental.Configuration;
 
 namespace RecepcionDocumental.Services
 {
     public sealed class GoogleOAuthSettings
     {
-        public const string RedirectUri = "https://localhost:44320/Gmail_OAuthCallback.aspx";
         public const string GmailReadonlyScope = "https://www.googleapis.com/auth/gmail.readonly";
 
         public ClientSecrets ClientSecrets { get; private set; }
+        public string RedirectUri { get; private set; }
 
         public static bool TryLoad(out GoogleOAuthSettings settings, out string errorMessage)
         {
@@ -23,7 +24,8 @@ namespace RecepcionDocumental.Services
 
             settings = new GoogleOAuthSettings
             {
-                ClientSecrets = new ClientSecrets { ClientId = clientId.Trim(), ClientSecret = clientSecret.Trim() }
+                ClientSecrets = new ClientSecrets { ClientId = clientId.Trim(), ClientSecret = clientSecret.Trim() },
+                RedirectUri = ConfiguracionSistema.Actual.GmailRedirectUri
             };
             errorMessage = null;
             return true;

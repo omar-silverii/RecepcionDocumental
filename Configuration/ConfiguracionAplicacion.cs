@@ -7,7 +7,8 @@ namespace RecepcionDocumental.Configuration
     public sealed class ConfiguracionAplicacion
     {
         public ConfiguracionAplicacion(string nombreProyecto, string rutaLogs, string rutaTrabajo, string rutaFacturas, string rutaRevisar,
-            int zipMaxEntradas, long zipMaxBytesPorArchivo, long zipMaxBytesDescomprimidos, int zipMaxProfundidad)
+            int zipMaxEntradas, long zipMaxBytesPorArchivo, long zipMaxBytesDescomprimidos, int zipMaxProfundidad,
+            string gmailRedirectUri)
         {
             NombreProyecto = ValidarNombreProyecto(nombreProyecto);
             RutaLogs = ValidarRuta("Rutas/Logs", rutaLogs);
@@ -18,6 +19,7 @@ namespace RecepcionDocumental.Configuration
             ZipMaxBytesPorArchivo = ValidarLongPositivo("Zip/MaxBytesPorArchivo", zipMaxBytesPorArchivo);
             ZipMaxBytesDescomprimidos = ValidarLongPositivo("Zip/MaxBytesDescomprimidos", zipMaxBytesDescomprimidos);
             ZipMaxProfundidad = ValidarEnteroPositivo("Zip/MaxProfundidad", zipMaxProfundidad);
+            GmailRedirectUri = ValidarUriHttps("Gmail/RedirectUri", gmailRedirectUri);
             if (ZipMaxBytesDescomprimidos < ZipMaxBytesPorArchivo)
                 throw new ConfiguracionAplicacionException("Zip/MaxBytesDescomprimidos no puede ser menor que Zip/MaxBytesPorArchivo.");
         }
@@ -31,6 +33,7 @@ namespace RecepcionDocumental.Configuration
         public long ZipMaxBytesPorArchivo { get; private set; }
         public long ZipMaxBytesDescomprimidos { get; private set; }
         public int ZipMaxProfundidad { get; private set; }
+        public string GmailRedirectUri { get; private set; }
 
         public void PrepararRutasOperativas()
         {
@@ -62,6 +65,16 @@ namespace RecepcionDocumental.Configuration
 
         private static long ValidarLongPositivo(string clave, long valor)
         { if (valor <= 0) throw new ConfiguracionAplicacionException(clave + " debe ser mayor que cero."); return valor; }
+
+        private static string ValidarUriHttps(string clave, string valor)
+        {
+            var texto = Normalizar(valor);
+            Uri uri;
+            if (string.IsNullOrWhiteSpace(texto) || !Uri.TryCreate(texto, UriKind.Absolute, out uri) ||
+                !string.Equals(uri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
+                throw new ConfiguracionAplicacionException("La clave " + clave + " debe contener una URI HTTPS absoluta válida.");
+            return texto;
+        }
 
         private static void PrepararRuta(string ruta)
         {

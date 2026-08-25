@@ -12,3 +12,6 @@ MaxEntradas=200
 MaxBytesPorArchivo=52428800
 MaxBytesDescomprimidos=262144000
 MaxProfundidad=2
+
+[Gmail]
+RedirectUri=https://localhost:44320/Gmail_OAuthCallback.aspx

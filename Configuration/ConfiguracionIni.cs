@@ -52,7 +52,8 @@ namespace RecepcionDocumental.Configuration
                 Obtener(valores, "General/NombreProyecto"), Obtener(valores, "Rutas/Logs"),
                 Obtener(valores, "Rutas/Trabajo"), Obtener(valores, "Rutas/Facturas"), Obtener(valores, "Rutas/Revisar"),
                 ObtenerEntero(valores, "Zip/MaxEntradas"), ObtenerLong(valores, "Zip/MaxBytesPorArchivo"),
-                ObtenerLong(valores, "Zip/MaxBytesDescomprimidos"), ObtenerEntero(valores, "Zip/MaxProfundidad"));
+                ObtenerLong(valores, "Zip/MaxBytesDescomprimidos"), ObtenerEntero(valores, "Zip/MaxProfundidad"),
+                Obtener(valores, "Gmail/RedirectUri"));
         }
 
         private static string Obtener(IDictionary<string, string> valores, string clave)

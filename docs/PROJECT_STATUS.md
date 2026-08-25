@@ -66,7 +66,7 @@ Validación funcional real completada para adjuntos directos, ZIP, RAR y ZIP ani
 
 ## Configuración operativa y logs
 
-La aplicación carga una vez `RecepcionDocumental.ini` desde la raíz física al iniciar. El INI define el nombre del proyecto, las rutas absolutas `Logs`, `Trabajo`, `Facturas` y `Revisar`, y los límites ZIP. El archivo real está excluido de Git y se proporciona `RecepcionDocumental.ini.example`.
+La aplicación carga una vez `RecepcionDocumental.ini` desde la raíz física al iniciar. El INI define el nombre del proyecto, las rutas absolutas `Logs`, `Trabajo`, `Facturas` y `Revisar`, los límites ZIP y `Gmail/RedirectUri`. El archivo real está excluido de Git y se proporciona `RecepcionDocumental.ini.example`.
 
 El logger centralizado genera archivos diarios `RecepcionDocumental_Proc_yyyyMMdd.txt` y `RecepcionDocumental_Error_yyyyMMdd.txt`. Las rutas operativas nuevas no deben hardcodearse y los logs nunca deben contener secretos, tokens, connection strings, cuerpos de correo ni contenido de adjuntos.
 
@@ -79,6 +79,6 @@ Variables de entorno de Windows requeridas:
 - `RECEPCIONDOCUMENTAL_GOOGLE_CLIENT_ID`
 - `RECEPCIONDOCUMENTAL_GOOGLE_CLIENT_SECRET`
 
-Los valores reales no deben guardarse en Git, `Web.config`, SQL, JSON ni logs. La URI registrada es `https://localhost:44320/Gmail_OAuthCallback.aspx`.
+Los valores reales no deben guardarse en Git, `Web.config`, SQL, JSON ni logs. El redirect URI se carga obligatoriamente desde `Gmail/RedirectUri` en el INI y debe ser una URI HTTPS absoluta válida; no existe un fallback hardcodeado.
 
 Los refresh tokens se protegen con `MachineKey.Protect`. En producción se deberá configurar y conservar una estrategia estable de claves de máquina; cambiar las claves impediría recuperar tokens ya almacenados.

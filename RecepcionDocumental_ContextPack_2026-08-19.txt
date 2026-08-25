@@ -84,8 +84,7 @@ Google Workspace:
 
 OAuth:
 - Web application
-- redirect local:
-  https://localhost:44320/Gmail_OAuthCallback.aspx
+- redirect configurable mediante Gmail/RedirectUri en RecepcionDocumental.ini
 
 Variables de entorno Windows:
 - RECEPCIONDOCUMENTAL_GOOGLE_CLIENT_ID
