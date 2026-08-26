@@ -20,8 +20,8 @@ namespace RecepcionDocumental.Services
         private const int MaxPages = 10;
         private const int MaxImages = 20;
         private const int MaxFormDepth = 4;
-        private const long MaxPixelsPerImage = 16000000;
-        private const long MaxTotalPixels = 40000000;
+        private const long MaxPixelsPerImage = OcrLimits.MaxPixelsPerImage;
+        private const long MaxTotalPixels = OcrLimits.MaxTotalPixels;
 
         public static PdfImageExtractionResult Extract(string path)
         {

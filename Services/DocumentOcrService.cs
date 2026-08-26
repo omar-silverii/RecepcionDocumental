@@ -34,11 +34,11 @@ namespace RecepcionDocumental.Services
 
     public static class DocumentOcrService
     {
-        private const int MaxFrames = 5;
-        private const long MaxPixelsPerImage = 16000000;
-        private const long MaxTotalPixels = 40000000;
-        private const long MaxSourceBytes = 25L * 1024 * 1024;
-        private const int MaxTextCharacters = 200000;
+        private const int MaxFrames = OcrLimits.MaxImages;
+        private const long MaxPixelsPerImage = OcrLimits.MaxPixelsPerImage;
+        private const long MaxTotalPixels = OcrLimits.MaxTotalPixels;
+        private const long MaxSourceBytes = OcrLimits.MaxSourceBytes;
+        private const int MaxTextCharacters = OcrLimits.MaxTextCharacters;
         private const double HeaderLeft = 0.43;
         private const double HeaderTop = 0.05;
         private const double HeaderWidth = 0.52;

@@ -193,7 +193,7 @@ namespace RecepcionDocumental.Services
             get.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
             var message = await get.ExecuteAsync();
             var parts = new List<AttachmentPart>();
-            CollectAttachmentParts(message.Payload, parts, "0");
+            CollectAttachmentParts(message.Payload, parts, "0", message.Id);
             var messageHistoryId = message.HistoryId.HasValue ? message.HistoryId.Value.ToString() : null;
             if (parts.Count == 0) return new MessageProcessResult { HistoryId = messageHistoryId, AttachmentsFound = 0 };
 
@@ -252,13 +252,36 @@ namespace RecepcionDocumental.Services
             return new MessageProcessResult { HistoryId = messageHistoryId, AttachmentsFound = parts.Count };
         }
 
-        private static void CollectAttachmentParts(MessagePart part, IList<AttachmentPart> result, string traversalPath)
+        private static void CollectAttachmentParts(MessagePart part, IList<AttachmentPart> result, string traversalPath, string messageId)
         {
             if (part == null) return;
+            var partId = string.IsNullOrWhiteSpace(part.PartId) ? traversalPath : part.PartId;
             if (!string.IsNullOrWhiteSpace(part.Filename) && part.Body != null && (!string.IsNullOrWhiteSpace(part.Body.AttachmentId) || !string.IsNullOrWhiteSpace(part.Body.Data)))
-                result.Add(new AttachmentPart { AttachmentId = part.Body.AttachmentId, PartId = string.IsNullOrWhiteSpace(part.PartId) ? traversalPath : part.PartId, FileName = part.Filename, MimeType = part.MimeType, InlineData = part.Body.Data, DeclaredSize = part.Body.Size });
+            {
+                if (ShouldOmitInlinePart(part))
+                    Logs.LogProc("GmailSyncService | Parte inline omitida | GmailMessageId=" + Logs.SanitizarMensaje(messageId) + " | PartId=" + Logs.SanitizarMensaje(partId));
+                else
+                    result.Add(new AttachmentPart { AttachmentId = part.Body.AttachmentId, PartId = partId, FileName = part.Filename, MimeType = part.MimeType, InlineData = part.Body.Data, DeclaredSize = part.Body.Size });
+            }
             var children = part.Parts ?? new List<MessagePart>();
-            for (var index = 0; index < children.Count; index++) CollectAttachmentParts(children[index], result, traversalPath + "." + index);
+            for (var index = 0; index < children.Count; index++) CollectAttachmentParts(children[index], result, traversalPath + "." + index, messageId);
+        }
+
+        private static bool ShouldOmitInlinePart(MessagePart part)
+        {
+            var headers = part.Headers ?? new List<MessagePartHeader>();
+            var contentDisposition = GetHeader(headers, "Content-Disposition");
+            if (HasDisposition(contentDisposition, "inline")) return true;
+            if (HasDisposition(contentDisposition, "attachment")) return false;
+            return string.IsNullOrWhiteSpace(contentDisposition) && !string.IsNullOrWhiteSpace(GetHeader(headers, "Content-ID"));
+        }
+
+        private static bool HasDisposition(string headerValue, string disposition)
+        {
+            if (string.IsNullOrWhiteSpace(headerValue)) return false;
+            var separator = headerValue.IndexOf(';');
+            var value = separator < 0 ? headerValue : headerValue.Substring(0, separator);
+            return string.Equals(value.Trim(), disposition, StringComparison.OrdinalIgnoreCase);
         }
 
         private static GmailMessageRecord MapMessage(Message message)

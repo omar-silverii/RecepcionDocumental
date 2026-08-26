@@ -58,7 +58,7 @@ namespace RecepcionDocumental.Services
                 Logs.LogProc("DocumentAnalysis | Contenedor detectado | Profundidad=1");
                 AnalyzeContainer(rootPath, fileName, mimeType, fileName, 1, workspace, new ZipBudget(), result, true);
             }
-            else AnalyzeDocument(rootPath, fileName, mimeType, "DIRECTO", null, HashFile(rootPath), result);
+            else AnalyzeDocument(rootPath, fileName, mimeType, "DIRECTO", null, HashFile(rootPath), workspace, result);
             return result;
         }
 
@@ -105,7 +105,7 @@ namespace RecepcionDocumental.Services
                         var nestedChain = chain + "!/" + entry.Key;
                         if (nestedChain.Length > 2000) throw new InvalidDataException("La cadena de origen supera la longitud permitida.");
                         if (IsContainerFile(destination, entry.Key)) AnalyzeContainer(destination, entry.Key, GuessMime(entry.Key), nestedChain, depth + 1, workspace, budget, result, false);
-                        else AnalyzeDocument(destination, Path.GetFileName(entry.Key), GuessMime(entry.Key), "ZIP", nestedChain, StableZipOriginHash(nestedChain, destination), result);
+                        else AnalyzeDocument(destination, Path.GetFileName(entry.Key), GuessMime(entry.Key), "ZIP", nestedChain, StableZipOriginHash(nestedChain, destination), workspace, result);
                     }
                 }
                 Logs.LogProc("DocumentAnalysis | Contenedor entradas analizadas | Entradas=" + budget.Entries + " | Bytes=" + budget.TotalBytes);
@@ -118,7 +118,7 @@ namespace RecepcionDocumental.Services
             }
         }
 
-        private static void AnalyzeDocument(string path, string name, string mime, string originType, string internalPath, string originHash, AttachmentAnalysis result)
+        private static void AnalyzeDocument(string path, string name, string mime, string originType, string internalPath, string originHash, AttachmentWorkspace workspace, AttachmentAnalysis result)
         {
             InvoiceSelection selection;
             var qr = new ArcaQrEvidence();
@@ -128,8 +128,12 @@ namespace RecepcionDocumental.Services
                 Logs.LogProc("DocumentAnalysis | QR detectado=" + (qr.QrDetected ? "Sí" : "No") + " | QR ARCA válido=" + (qr.IsValid ? "Sí" : "No") + (qr.IsValid ? " | Versión=1 | TipoCmp=" + qr.TipoComprobante.Value : string.Empty));
                 var pdf = MdocPdfTextExtractor.Extract(path);
                 InvoiceSelection textSelection;
-                if (pdf.HasUsefulText) textSelection = InvoiceSelector.SelectPdf(pdf.Text, true);
-                else textSelection = AnalyzePdfWithOcr(path, pdf);
+                if (pdf.HasUsefulText)
+                {
+                    Logs.LogProc("PDFRaster | Ejecutado=No | Motivo=TextoUtil");
+                    textSelection = InvoiceSelector.SelectPdf(pdf.Text, true);
+                }
+                else textSelection = AnalyzePdfWithOcr(path, pdf, workspace);
                 selection = ArcaQrDecoder.Combine(qr, textSelection);
             }
             else if (IsImage(name)) selection = AnalyzeImageWithOcr(path, Path.GetExtension(name));
@@ -139,14 +143,31 @@ namespace RecepcionDocumental.Services
             result.Candidates.Add(new DocumentCandidate { SourcePath = path, OriginalName = SafeOriginalName(name), MimeType = mime, OriginType = originType, InternalContainerPath = internalPath, OriginHash = originHash, SizeBytes = new FileInfo(path).Length, Selection = selection, QrDetected = qr.QrDetected, TipoComprobanteArca = qr.IsValid ? qr.TipoComprobante : null });
         }
 
-        private static InvoiceSelection AnalyzePdfWithOcr(string path, PdfTextResult pdf)
+        private static InvoiceSelection AnalyzePdfWithOcr(string path, PdfTextResult pdf, AttachmentWorkspace workspace)
         {
             var extraction = MdocPdfImageExtractor.Extract(path);
             if (extraction.LimitExceeded)
+            {
+                Logs.LogProc("PDFRaster | Ejecutado=No | Motivo=LimiteMdoc");
                 return InvoiceSelector.Review("OCR_LIMITE", extraction.FailureReason, null);
-            if (extraction.Images.Count == 0)
-                return InvoiceSelector.Review("OCR_NO_DISPONIBLE", extraction.FailureReason ?? pdf.FailureReason ?? "Mdoc no suministró una imagen procesable para OCR.", null);
-            return SelectOcr(extraction.Images, "PDF");
+            }
+            if (extraction.Images.Count > 0)
+            {
+                Logs.LogProc("PDFRaster | Ejecutado=No | Motivo=ImagenMdoc");
+                return SelectOcr(extraction.Images, "PDF");
+            }
+
+            var raster = PdfPageRasterizer.Rasterize(path, workspace);
+            Logs.LogProc("PDFRaster | Ejecutado=Sí | Paginas=" + raster.PageCount + " | DPI=" + OcrLimits.PdfRasterDpi + " | DuracionMs=" + raster.DurationMilliseconds);
+            if (raster.LimitExceeded)
+                return InvoiceSelector.Review("OCR_LIMITE", raster.FailureReason, null);
+            if (raster.Images.Count == 0)
+            {
+                if (raster.StructuralFailure)
+                    Logs.LogError("PDFRaster | Operación=Rasterizar | Estado=FalloEstructural | Motivo=" + Logs.SanitizarMensaje(raster.FailureReason));
+                return InvoiceSelector.Review("OCR_RENDER_ERROR", raster.FailureReason ?? extraction.FailureReason ?? pdf.FailureReason ?? "No se pudo obtener una imagen procesable para OCR.", null);
+            }
+            return SelectOcr(raster.Images, "PDF_RASTER");
         }
 
         private static InvoiceSelection AnalyzeImageWithOcr(string path, string extension)

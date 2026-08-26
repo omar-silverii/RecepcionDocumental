@@ -22,6 +22,7 @@ namespace RecepcionDocumental.Services
             new[] { "IVA" }, new[] { "FECHA DE EMISION" }
         };
         private static readonly string[] NegativeSignals = { "REMITO", "NOTA DE CREDITO", "NOTA DE DEBITO", "ORDEN DE COMPRA", "PRESUPUESTO", "RECIBO", "NOTA DE PEDIDO", "CREDENCIAL DE PAGO", "EXTRACTO DE CUENTAS", "RESUMEN DE OPERACIONES" };
+        private static readonly string[] DeterministicNonInvoiceSignals = { "COMPROBANTE DE PAGO", "FONDO DE CESE LABORAL" };
         private static readonly string[] InvoiceLetters = { "A", "B", "C", "M", "E" };
 
         public static InvoiceSelection SelectPdf(string text, bool hasUsefulText)
@@ -35,6 +36,9 @@ namespace RecepcionDocumental.Services
             var negative = NegativeSignals.FirstOrDefault(x => ContainsSignal(normalized, compact, x));
             if (!string.IsNullOrEmpty(negative) && (!explicitInvoice || !string.Equals(negative, "REMITO", StringComparison.Ordinal)))
                 return Discard("PDF_TEXTO", "Documento identificado como " + negative + ".");
+            var deterministicNonInvoice = DeterministicNonInvoiceSignals.FirstOrDefault(x => ContainsSignal(normalized, compact, x));
+            if (!explicitInvoice && !string.IsNullOrEmpty(deterministicNonInvoice))
+                return Discard("PDF_TEXTO", "Documento identificado como " + deterministicNonInvoice + ".");
             if (explicitInvoice && fiscalCount >= 3) return new InvoiceSelection { Classification = "FACTURA", DetectionMethod = "PDF_TEXTO", Confidence = (byte)Math.Min(95, 70 + fiscalCount * 4), Reason = "Factura explícita y " + fiscalCount + " señales fiscales." };
             if (explicitInvoice) return Review("PDF_TEXTO", "Factura explícita con señales fiscales insuficientes.", 55);
             if (fiscalCount >= 3) return Review("PDF_TEXTO", "Se detectaron " + fiscalCount + " señales fiscales sin tipo de factura explícito.", 45);
