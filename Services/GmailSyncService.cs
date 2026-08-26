@@ -59,8 +59,10 @@ namespace RecepcionDocumental.Services
 
     public static class GmailSyncService
     {
-        private const int MaxMessages = 100;
+        private const int InitialPageSize = 100;
+        private const int MaxInitialMessages = 1000;
         private const int HistoryPageSize = 100;
+        private const string InitialSearchQuery = "newer_than:30d";
 
         public static async Task<GmailSyncResult> SynchronizeAsync()
         {
@@ -114,8 +116,6 @@ namespace RecepcionDocumental.Services
                     {
                         var processed = await ProcessMessageAsync(client.Service, account.Id, batch.MessageIds[index], result);
                         attachmentsFound = processed.AttachmentsFound;
-                        if (batch.IsInitial && string.IsNullOrWhiteSpace(batch.CompletionHistoryId) && !string.IsNullOrWhiteSpace(processed.HistoryId))
-                            batch.CompletionHistoryId = processed.HistoryId;
                     }
                     catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.NotFound)
                     {
@@ -148,15 +148,40 @@ namespace RecepcionDocumental.Services
 
         private static async Task<GmailSyncBatch> GetInitialMessageIdsAsync(GmailService service)
         {
-            var request = service.Users.Messages.List("me");
-            request.Q = "has:attachment newer_than:30d";
-            request.MaxResults = MaxMessages;
-            Logs.LogProc("GmailSyncService | Consulta inicial | UltimosDias=30 | Limite=" + MaxMessages);
-            var response = await request.ExecuteAsync();
+            var profile = await service.Users.GetProfile("me").ExecuteAsync();
+            var completionHistoryId = profile.HistoryId.HasValue ? profile.HistoryId.Value.ToString() : null;
+            if (string.IsNullOrWhiteSpace(completionHistoryId))
+                throw new InvalidOperationException("Gmail no devolvió un cursor para iniciar la sincronización.");
+
+            var ids = new List<string>();
+            var uniqueIds = new HashSet<string>(StringComparer.Ordinal);
+            string pageToken = null;
+            var pages = 0;
+            Logs.LogProc("GmailSyncService | Consulta inicial | UltimosDias=30 | Paginada=Sí | LimiteDefensivo=" + MaxInitialMessages);
+            do
+            {
+                var request = service.Users.Messages.List("me");
+                request.Q = InitialSearchQuery;
+                request.MaxResults = InitialPageSize;
+                request.PageToken = pageToken;
+                var response = await request.ExecuteAsync();
+                pages++;
+                foreach (var message in response.Messages ?? new List<Message>())
+                {
+                    if (message == null || string.IsNullOrWhiteSpace(message.Id) || !uniqueIds.Add(message.Id)) continue;
+                    if (ids.Count >= MaxInitialMessages)
+                        throw new InvalidOperationException("La sincronización inicial supera el límite defensivo de " + MaxInitialMessages + " mensajes dentro de los últimos 30 días; no se avanzó el cursor.");
+                    ids.Add(message.Id);
+                }
+                pageToken = response.NextPageToken;
+            } while (!string.IsNullOrEmpty(pageToken));
+
             return new GmailSyncBatch
             {
                 IsInitial = true,
-                MessageIds = (response.Messages ?? new List<Message>()).Where(x => !string.IsNullOrWhiteSpace(x.Id)).Select(x => x.Id).Distinct().Take(MaxMessages).ToList()
+                MessageIds = ids,
+                CompletionHistoryId = completionHistoryId,
+                HistoryPages = pages
             };
         }
 
@@ -193,7 +218,7 @@ namespace RecepcionDocumental.Services
             get.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
             var message = await get.ExecuteAsync();
             var parts = new List<AttachmentPart>();
-            CollectAttachmentParts(message.Payload, parts, "0", message.Id);
+            CollectAttachmentParts(message.Payload, parts, "0");
             var messageHistoryId = message.HistoryId.HasValue ? message.HistoryId.Value.ToString() : null;
             if (parts.Count == 0) return new MessageProcessResult { HistoryId = messageHistoryId, AttachmentsFound = 0 };
 
@@ -252,36 +277,14 @@ namespace RecepcionDocumental.Services
             return new MessageProcessResult { HistoryId = messageHistoryId, AttachmentsFound = parts.Count };
         }
 
-        private static void CollectAttachmentParts(MessagePart part, IList<AttachmentPart> result, string traversalPath, string messageId)
+        private static void CollectAttachmentParts(MessagePart part, IList<AttachmentPart> result, string traversalPath)
         {
             if (part == null) return;
             var partId = string.IsNullOrWhiteSpace(part.PartId) ? traversalPath : part.PartId;
             if (!string.IsNullOrWhiteSpace(part.Filename) && part.Body != null && (!string.IsNullOrWhiteSpace(part.Body.AttachmentId) || !string.IsNullOrWhiteSpace(part.Body.Data)))
-            {
-                if (ShouldOmitInlinePart(part))
-                    Logs.LogProc("GmailSyncService | Parte inline omitida | GmailMessageId=" + Logs.SanitizarMensaje(messageId) + " | PartId=" + Logs.SanitizarMensaje(partId));
-                else
-                    result.Add(new AttachmentPart { AttachmentId = part.Body.AttachmentId, PartId = partId, FileName = part.Filename, MimeType = part.MimeType, InlineData = part.Body.Data, DeclaredSize = part.Body.Size });
-            }
+                result.Add(new AttachmentPart { AttachmentId = part.Body.AttachmentId, PartId = partId, FileName = part.Filename, MimeType = part.MimeType, InlineData = part.Body.Data, DeclaredSize = part.Body.Size });
             var children = part.Parts ?? new List<MessagePart>();
-            for (var index = 0; index < children.Count; index++) CollectAttachmentParts(children[index], result, traversalPath + "." + index, messageId);
-        }
-
-        private static bool ShouldOmitInlinePart(MessagePart part)
-        {
-            var headers = part.Headers ?? new List<MessagePartHeader>();
-            var contentDisposition = GetHeader(headers, "Content-Disposition");
-            if (HasDisposition(contentDisposition, "inline")) return true;
-            if (HasDisposition(contentDisposition, "attachment")) return false;
-            return string.IsNullOrWhiteSpace(contentDisposition) && !string.IsNullOrWhiteSpace(GetHeader(headers, "Content-ID"));
-        }
-
-        private static bool HasDisposition(string headerValue, string disposition)
-        {
-            if (string.IsNullOrWhiteSpace(headerValue)) return false;
-            var separator = headerValue.IndexOf(';');
-            var value = separator < 0 ? headerValue : headerValue.Substring(0, separator);
-            return string.Equals(value.Trim(), disposition, StringComparison.OrdinalIgnoreCase);
+            for (var index = 0; index < children.Count; index++) CollectAttachmentParts(children[index], result, traversalPath + "." + index);
         }
 
         private static GmailMessageRecord MapMessage(Message message)

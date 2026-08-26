@@ -20,14 +20,16 @@ Aplicación ASP.NET WebForms en C# para .NET Framework 4.8, Visual Studio 2022 y
 ### H1C — VALIDADO
 
 - Sincronización incremental mediante `historyId`.
-- Full sync inicial limitado a 30 días y 100 mensajes.
+- Full sync inicial paginado sobre una ventana de 30 días, con límite defensivo explícito de 1.000 mensajes y sin truncamiento silencioso.
 - MIME recursivo y soporte para `AttachmentId` y `Body.Data`.
 - Almacenamiento físico configurable y hash SHA-256.
 - Idempotencia por `GmailMensajeId + GmailPartId`.
 - Un 404 individual de mensaje se omite sin bloquear el cursor; un 404 por `historyId` vencido activa el fallback inicial.
 - Logs diarios separados `Proc`/`Error` y timeout WebForms de 600 segundos.
 - Prueba real validada con PDF, JPG y XLSX; repetición validada sin redescarga.
-- La recolección MIME distingue adjuntos documentales de recursos inline: omite partes con `Content-Disposition: inline` y, cuando ese header falta, partes con `Content-ID`; conserva `Content-Disposition: attachment` y el comportamiento compatible para partes sin ambos headers. Esto evita procesar logos, firmas y recursos HTML como documentos sin filtrar por extensión, MIME, tamaño, nombre o remitente.
+- RecepcionDocumental no utiliza la disposición MIME como criterio documental. Toda parte con nombre de archivo utilizable y contenido mediante `AttachmentId` o `Body.Data` se recolecta una vez, sea `attachment`, `inline`, tenga `Content-ID` o no, y recorre el mismo `DocumentAnalysisService` y las mismas reglas de clasificación.
+- La sincronización inicial busca todos los mensajes de los últimos 30 días mediante `newer_than:30d`, pagina la ventana y deja que la inspección MIME determine cuáles contienen documentos analizables. Se toma previamente un `historyId` de perfil como cursor seguro; un límite defensivo de 1.000 mensajes aborta de forma explícita y sin avanzar ese cursor, nunca trunca silenciosamente con `Take(100)`.
+- Esta política puede aumentar documentos irrelevantes en `REVISAR`, pero evita perder facturas pegadas en el cuerpo HTML. La reducción futura de ruido corresponderá a clasificación semántica/inteligente; no se ampliarán indiscriminadamente listas de títulos negativos para compensar el origen inline.
 
 Los adjuntos se guardan fuera del sitio en la carpeta configurable `AdjuntosRootPath` (localmente `C:\RecepcionDocumental\Adjuntos\`).
 

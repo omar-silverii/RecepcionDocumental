@@ -19,6 +19,8 @@ namespace PdfRasterProbe
 
         private static int Main(string[] args)
         {
+            if (args.Length > 0 && string.Equals(args[0], "--mime", StringComparison.OrdinalIgnoreCase))
+                return GmailMimeProbe.Run(args);
             if (args.Length > 0 && string.Equals(args[0], "--product", StringComparison.OrdinalIgnoreCase))
                 return ProductFlowProbe.Run(args);
             if (args.Length != 2) { Console.Error.WriteLine("Uso: PdfRasterProbe <pdf1> <pdf2>"); return 2; }
