@@ -15,9 +15,16 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="Google.Apis.Gmail.v1">
       <HintPath>..\..\bin\Google.Apis.Gmail.v1.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Google.Apis">
+      <HintPath>..\..\bin\Google.Apis.dll</HintPath>
       <Private>true</Private>
     </Reference>
     <Reference Include="PDFtoImage">
@@ -37,6 +44,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="ProductFlowProbe.cs" />
     <Compile Include="GmailMimeProbe.cs" />
+    <Compile Include="GmailCorpusProbe.cs" />
     <None Include="App.config" />
     <None Include="..\..\bin\*.dll">
       <Link>%(Filename)%(Extension)</Link>

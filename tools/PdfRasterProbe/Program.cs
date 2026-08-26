@@ -23,6 +23,8 @@ namespace PdfRasterProbe
                 return GmailMimeProbe.Run(args);
             if (args.Length > 0 && string.Equals(args[0], "--product", StringComparison.OrdinalIgnoreCase))
                 return ProductFlowProbe.Run(args);
+            if (args.Length > 0 && string.Equals(args[0], "--gmail-corpus", StringComparison.OrdinalIgnoreCase))
+                return GmailCorpusProbe.Run(args);
             if (args.Length != 2) { Console.Error.WriteLine("Uso: PdfRasterProbe <pdf1> <pdf2>"); return 2; }
             var failed = false;
             foreach (var path in args)
