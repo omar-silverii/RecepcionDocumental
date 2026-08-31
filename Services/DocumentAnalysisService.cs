@@ -127,13 +127,18 @@ namespace RecepcionDocumental.Services
                 qr = MdocPdfQrDetector.Detect(path);
                 Logs.LogProc("DocumentAnalysis | QR detectado=" + (qr.QrDetected ? "Sí" : "No") + " | QR ARCA válido=" + (qr.IsValid ? "Sí" : "No") + (qr.IsValid ? " | Versión=1 | TipoCmp=" + qr.TipoComprobante.Value : string.Empty));
                 var pdf = MdocPdfTextExtractor.Extract(path);
-                InvoiceSelection textSelection;
-                if (pdf.HasUsefulText)
+                var mdocSelection = InvoiceSelector.SelectPdf(pdf.Text, pdf.HasUsefulText);
+                Logs.LogProc("DocumentAnalysis | MdocTextoUtil=" + (pdf.HasUsefulText ? "Sí" : "No") + " | MdocClasificacion=" + mdocSelection.Classification);
+                InvoiceSelection textSelection = mdocSelection;
+                if (string.Equals(mdocSelection.Classification, "REVISAR", StringComparison.Ordinal))
                 {
-                    Logs.LogProc("PDFRaster | Ejecutado=No | Motivo=TextoUtil");
-                    textSelection = InvoiceSelector.SelectPdf(pdf.Text, true);
+                    var ocrReason = pdf.HasUsefulText ? "MDOC_REVISAR" : "MDOC_SIN_TEXTO";
+                    Logs.LogProc("DocumentAnalysis | OCR requerido=Sí | Motivo=" + ocrReason);
+                    var ocrSelection = AnalyzePdfWithOcr(path, pdf, workspace);
+                    textSelection = FusePdfSelections(mdocSelection, ocrSelection);
+                    Logs.LogProc("DocumentAnalysis | OCR resultado=" + ocrSelection.Classification + " | FusionAccion=" + FusionAction(mdocSelection, ocrSelection));
                 }
-                else textSelection = AnalyzePdfWithOcr(path, pdf, workspace);
+                else Logs.LogProc("DocumentAnalysis | OCR requerido=No | Motivo=MDOC_CONCLUYENTE | FusionAccion=MDOC_CONSERVADO");
                 selection = ArcaQrDecoder.Combine(qr, textSelection);
             }
             else if (IsImage(name)) selection = AnalyzeImageWithOcr(path, Path.GetExtension(name));
@@ -143,20 +148,28 @@ namespace RecepcionDocumental.Services
             result.Candidates.Add(new DocumentCandidate { SourcePath = path, OriginalName = SafeOriginalName(name), MimeType = mime, OriginType = originType, InternalContainerPath = internalPath, OriginHash = originHash, SizeBytes = new FileInfo(path).Length, Selection = selection, QrDetected = qr.QrDetected, TipoComprobanteArca = qr.IsValid ? qr.TipoComprobante : null });
         }
 
+        internal static InvoiceSelection FusePdfSelections(InvoiceSelection mdocSelection, InvoiceSelection ocrSelection)
+        {
+            if (mdocSelection == null) throw new ArgumentNullException("mdocSelection");
+            if (!string.Equals(mdocSelection.Classification, "REVISAR", StringComparison.Ordinal)) return mdocSelection;
+            if (ocrSelection == null) throw new ArgumentNullException("ocrSelection");
+            if (string.Equals(ocrSelection.Classification, "FACTURA", StringComparison.Ordinal)) return ocrSelection;
+            if (string.Equals(ocrSelection.Classification, "DESCARTAR", StringComparison.Ordinal))
+                return InvoiceSelector.Review("MDOC_OCR_CONFLICTO", "Mdoc no produjo una clasificación concluyente y OCR detectó evidencia de otro tipo documental. Se conserva REVISAR por política de fusión conservadora.", null);
+            return ocrSelection;
+        }
+
+        private static string FusionAction(InvoiceSelection mdocSelection, InvoiceSelection ocrSelection)
+        {
+            if (!string.Equals(mdocSelection.Classification, "REVISAR", StringComparison.Ordinal)) return "MDOC_CONSERVADO";
+            if (string.Equals(ocrSelection.Classification, "FACTURA", StringComparison.Ordinal)) return "OCR_PROMUEVE_FACTURA";
+            if (string.Equals(ocrSelection.Classification, "DESCARTAR", StringComparison.Ordinal)) return "OCR_DESCARTAR_BLOQUEADO";
+            return "OCR_MANTIENE_REVISAR";
+        }
+
         private static InvoiceSelection AnalyzePdfWithOcr(string path, PdfTextResult pdf, AttachmentWorkspace workspace)
         {
-            var extraction = MdocPdfImageExtractor.Extract(path);
-            if (extraction.LimitExceeded)
-            {
-                Logs.LogProc("PDFRaster | Ejecutado=No | Motivo=LimiteMdoc");
-                return InvoiceSelector.Review("OCR_LIMITE", extraction.FailureReason, null);
-            }
-            if (extraction.Images.Count > 0)
-            {
-                Logs.LogProc("PDFRaster | Ejecutado=No | Motivo=ImagenMdoc");
-                return SelectOcr(extraction.Images, "PDF");
-            }
-
+            Logs.LogProc("DocumentAnalysis | FuenteOCR=RASTER_PAGINA");
             var raster = PdfPageRasterizer.Rasterize(path, workspace);
             Logs.LogProc("PDFRaster | Ejecutado=Sí | Paginas=" + raster.PageCount + " | DPI=" + OcrLimits.PdfRasterDpi + " | DuracionMs=" + raster.DurationMilliseconds);
             if (raster.LimitExceeded)
@@ -165,7 +178,7 @@ namespace RecepcionDocumental.Services
             {
                 if (raster.StructuralFailure)
                     Logs.LogError("PDFRaster | Operación=Rasterizar | Estado=FalloEstructural | Motivo=" + Logs.SanitizarMensaje(raster.FailureReason));
-                return InvoiceSelector.Review("OCR_RENDER_ERROR", raster.FailureReason ?? extraction.FailureReason ?? pdf.FailureReason ?? "No se pudo obtener una imagen procesable para OCR.", null);
+                return InvoiceSelector.Review("OCR_RENDER_ERROR", raster.FailureReason ?? pdf.FailureReason ?? "No se pudo obtener una imagen procesable para OCR.", null);
             }
             return SelectOcr(raster.Images, "PDF_RASTER");
         }

@@ -65,4 +65,7 @@ namespace RecepcionDocumental
 
         private void ShowError(string message) { pnlDatabaseWarning.Visible = true; litDatabaseWarning.Text = Server.HtmlEncode(message); }
     }
+
+
+
 }

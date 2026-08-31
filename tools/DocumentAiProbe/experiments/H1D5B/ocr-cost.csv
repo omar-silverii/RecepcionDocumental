@@ -1,0 +1,3 @@
+Strategy,PdfsRequiringOcr,Percent,OcrDurationTotalMs,OcrDurationMeanMs,OcrDurationMedianMs,OcrDurationP95Ms,Rasterizations,RasterPageCount,OcrFailuresOrLimits
+"CURRENT_PRODUCT","6","16.67","149221","24870.17","1326","108450.5","5","7","1"
+"CONSERVATIVE_FUSION","21","58.33","173129","8244.24","1404","3503","19","35","2"

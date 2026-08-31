@@ -24,6 +24,6 @@ Se inspeccionaron 1.615 mensajes dentro de una ventana Gmail de 365 días. Se ob
 
 ## Cierre
 
-No se entrenó IA, no se modificó la lógica productiva y no se publicó. Las compilaciones finales Release de `DocumentAiProbe` y `RecepcionDocumental.sln` se ejecutan como parte de este cierre.
+No se entrenó IA, no se modificó la lógica productiva y no se publicó. Las compilaciones finales Release de `DocumentAiProbe` y `RecepcionDocumental.sln` finalizaron con exit code 0, cero errores y cero advertencias.
 
 Próximo punto exacto: esperar la revisión humana H1D3A2g y, sólo con decisiones aprobadas, preparar una futura importación mediante `import-reviewed`.

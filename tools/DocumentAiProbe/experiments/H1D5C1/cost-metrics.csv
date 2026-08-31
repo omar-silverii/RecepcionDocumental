@@ -1,0 +1,5 @@
+Policy,EmbeddedOcrDocuments,FullPageRasterizations,HeaderPasses,TotalDurationMs,MeanDurationMs,MedianDurationMs,P95DurationMs,LimitsOrFailures
+"P0_PRODUCT_EMBEDDED_FIRST","6","15","14","178880","8518.1","1625","4482","1"
+"P1_FULL_PAGE_RASTER","0","21","11","190438","9068.48","1855","4814","2"
+"P2_EMBEDDED_THEN_RASTER_IF_REVIEW","6","21","17","192320","9158.1","1868","5213","2"
+"P3_POSITIVE_RESCUE","6","21","17","192320","9158.1","1868","5213","2"

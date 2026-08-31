@@ -21,6 +21,7 @@ using System.Runtime.InteropServices;
 
 // El siguiente GUID es para el Id. typelib cuando este proyecto esté expuesto a COM
 [assembly: Guid("750bd714-fbeb-4f46-9d2b-3adc702856a0")]
+[assembly: InternalsVisibleTo("PdfRasterProbe")]
 
 // La información de versión de un ensamblado consta de los siguientes cuatro valores:
 //

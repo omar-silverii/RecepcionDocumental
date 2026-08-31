@@ -25,6 +25,20 @@ namespace PdfRasterProbe
                 return ProductFlowProbe.Run(args);
             if (args.Length > 0 && string.Equals(args[0], "--gmail-corpus", StringComparison.OrdinalIgnoreCase))
                 return GmailCorpusProbe.Run(args);
+            if (args.Length > 0 && string.Equals(args[0], "--productive-corpus", StringComparison.OrdinalIgnoreCase))
+                return ProductiveCorpusProbe.Run(args);
+            if (args.Length > 0 && string.Equals(args[0], "--h1d4a-assets", StringComparison.OrdinalIgnoreCase))
+                return H1D4AAssetProbe.Run(args);
+            if (args.Length > 0 && string.Equals(args[0], "--h1d5a-evidence", StringComparison.OrdinalIgnoreCase))
+                return H1D5AEvidenceProbe.Run(args);
+            if (args.Length > 0 && string.Equals(args[0], "--h1d5b-fusion", StringComparison.OrdinalIgnoreCase))
+                return H1D5BFusionProbe.Run(args);
+            if (args.Length > 0 && string.Equals(args[0], "--h1d5c-product-validation", StringComparison.OrdinalIgnoreCase))
+                return H1D5CProductValidationProbe.Run(args);
+            if (args.Length > 0 && string.Equals(args[0], "--h1d5c1-ocr-source-benchmark", StringComparison.OrdinalIgnoreCase))
+                return H1D5C1OcrSourceBenchmarkProbe.Run(args);
+            if (args.Length > 0 && string.Equals(args[0], "--h1d5c2-product-validation", StringComparison.OrdinalIgnoreCase))
+                return H1D5C2ProductValidationProbe.Run(args);
             if (args.Length != 2) { Console.Error.WriteLine("Uso: PdfRasterProbe <pdf1> <pdf2>"); return 2; }
             var failed = false;
             foreach (var path in args)

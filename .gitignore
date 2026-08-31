@@ -12,6 +12,7 @@
 
 # Local operational configuration (may contain secrets)
 RecepcionDocumental.ini
+MachineKey.config
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

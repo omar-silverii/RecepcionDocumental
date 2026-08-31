@@ -16,9 +16,11 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Google.Apis.Gmail.v1">
       <HintPath>..\..\bin\Google.Apis.Gmail.v1.dll</HintPath>
       <Private>true</Private>
@@ -45,6 +47,13 @@
     <Compile Include="ProductFlowProbe.cs" />
     <Compile Include="GmailMimeProbe.cs" />
     <Compile Include="GmailCorpusProbe.cs" />
+    <Compile Include="ProductiveCorpusProbe.cs" />
+    <Compile Include="H1D4AAssetProbe.cs" />
+    <Compile Include="H1D5AEvidenceProbe.cs" />
+    <Compile Include="H1D5BFusionProbe.cs" />
+    <Compile Include="H1D5CProductValidationProbe.cs" />
+    <Compile Include="H1D5C1OcrSourceBenchmarkProbe.cs" />
+    <Compile Include="H1D5C2ProductValidationProbe.cs" />
     <None Include="App.config" />
     <None Include="..\..\bin\*.dll">
       <Link>%(Filename)%(Extension)</Link>

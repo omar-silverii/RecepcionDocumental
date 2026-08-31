@@ -1,0 +1,7 @@
+Seed=H1D4A-v1-sha256
+Algoritmo=SHA256(seed|label|group|purpose), orden ascendente
+VisualFeatures=histogramas RGB y luminancia, 64 dimensiones, imagen 96x96
+VisualTrainer=SdcaLogisticRegression
+TextTrainer=FeaturizeText+SdcaLogisticRegression
+PDFVisual=primera pagina a 150 DPI normalizada
+TextPriority=MDOC luego OCR Tesseract local

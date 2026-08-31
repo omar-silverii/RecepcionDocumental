@@ -108,4 +108,4 @@ Variables de entorno de Windows requeridas:
 
 Los valores reales no deben guardarse en Git, `Web.config`, SQL, JSON ni logs. El redirect URI se carga obligatoriamente desde `Gmail/RedirectUri` en el INI y debe ser una URI HTTPS absoluta válida; no existe un fallback hardcodeado.
 
-Los refresh tokens se protegen con `MachineKey.Protect`. En producción se deberá configurar y conservar una estrategia estable de claves de máquina; cambiar las claves impediría recuperar tokens ya almacenados.
+Los refresh tokens se protegen con `MachineKey.Protect`. La sección `machineKey` se carga desde el archivo local excluido `MachineKey.config`; `MachineKey.config.example` contiene únicamente placeholders. El archivo real debe provisionarse y respaldarse de forma segura fuera de Git: perderlo impide recuperar los datos protegidos. Un servidor IIS nuevo debe recibir la misma configuración antes de usar tokens existentes; si se decide usar claves distintas, Gmail debe reautorizarse una vez en ese contexto.

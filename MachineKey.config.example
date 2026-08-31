@@ -1,0 +1,1 @@
+<machineKey validationKey="REEMPLAZAR_CON_CLAVE_HEXADECIMAL_SEGURA" decryptionKey="REEMPLAZAR_CON_CLAVE_HEXADECIMAL_SEGURA" validation="HMACSHA256" decryption="AES" />
