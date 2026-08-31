@@ -39,6 +39,14 @@ namespace PdfRasterProbe
                 return H1D5C1OcrSourceBenchmarkProbe.Run(args);
             if (args.Length > 0 && string.Equals(args[0], "--h1d5c2-product-validation", StringComparison.OrdinalIgnoreCase))
                 return H1D5C2ProductValidationProbe.Run(args);
+            if (args.Length > 0 && string.Equals(args[0], "--h1d6a-gmail-operational", StringComparison.OrdinalIgnoreCase))
+                return H1D6AOperationalGmailProbe.Run(args);
+            if (args.Length > 0 && string.Equals(args[0], "--h1d6a-gmail-operational-inner", StringComparison.OrdinalIgnoreCase))
+                return H1D6AOperationalGmailProbe.RunInner(args);
+            if (args.Length > 0 && string.Equals(args[0], "--h1d7a-review", StringComparison.OrdinalIgnoreCase))
+                return H1D7AReviewValidationProbe.Run(args);
+            if (args.Length > 0 && string.Equals(args[0], "--h1d7a-review-inner", StringComparison.OrdinalIgnoreCase))
+                return H1D7AReviewValidationProbe.RunInner(args);
             if (args.Length != 2) { Console.Error.WriteLine("Uso: PdfRasterProbe <pdf1> <pdf2>"); return 2; }
             var failed = false;
             foreach (var path in args)

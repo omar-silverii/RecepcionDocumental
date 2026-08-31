@@ -191,6 +191,8 @@
     <Content Include="Database\003_GmailSync.sql" />
     <Content Include="Database\004_GmailAttachmentIdentity.sql" />
     <Content Include="Database\005_SelectorFacturaBase.sql" />
+    <Content Include="Database\006_RevisionDocumental.sql" />
+    <Content Include="Documento_Ver.aspx" />
     <Content Include="Documentos.aspx" />
     <Content Include="docs\PROJECT_STATUS.md" />
     <Content Include="docs\THIRD_PARTY_NOTICES.md" />
@@ -301,6 +303,7 @@
     <Compile Include="Services\DocumentAnalysisService.cs" />
     <Compile Include="Services\DocumentOcrService.cs" />
     <Compile Include="Services\DocumentStorage.cs" />
+    <Compile Include="Services\DocumentReviewService.cs" />
     <Compile Include="Services\InvoiceSelector.cs" />
     <Compile Include="Services\MdocPdfTextExtractor.cs" />
     <Compile Include="Services\MdocPdfQrDetector.cs" />
@@ -321,6 +324,13 @@
     </Compile>
     <Compile Include="Documentos.aspx.designer.cs">
       <DependentUpon>Documentos.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Documento_Ver.aspx.cs">
+      <DependentUpon>Documento_Ver.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Documento_Ver.aspx.designer.cs">
+      <DependentUpon>Documento_Ver.aspx</DependentUpon>
     </Compile>
     <Compile Include="Gmail_Config.aspx.cs">
       <DependentUpon>Gmail_Config.aspx</DependentUpon>
