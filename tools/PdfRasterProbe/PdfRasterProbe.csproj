@@ -62,6 +62,7 @@
     <Compile Include="H1D6AOperationalGmailProbe.cs" />
     <Compile Include="H1D7AReviewValidationProbe.cs" />
     <Compile Include="H1D7BVisualShadowProbe.cs" />
+    <Compile Include="H1D7B2VisualShadowProbe.cs" />
     <None Include="App.config" />
     <None Include="..\..\bin\*.dll">
       <Link>%(Filename)%(Extension)</Link>
