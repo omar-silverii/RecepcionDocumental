@@ -13,6 +13,9 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.ML" Version="4.0.2" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Configuration" />
@@ -58,6 +61,7 @@
     <Compile Include="H1D5C2ProductValidationProbe.cs" />
     <Compile Include="H1D6AOperationalGmailProbe.cs" />
     <Compile Include="H1D7AReviewValidationProbe.cs" />
+    <Compile Include="H1D7BVisualShadowProbe.cs" />
     <None Include="App.config" />
     <None Include="..\..\bin\*.dll">
       <Link>%(Filename)%(Extension)</Link>

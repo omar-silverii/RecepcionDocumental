@@ -20,7 +20,7 @@ namespace RecepcionDocumental
         protected void Documentos_ItemCommand(object source,RepeaterCommandEventArgs e)
         {
             long id;if(!long.TryParse(Convert.ToString(e.CommandArgument),out id))return;var box=(TextBox)e.Item.FindControl("txtObservacion");var identity=Context.User!=null&&Context.User.Identity!=null&&Context.User.Identity.IsAuthenticated?Context.User.Identity.Name:null;
-            try{var result=e.CommandName=="FACTURA"?DocumentReviewService.ConfirmInvoice(id,identity,box==null?null:box.Text):DocumentReviewService.Discard(id,identity,box==null?null:box.Text);litResultado.Text=Server.HtmlEncode(result.Message);pnlResultado.Visible=true;}catch(Exception ex)when(ex is System.IO.IOException||ex is UnauthorizedAccessException||ex is SqlException){litResultado.Text="No se pudo resolver el documento de forma segura.";pnlResultado.Visible=true;}LoadDocuments();
+            try{var observation=box==null?null:box.Text;var result=e.CommandName=="FACTURA"?DocumentReviewService.ConfirmInvoice(id,identity,observation):e.CommandName=="OTRO_DOCUMENTO"?DocumentReviewService.DiscardOtherDocument(id,identity,observation):DocumentReviewService.DiscardNonDocument(id,identity,observation);litResultado.Text=Server.HtmlEncode(result.Message);pnlResultado.Visible=true;}catch(Exception ex)when(ex is System.IO.IOException||ex is UnauthorizedAccessException||ex is SqlException){litResultado.Text="No se pudo resolver el documento de forma segura.";pnlResultado.Visible=true;}LoadDocuments();
         }
         private void LoadDocuments()
         {

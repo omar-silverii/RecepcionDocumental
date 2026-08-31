@@ -192,6 +192,7 @@
     <Content Include="Database\004_GmailAttachmentIdentity.sql" />
     <Content Include="Database\005_SelectorFacturaBase.sql" />
     <Content Include="Database\006_RevisionDocumental.sql" />
+    <Content Include="Database\007_EtiquetaRevisionDocumental.sql" />
     <Content Include="Documento_Ver.aspx" />
     <Content Include="Documentos.aspx" />
     <Content Include="docs\PROJECT_STATUS.md" />
