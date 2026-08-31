@@ -27,6 +27,14 @@ namespace RecepcionDocumental.Data
 
     public sealed class ReviewDocumentRecord { public long Id { get; set; } public DateTime MessageDateUtc { get; set; } public string GmailMessageId { get; set; } public string NombreOriginal { get; set; } public string RutaLocal { get; set; } public string HashSha256 { get; set; } public long TamanioBytes { get; set; } public string Clasificacion { get; set; } public string ResultadoRevision { get; set; } }
 
+    public sealed class PendingReviewInfo
+    {
+        public long Id { get; set; } public DateTime Fecha { get; set; } public string Remitente { get; set; } public string Asunto { get; set; }
+        public string NombreOriginal { get; set; } public string Clasificacion { get; set; } public string MetodoDeteccion { get; set; }
+        public byte? Confianza { get; set; } public string Motivo { get; set; } public string OrigenTipo { get; set; }
+        public int Position { get; set; } public int Total { get; set; }
+    }
+
     public static class DocumentRepository
     {
         private static string ConnectionString { get { return ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString; } }
@@ -87,6 +95,20 @@ WHERE NOT EXISTS (SELECT 1 FROM dbo.DocumentoRecepcion WITH (UPDLOCK,SERIALIZABL
             const string sql=@"SELECT d.Id,m.FechaMensajeUtc,m.GmailMessageId,d.NombreOriginal,d.RutaLocal,d.HashSha256,d.TamanioBytes,d.Clasificacion,d.ResultadoRevision FROM dbo.DocumentoRecepcion d INNER JOIN dbo.GmailMensaje m ON m.Id=d.GmailMensajeId WHERE d.Id=@Id;";
             using(var cn=new SqlConnection(ConnectionString))using(var cmd=new SqlCommand(sql,cn)){cmd.Parameters.Add("@Id",SqlDbType.BigInt).Value=id;cn.Open();using(var r=cmd.ExecuteReader()){if(!r.Read())return null;return new ReviewDocumentRecord{Id=r.GetInt64(0),MessageDateUtc=r.GetDateTime(1),GmailMessageId=r.GetString(2),NombreOriginal=r.GetString(3),RutaLocal=r.GetString(4),HashSha256=r.GetString(5),TamanioBytes=r.GetInt64(6),Clasificacion=r.GetString(7),ResultadoRevision=r.IsDBNull(8)?null:r.GetString(8)};}}
         }
+        public static PendingReviewInfo GetPendingForReview(long id)
+        {
+            const string sql=@"SELECT d.Id,m.FechaMensajeUtc,m.Remitente,m.Asunto,d.NombreOriginal,d.Clasificacion,d.MetodoDeteccion,d.Confianza,d.MotivoClasificacion,d.OrigenTipo,
+(SELECT COUNT(*) FROM dbo.DocumentoRecepcion p WHERE p.Clasificacion=N'REVISAR' AND p.ResultadoRevision IS NULL AND (p.FechaClasificacionUtc<d.FechaClasificacionUtc OR (p.FechaClasificacionUtc=d.FechaClasificacionUtc AND p.Id<=d.Id))),
+(SELECT COUNT(*) FROM dbo.DocumentoRecepcion p WHERE p.Clasificacion=N'REVISAR' AND p.ResultadoRevision IS NULL)
+FROM dbo.DocumentoRecepcion d INNER JOIN dbo.GmailMensaje m ON m.Id=d.GmailMensajeId
+WHERE d.Id=@Id AND d.Clasificacion=N'REVISAR' AND d.ResultadoRevision IS NULL;";
+            using(var cn=new SqlConnection(ConnectionString))using(var cmd=new SqlCommand(sql,cn)){cmd.Parameters.Add("@Id",SqlDbType.BigInt).Value=id;cn.Open();using(var r=cmd.ExecuteReader()){return r.Read()?MapPending(r):null;}}
+        }
+        public static long? GetFirstPending() { return PendingId(@"SELECT TOP (1) Id FROM dbo.DocumentoRecepcion WHERE Clasificacion=N'REVISAR' AND ResultadoRevision IS NULL ORDER BY FechaClasificacionUtc ASC,Id ASC;",null); }
+        public static long? GetNextPending(long id) { return PendingId(@"SELECT TOP (1) p.Id FROM dbo.DocumentoRecepcion p CROSS JOIN (SELECT FechaClasificacionUtc,Id FROM dbo.DocumentoRecepcion WHERE Id=@Id) c WHERE p.Clasificacion=N'REVISAR' AND p.ResultadoRevision IS NULL AND (p.FechaClasificacionUtc>c.FechaClasificacionUtc OR (p.FechaClasificacionUtc=c.FechaClasificacionUtc AND p.Id>c.Id)) ORDER BY p.FechaClasificacionUtc ASC,p.Id ASC;",id); }
+        public static long? GetPreviousPending(long id) { return PendingId(@"SELECT TOP (1) p.Id FROM dbo.DocumentoRecepcion p CROSS JOIN (SELECT FechaClasificacionUtc,Id FROM dbo.DocumentoRecepcion WHERE Id=@Id) c WHERE p.Clasificacion=N'REVISAR' AND p.ResultadoRevision IS NULL AND (p.FechaClasificacionUtc<c.FechaClasificacionUtc OR (p.FechaClasificacionUtc=c.FechaClasificacionUtc AND p.Id<c.Id)) ORDER BY p.FechaClasificacionUtc DESC,p.Id DESC;",id); }
+        private static long? PendingId(string sql,long? id){using(var cn=new SqlConnection(ConnectionString))using(var cmd=new SqlCommand(sql,cn)){if(id.HasValue)cmd.Parameters.Add("@Id",SqlDbType.BigInt).Value=id.Value;cn.Open();var value=cmd.ExecuteScalar();return value==null||value==DBNull.Value?(long?)null:Convert.ToInt64(value);}}
+        private static PendingReviewInfo MapPending(SqlDataReader r){return new PendingReviewInfo{Id=r.GetInt64(0),Fecha=r.GetDateTime(1),Remitente=r.GetString(2),Asunto=r.IsDBNull(3)?"(Sin asunto)":r.GetString(3),NombreOriginal=r.GetString(4),Clasificacion=r.GetString(5),MetodoDeteccion=r.GetString(6),Confianza=r.IsDBNull(7)?(byte?)null:r.GetByte(7),Motivo=r.IsDBNull(8)?null:r.GetString(8),OrigenTipo=r.GetString(9),Position=r.GetInt32(10),Total=r.GetInt32(11)};}
         public static bool TryResolve(long id,string result,string label,string user,string observation,DocumentStoredFile stored)
         {
             const string sql=@"UPDATE dbo.DocumentoRecepcion SET ResultadoRevision=@Result,EtiquetaRevision=@Label,FechaRevisionUtc=SYSUTCDATETIME(),UsuarioRevision=@User,ObservacionRevision=@Observation,RutaLocal=CASE WHEN @Result=N'FACTURA' THEN @Path ELSE RutaLocal END,HashSha256=CASE WHEN @Result=N'FACTURA' THEN @Hash ELSE HashSha256 END,TamanioBytes=CASE WHEN @Result=N'FACTURA' THEN @Size ELSE TamanioBytes END WHERE Id=@Id AND Clasificacion=N'REVISAR' AND ResultadoRevision IS NULL;";

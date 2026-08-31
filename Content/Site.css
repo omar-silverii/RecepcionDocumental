@@ -23,6 +23,16 @@ body { background: #f5f7fa; color: #1f2937; }
 .detail-list dd { margin-bottom: 16px; }
 footer { color: #6b7280; font-size: .9rem; }
 
+.review-station { margin-left: 50%; transform: translateX(-50%); width: min(1500px, calc(100vw - 48px)); }
+.review-layout { display: grid; gap: 20px; grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr); }
+.review-preview { background: #e9eef5; min-height: 720px; overflow: hidden; }
+.review-frame-wrap, .review-frame { border: 0; height: 100%; min-height: 720px; width: 100%; }
+.review-download { align-items: center; display: flex; justify-content: center; min-height: 720px; padding: 40px; text-align: center; }
+.review-decision { align-self: start; }
+.review-details dd { overflow-wrap: anywhere; }
+.review-observation { max-width: none; resize: vertical; width: 100%; }
+@media screen and (max-width: 991.98px) { .review-layout { grid-template-columns: 1fr; } .review-preview, .review-frame-wrap, .review-frame, .review-download { min-height: 560px; } }
+
 .documents-page { margin-left: 50%; transform: translateX(-50%); width: min(1720px, calc(100vw - 48px)); }
 .documents-filter { min-width: 160px; }
 .documents-table-card { background: #fff; border-radius: 12px; }

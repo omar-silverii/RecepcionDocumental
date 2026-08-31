@@ -10,9 +10,10 @@
 <asp:Panel ID="pnlError" runat="server" Visible="false" CssClass="alert alert-warning">No se pudo consultar DocumentoRecepcion. Ejecutá Database/005_SelectorFacturaBase.sql.</asp:Panel>
 <asp:Panel ID="pnlVacio" runat="server" Visible="false" CssClass="empty-state">No hay documentos para el filtro seleccionado.</asp:Panel>
 <asp:Panel ID="pnlResultado" runat="server" Visible="false" CssClass="alert alert-info"><asp:Literal ID="litResultado" runat="server" /></asp:Panel>
+<asp:Panel ID="pnlComenzarRevision" runat="server" Visible="false" CssClass="mb-3"><asp:HyperLink ID="lnkComenzarRevision" runat="server" CssClass="btn btn-primary">Comenzar revisión</asp:HyperLink></asp:Panel>
 <asp:Panel ID="pnlTabla" runat="server" CssClass="card border-0 shadow-sm overflow-hidden documents-table-card">
 <div class="table-responsive documents-table-wrap">
-    <asp:Repeater ID="rptDocumentos" runat="server" OnItemCommand="Documentos_ItemCommand">
+    <asp:Repeater ID="rptDocumentos" runat="server">
         <HeaderTemplate>
             <table class="table table-striped table-hover table-sm align-middle mb-0 documents-table">
                 <colgroup>
@@ -35,7 +36,7 @@
                 <td class="doc-confidence"><%#: Eval("Confianza") %></td>
                 <td class="doc-reason text-truncate" title='<%#: Eval("Motivo") %>'><%#: Eval("Motivo") %></td>
                 <td class="doc-origin"><%#: Eval("OrigenTipo") %></td>
-                <td class="text-nowrap"><a class="btn btn-sm btn-outline-secondary" target="_blank" href='<%#: "Documento_Ver.aspx?id="+Eval("Id") %>'>Ver</a><asp:PlaceHolder runat="server" Visible='<%# (bool)Eval("PendienteRevision") %>'><asp:TextBox ID="txtObservacion" runat="server" MaxLength="1000" CssClass="form-control form-control-sm my-1" placeholder="Observación opcional" /><asp:LinkButton runat="server" CommandName="FACTURA" CommandArgument='<%# Eval("Id") %>' CssClass="btn btn-sm btn-success me-1" OnClientClick="return confirm('¿Confirmar este documento como factura?');">Confirmar factura</asp:LinkButton><asp:LinkButton runat="server" CommandName="OTRO_DOCUMENTO" CommandArgument='<%# Eval("Id") %>' CssClass="btn btn-sm btn-outline-warning me-1" OnClientClick="return confirm('¿Descartar y etiquetar como OTRO_DOCUMENTO?');">Otro documento</asp:LinkButton><asp:LinkButton runat="server" CommandName="NO_DOCUMENTO" CommandArgument='<%# Eval("Id") %>' CssClass="btn btn-sm btn-outline-danger" OnClientClick="return confirm('¿Descartar y etiquetar como NO_DOCUMENTO?');">No es un documento</asp:LinkButton></asp:PlaceHolder></td>
+                <td class="text-nowrap"><asp:PlaceHolder runat="server" Visible='<%# (bool)Eval("PendienteRevision") %>'><a class="btn btn-sm btn-primary me-1" href='<%#: "Documento_Revisar.aspx?id="+Eval("Id") %>'>Revisar</a></asp:PlaceHolder><a class="btn btn-sm btn-outline-secondary" target="_blank" href='<%#: "Documento_Ver.aspx?id="+Eval("Id") %>'>Ver</a></td>
             </tr>
         </ItemTemplate>
         <FooterTemplate></tbody></table></FooterTemplate>
