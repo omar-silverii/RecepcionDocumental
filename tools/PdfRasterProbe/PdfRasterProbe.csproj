@@ -72,6 +72,7 @@
     <Compile Include="H1D8BProductRegressionProbe.cs" />
     <Compile Include="H1D9AOnnxRuntimeProbe.cs" />
     <Compile Include="H1D9BVisualAssetProbe.cs" />
+    <Compile Include="H1D9DVisualInferenceParityProbe.cs" />
     <None Include="App.config" />
     <None Include="Assets\H1D9A\mul_1.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

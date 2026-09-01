@@ -1,0 +1,20 @@
+{
+  "milestone": "H1D9D",
+  "status": "NO_APROBADO",
+  "frozen_hashes": {"dataset.csv": "AFECA7A2F995CE1B2DF6F9DAF3501A392CC7FB4DD1509900A19D1588E26794C2", "frozen-test-groups.txt": "FADEA71A298125E8CE0EB65C31F6232EAAE72EB71F33141B912D23F4E59603E4", "fold-manifest.csv": "9E4A9ACC7DB4B042A96A28502745ADC32F78AF7866A45918000668C127D895D9", "candidate.onnx": "A1DC24FE90C3C14303C3319EC0BD6D9EF95E91CC82C9B38E2FBAAEB0EF826811", "candidate-checkpoint.pt": "F6F552CF5FAD856D7FB57352C63C4CD68C3E3E0F6C039C3C7623B030FD965F27"},
+  "runtime": {"onnx_runtime": "1.29.0.0", "execution_provider": "CPUExecutionProvider", "framework": ".NET Framework 4.8", "process_x64": true},
+  "class_mapping": {"NO_FACTURA": 0, "FACTURA": 1},
+  "thresholds": {"no_factura": 0.1169927716255188, "factura": 0.79798316955566406},
+  "python_preprocessing": "Pillow BICUBIC; RGB; complete image; aspect-fit 224x224; Python round-to-even; centered white canvas; [0,1]; ImageNet mean/std; NCHW",
+  "csharp_preprocessing": "System.Drawing HighQualityBicubic; RGB; complete image; aspect-fit 224x224; MidpointRounding.ToEven; centered white canvas; [0,1]; ImageNet mean/std; NCHW",
+  "evaluated": {"total": 80, "development": 70, "holdout": 10, "unique_sha256": 80},
+  "delta_abs": {"mean": 0.015999662, "median": 0.011367559, "p95": 0.044785294, "max": 0.082272938},
+  "equalities": {"pred050": 79, "zones": 75},
+  "csharp_timings_ms": {"preprocessing": {"mean": 78.422481, "p50": 101.9324, "p95": 193.148975, "max": 403.0968}, "onnx": {"mean": 7.905945, "p50": 7.64715, "p95": 8.745925, "max": 34.0715}, "total": {"mean": 86.329454, "p50": 108.6822, "p95": 200.716405, "max": 410.8814}},
+  "memory_private_bytes": {"before": 25255936, "after": 52031488, "delta": 26775552},
+  "holdout_csharp": {"file_predictions_correct": 10, "group_predictions_correct": 5, "dangerous_strong_errors": 0},
+  "gates": {"A_integrity": true, "B_pred050": false, "C_zones": false, "D_numeric_drift": false, "E_holdout": true},
+  "training_performed": false,
+  "threshold_tuning_performed": false,
+  "product_modified": false
+}

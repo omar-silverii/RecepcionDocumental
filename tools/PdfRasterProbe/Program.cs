@@ -61,6 +61,8 @@ namespace PdfRasterProbe
                 return H1D9BVisualAssetProbe.Run(args);
             if (args.Length > 0 && string.Equals(args[0], "--h1d9c-export-test-assets", StringComparison.OrdinalIgnoreCase))
                 return H1D9BVisualAssetProbe.RunTest(args);
+            if (args.Length > 0 && string.Equals(args[0], "--h1d9d-visual-parity", StringComparison.OrdinalIgnoreCase))
+                return H1D9DVisualInferenceParityProbe.Run(args);
             if (args.Length != 2) { Console.Error.WriteLine("Uso: PdfRasterProbe <pdf1> <pdf2>"); return 2; }
             var failed = false;
             foreach (var path in args)
