@@ -91,6 +91,19 @@ Validación funcional real completada para adjuntos directos, ZIP, RAR y ZIP ani
 - H1D3A2f quedó completado. La Parte A incorporó mediante `import-reviewed` ocho PDF revisados: tres grupos nuevos FACTURA y cinco archivos OTRO_DOCUMENTO organizados en cuatro grupos nuevos. El corpus actual suma 40 hashes y 27 grupos: FACTURA 21 archivos/13 grupos, OTRO_DOCUMENTO 12/11 y NO_DOCUMENTO 7/3. No existen duplicados exactos, fugas entre splits ni grupos con etiquetas mezcladas; el estado continúa `INSUFICIENTE`.
 - H1D3A2f Parte B generó localmente `tools/DocumentAiProbe/H1D3A2f_NoDocumento_Revision.zip` para revisión humana: 27 candidatos gráficos únicos provenientes de 15 mensajes/orígenes, sin Label ni GroupId. El muestreo Gmail fue exclusivamente de lectura, excluyó hashes ya presentes y FlightAware como fuente deliberada, respetó cinco imágenes por MessageId y no modificó `dataset.csv` ni el corpus. No se entrenó IA ni se publicó. El próximo hito, todavía no implementado, es H1D3A2g: revisión humana y eventual `import-reviewed` de candidatos aprobados.
 
+### Estado consolidado al 31/08/2026
+
+- **H1D5C2 — VALIDADO:** fusión conservadora y OCR PDF sobre raster de página completa integrados y validados.
+- **H1D6A2 / H1D6B — VALIDADOS:** prueba con Gmail real y funcionamiento normal de la sincronización confirmados.
+- **H1D7A — VALIDADO:** resolución humana de pendientes como `FACTURA` o `DESCARTAR`, con etiqueta humana explícita.
+- **H1D7B2 — BENCHMARK APROBADO, NO PRODUCTIVO:** el modelo visual H1D4A se reprodujo, pero no está aprobado para producción y no interviene en decisiones.
+- **H1D7C — IMPLEMENTADO:** estación operativa para revisar un documento pendiente por vez.
+- **H1D7C1 — PENDIENTE / NO IMPLEMENTADO.**
+- **H1D8A — NO APROBADO:** la jerarquía textual candidata no superó el gate y no se integró.
+- **H1D8B — APROBADO E INTEGRADO:** `RasterQrDetector` reutiliza el raster ya generado para OCR y combina QR ARCA mediante la lógica existente. B4C8 y D099 se promovieron correctamente; regresión productiva 80/80, `FACTURA → DESCARTAR = 0` y falsos `FACTURA = 0`.
+
+El próximo objetivo es estudiar una IA visual real, local/offline, para `FACTURA` frente a `NO_FACTURA`, conservando la estructura espacial del documento. H1D4A y sus histogramas no continuarán como candidato productivo.
+
 ## Configuración operativa y logs
 
 La aplicación carga una vez `RecepcionDocumental.ini` desde la raíz física al iniciar. El INI define el nombre del proyecto, las rutas absolutas `Logs`, `Trabajo`, `Facturas` y `Revisar`, los límites ZIP y `Gmail/RedirectUri`. El archivo real está excluido de Git y se proporciona `RecepcionDocumental.ini.example`.

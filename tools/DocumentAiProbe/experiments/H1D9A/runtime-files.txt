@@ -1,0 +1,11 @@
+H1D9A - archivos ONNX Runtime desplegados en tools/PdfRasterProbe/bin
+
+Microsoft.ML.OnnxRuntime.dll | 233272 bytes | assembly 1.29.0.0
+Microsoft.ML.OnnxRuntime.pdb | 74500 bytes
+onnxruntime.dll | 16149344 bytes | file version 1.29.0.20260811.4.2e2543f | Windows x64 CPU | cargado correctamente
+onnxruntime.lib | 2124 bytes
+onnxruntime_providers_shared.dll | 21856 bytes | file version 1.29.0.20260811.4.2e2543f
+onnxruntime_providers_shared.lib | 2314 bytes
+Assets/H1D9A/mul_1.onnx | 130 bytes | SHA-256 71F431C4E9321EC6FBEB158D02ED240459A7DCC98673FA79A4F439CE42EFAF10
+
+No se desplegaron proveedores CUDA, GPU ni DirectML para H1D9A.
