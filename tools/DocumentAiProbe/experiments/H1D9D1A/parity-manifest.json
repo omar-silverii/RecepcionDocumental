@@ -1,0 +1,16 @@
+{
+  "milestone": "H1D9D1A",
+  "status": "NO_APROBADO",
+  "stopped_at": "SOURCE_RGB",
+  "previous_csv_actual_equal_true": 60,
+  "source_rgb_equal": 60,
+  "source_width_equal": 80,
+  "source_height_equal": 80,
+  "negative_coefficient_rounding_modified": false,
+  "resize_executed": false,
+  "tensor_executed": false,
+  "final_onnx_executed": false,
+  "training_performed": false,
+  "threshold_tuning_performed": false,
+  "product_modified": false
+}

@@ -1,0 +1,15 @@
+{
+  "milestone": "H1D9D1B",
+  "status": "APROBADO",
+  "source_total": 80,
+  "source_equal": 80,
+  "format_counts": {"Format24bppRgb": 28, "Format32bppArgb": 51, "Format8bppIndexed": 1},
+  "graphics_used": false,
+  "resize_executed": false,
+  "tensor_executed": false,
+  "final_onnx_executed": false,
+  "temporary_rgb_references_deleted": true,
+  "training_performed": false,
+  "threshold_tuning_performed": false,
+  "product_modified": false
+}

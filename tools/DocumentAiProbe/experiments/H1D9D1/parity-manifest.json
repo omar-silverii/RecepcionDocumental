@@ -1,0 +1,18 @@
+{
+  "milestone": "H1D9D1",
+  "status": "NO_APROBADO",
+  "pillow_version": "12.3.0",
+  "onnx_runtime": "1.29.0",
+  "source_rgb_equal": 80,
+  "python_tensor_onnx_max_delta": 0.000000000,
+  "target_rgb_equal": 0,
+  "tensor_max_delta": 4.464285851,
+  "pred050_equal": 78,
+  "zones_equal": 76,
+  "probability_delta": {"mean": 0.018621264, "p95": 0.108028039, "max": 0.461397022},
+  "gates": [true,true,false,false,false,true],
+  "temporary_binaries_deleted": true,
+  "training_performed": false,
+  "threshold_tuning_performed": false,
+  "product_modified": false
+}
