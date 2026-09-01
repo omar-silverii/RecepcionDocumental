@@ -86,6 +86,15 @@ namespace PdfRasterProbe
             }
         }
 
+        internal static byte[] DecodeRgbDirect(string path, out int width, out int height)
+        {
+            Audit audit;
+            var rgb = DecodeRgbDirect(path, out audit);
+            width = audit.Width;
+            height = audit.Height;
+            return rgb;
+        }
+
         private static void WriteArtifacts(string output, Dictionary<string, Dictionary<string, string>> references, List<Result> results)
         {
             var formats = results.GroupBy(x => x.Audit.PixelFormat).OrderBy(x => x.Key).ToList(); var mismatches = results.Where(x => !x.HashEqual || !x.WidthEqual || !x.HeightEqual).ToList();

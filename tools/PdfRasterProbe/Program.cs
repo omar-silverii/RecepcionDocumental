@@ -67,6 +67,8 @@ namespace PdfRasterProbe
                 return H1D9D1PillowParityProbe.Run(args);
             if (args.Length > 0 && string.Equals(args[0], "--h1d9d1b-direct-rgb", StringComparison.OrdinalIgnoreCase))
                 return H1D9D1BDirectRgbProbe.Run(args);
+            if (args.Length > 0 && string.Equals(args[0], "--h1d9d1c-resampler-parity", StringComparison.OrdinalIgnoreCase))
+                return H1D9D1CResamplerParityProbe.Run(args);
             if (args.Length != 2) { Console.Error.WriteLine("Uso: PdfRasterProbe <pdf1> <pdf2>"); return 2; }
             var failed = false;
             foreach (var path in args)

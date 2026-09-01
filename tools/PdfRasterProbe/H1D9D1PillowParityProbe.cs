@@ -133,7 +133,7 @@ namespace PdfRasterProbe
           for (var xx = 0; xx < output; xx++) { var center = (xx + .5) * scale; var xmin = Math.Max(0, (int)(center - support + .5)); var xmax = Math.Min(input, (int)(center + support + .5)); var values = new double[xmax - xmin]; var total = 0.0;
             for (var x = 0; x < values.Length; x++) { values[x] = Cubic((x + xmin - center + .5) / filterScale); total += values[x]; }
             if (total != 0) for (var x = 0; x < values.Length; x++) values[x] /= total;
-            result[xx] = new Coeff { Start = xmin, C = values.Select(v => (int)(.5 + v * (1 << Precision))).ToArray() }; } return result; }
+            result[xx] = new Coeff { Start = xmin, C = values.Select(v => v < 0 ? (int)(-.5 + v * (1 << Precision)) : (int)(.5 + v * (1 << Precision))).ToArray() }; } return result; }
         private static double Cubic(double x) { x = Math.Abs(x); return x < 1 ? ((1.5 * x - 2.5) * x * x + 1) : x < 2 ? (((-.5 * x + 2.5) * x - 4) * x + 2) : 0; }
         private static byte Clip(long x) { return x < 0 ? (byte)0 : x > 255 ? (byte)255 : (byte)x; }
 

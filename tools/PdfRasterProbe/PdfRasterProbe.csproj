@@ -75,6 +75,7 @@
     <Compile Include="H1D9DVisualInferenceParityProbe.cs" />
     <Compile Include="H1D9D1PillowParityProbe.cs" />
     <Compile Include="H1D9D1BDirectRgbProbe.cs" />
+    <Compile Include="H1D9D1CResamplerParityProbe.cs" />
     <None Include="App.config" />
     <None Include="Assets\H1D9A\mul_1.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
