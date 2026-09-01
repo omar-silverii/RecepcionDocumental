@@ -129,7 +129,7 @@ def read_csv(path):
 
 def write_csv(path, fieldnames, rows):
     with open(path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore", lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
@@ -501,10 +501,35 @@ def main():
             lines.append(f"| {level} | {m['tn']} | {m['fp']} | {m['fn']} | {m['tp']} | {fmt(m['recall_factura'])} | {fmt(m['precision_factura'])} | {fmt(m['f1_factura'])} | {fmt(m['balanced_accuracy'])} | {fmt(m['roc_auc'])} | {fmt(m['pr_auc'])} |")
         lines += [""]
     Path(output / "cv-metrics.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    comparison_lines = ["# Comparación de modelos H1D9B", ""]
-    comparison_lines.append("- Criterio principal: seguridad FACTURA y métricas group-aware.")
-    comparison_lines.append(f"- Ganador OOF: **{winner or 'ninguno'}**.")
-    comparison_lines.append(f"- Gate candidato: **{'APROBADO COMO CANDIDATO' if winner else 'NO APROBADO'}**.")
+    status = "APROBADO COMO CANDIDATO" if winner else "NO APROBADO"
+    comparison_lines = ["# Comparación de modelos H1D9B", "", "- Criterio principal: seguridad FACTURA y métricas group-aware.",
+                        f"- Ganador OOF: **{winner or 'ninguno'}**.", f"- Gate candidato: **{status}**.", "",
+                        "| Modelo | Recall FACTURA grupo | Balanced accuracy grupo | ROC-AUC grupo | PR-AUC grupo |",
+                        "|---|---:|---:|---:|---:|"]
+    for name, metrics in comparison.items():
+        group = metrics["group"]
+        comparison_lines.append(f"| {name} | {fmt(group['recall_factura'])} | {fmt(group['balanced_accuracy'])} | {fmt(group['roc_auc'])} | {fmt(group['pr_auc'])} |")
+    if winner:
+        winner_group = comparison[winner]["group"]
+        others = [name for name in comparison if name != winner]
+        comparison_lines += ["", f"**{winner}** fue seleccionado por priorizar seguridad sobre FACTURA: recall group-level {fmt(winner_group['recall_factura'])}, "
+                             f"balanced accuracy {fmt(winner_group['balanced_accuracy'])} y ROC-AUC {fmt(winner_group['roc_auc'])}."]
+        for name in others:
+            group = comparison[name]["group"]
+            comparison_lines.append(f"{name} quedó descartado: aunque obtuvo ROC-AUC {fmt(group['roc_auc'])}, su recall FACTURA group-level fue {fmt(group['recall_factura'])}.")
+        comparison_lines += [""]
+        for name, metrics in comparison.items():
+            recalls = [fold["recall_factura"] for fold in metrics["fold_oof_metrics"]]
+            aucs = [fold["roc_auc"] for fold in metrics["fold_oof_metrics"]]
+            zero_folds = sum(value == 0 for value in recalls)
+            comparison_lines.append(f"- Estabilidad {name}: recall FACTURA por fold {', '.join(fmt(x) for x in recalls)}; "
+                                    f"ROC-AUC {fmt(min(aucs))}–{fmt(max(aucs))}; folds con recall 0: {zero_folds}.")
+        winner_file_threshold = next(x for x in threshold_rows if x["Model"] == winner and x["Level"] == "FILE")
+        winner_group_threshold = next(x for x in threshold_rows if x["Model"] == winner and x["Level"] == "GROUP")
+        comparison_lines += ["", f"Cobertura segura {winner}: {winner_file_threshold['NoFacturaFuerte'] + winner_file_threshold['FacturaFuerte']}/{winner_file_threshold['Total']} archivos y "
+                             f"{winner_group_threshold['NoFacturaFuerte'] + winner_group_threshold['FacturaFuerte']}/{winner_group_threshold['Total']} grupos, "
+                             "con 0 errores conocidos en ambas zonas fuertes.",
+                             "", "El corpus sigue siendo pequeño; la variación entre folds exige tratar el candidato con cautela en H1D9C. Los thresholds son diagnósticos OOF y no se integraron al producto."]
     Path(output / "model-comparison.md").write_text("\n".join(comparison_lines) + "\n", encoding="utf-8")
 
     base_weights = {name: base_weight_info(name) for name in MODEL_SPECS}
@@ -516,14 +541,31 @@ def main():
         "test_used": False, "test_scores_generated": False,
     }
     if candidate:
-        manifest["candidate"] = {"onnx": {"file": candidate["onnx"].name, "sha256": sha256(candidate["onnx"]), "bytes": candidate["onnx"].stat().st_size},
+        manifest["candidate"] = {"onnx": {"file": candidate["onnx"].name, "sha256": sha256(candidate["onnx"]), "bytes": candidate["onnx"].stat().st_size, "external_data": False},
                                  "checkpoint": {"file": candidate["checkpoint"].name, "sha256": sha256(candidate["checkpoint"]), "bytes": candidate["checkpoint"].stat().st_size},
                                  "phase1_epochs": candidate["phase1_epochs"], "phase2_epochs": candidate["phase2_epochs"],
                                  "pytorch_onnx_max_abs_error": candidate["max_abs_error"], "ort_cpu_mean_ms": candidate["ort_cpu_mean_ms"], "ort_cpu_p95_ms": candidate["ort_cpu_p95_ms"]}
     Path(output / "candidate-manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    summary = ["# H1D9B — Benchmark visual FACTURA vs NO_FACTURA", "", f"**{'APROBADO COMO CANDIDATO' if winner else 'NO APROBADO'}**", "",
+    summary = ["# H1D9B — Benchmark visual FACTURA vs NO_FACTURA", "", f"**{status}**", "",
                "- Assets: 70/70 de desarrollo; TEST congelado no rasterizado ni utilizado por el entrenador.", "- Folds: 5, estratificados por clase y agrupados por GroupId; leakage GroupId/SHA/TEST = 0.",
-               f"- Ganador: {winner or 'ninguno'}.", "- Producto WebForms, H1D8B, SQL, Gmail, OCR, QR y clasificación productiva no fueron modificados.", "- H1D9C no fue ejecutado."]
+               f"- Ganador: {winner or 'ninguno'}."]
+    for name, metrics in comparison.items():
+        group = metrics["group"]
+        summary.append(f"- {name} group-level: recall FACTURA {fmt(group['recall_factura'])}, balanced accuracy {fmt(group['balanced_accuracy'])}, ROC-AUC {fmt(group['roc_auc'])} y PR-AUC {fmt(group['pr_auc'])}.")
+    if winner and candidate:
+        file_threshold = next(x for x in threshold_rows if x["Model"] == winner and x["Level"] == "FILE")
+        group_threshold = next(x for x in threshold_rows if x["Model"] == winner and x["Level"] == "GROUP")
+        onnx_hash = sha256(candidate["onnx"])
+        checkpoint_hash = sha256(candidate["checkpoint"])
+        summary += [f"- Zonas fuertes {winner}: `T_NO_FACTURA={file_threshold['TNoFactura']:.10f}`, `T_FACTURA={file_threshold['TFactura']:.10f}`; "
+                    f"cobertura {file_threshold['NoFacturaFuerte'] + file_threshold['FacturaFuerte']}/{file_threshold['Total']} archivos y "
+                    f"{group_threshold['NoFacturaFuerte'] + group_threshold['FacturaFuerte']}/{group_threshold['Total']} grupos, con 0 errores conocidos.",
+                    f"- Candidato final: `H1D9B-CANDIDATE-001`, {winner}, {candidate['phase1_epochs']} épocas de head y {candidate['phase2_epochs']} de ajuste del último bloque.",
+                    f"- ONNX autocontenido: {candidate['onnx'].stat().st_size} bytes; SHA-256 `{onnx_hash}`; `external_data=false`.",
+                    f"- Checkpoint entrenable: {candidate['checkpoint'].stat().st_size} bytes; SHA-256 `{checkpoint_hash}`.",
+                    f"- Paridad PyTorch/ONNX Runtime: error absoluto máximo {candidate['max_abs_error']:.10f} sobre imágenes de desarrollo.",
+                    f"- ONNX Runtime CPU: media {candidate['ort_cpu_mean_ms']:.3f} ms y P95 {candidate['ort_cpu_p95_ms']:.3f} ms."]
+    summary += ["- TEST no utilizado y sin scores generados.", "- Producto WebForms, H1D8B, SQL, Gmail, OCR, QR y clasificación productiva no fueron modificados.", "- H1D9C no fue ejecutado."]
     Path(output / "resumen.md").write_text("\n".join(summary) + "\n", encoding="utf-8")
     print("H1D9B | " + ("APROBADO COMO CANDIDATO | Winner=" + winner if winner else "NO APROBADO"), flush=True)
 

@@ -1,0 +1,133 @@
+{
+  "candidate_id": "H1D9B-CANDIDATE-001",
+  "candidate_onnx_sha256": "A1DC24FE90C3C14303C3319EC0BD6D9EF95E91CC82C9B38E2FBAAEB0EF826811",
+  "dataset_sha256": "AFECA7A2F995CE1B2DF6F9DAF3501A392CC7FB4DD1509900A19D1588E26794C2",
+  "frozen_test_groups_sha256": "FADEA71A298125E8CE0EB65C31F6232EAAE72EB71F33141B912D23F4E59603E4",
+  "h1d9b_development_manifest_sha256": "9E4A9ACC7DB4B042A96A28502745ADC32F78AF7866A45918000668C127D895D9",
+  "preprocessing": {
+    "input": "complete page/image",
+    "resize": "preserve aspect ratio to fit 224x224",
+    "crop": false,
+    "canvas": [
+      224,
+      224
+    ],
+    "centering": true,
+    "padding_rgb": [
+      255,
+      255,
+      255
+    ],
+    "color": "RGB",
+    "float_range": [
+      0.0,
+      1.0
+    ],
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "thresholds_pre_registered": {
+    "T_NO_FACTURA": 0.1169927716255188,
+    "T_FACTURA": 0.7979831695556641
+  },
+  "timestamp_utc": "2026-09-01T11:56:35.986824+00:00",
+  "onnxruntime_version": "1.29.0",
+  "execution_provider": "CPUExecutionProvider",
+  "test_file_count": 10,
+  "test_group_count": 5,
+  "file_metrics": {
+    "tn": 6,
+    "fp": 0,
+    "fn": 0,
+    "tp": 4,
+    "recall_factura": 1.0,
+    "precision_factura": 1.0,
+    "specificity_no_factura": 1.0,
+    "f1_factura": 1.0,
+    "balanced_accuracy": 1.0,
+    "roc_auc": 1.0,
+    "pr_auc": 1.0
+  },
+  "group_metrics": {
+    "tn": 3,
+    "fp": 0,
+    "fn": 0,
+    "tp": 2,
+    "recall_factura": 1.0,
+    "precision_factura": 1.0,
+    "specificity_no_factura": 1.0,
+    "f1_factura": 1.0,
+    "balanced_accuracy": 1.0,
+    "roc_auc": 1.0,
+    "pr_auc": 1.0
+  },
+  "zones": {
+    "NO_FACTURA_FUERTE": 2,
+    "FACTURA_FUERTE": 2,
+    "INCIERTO_VISUAL": 6,
+    "strong_no_errors": 0,
+    "strong_factura_errors": 0
+  },
+  "group_results": [
+    {
+      "GroupId": "comprobante-pago-bancario",
+      "LabelBinario": "NO_FACTURA",
+      "Files": 1,
+      "PFactura": 0.3160836100578308,
+      "Pred050": "NO_FACTURA",
+      "Correct": true
+    },
+    {
+      "GroupId": "factura-familia-arillo",
+      "LabelBinario": "FACTURA",
+      "Files": 1,
+      "PFactura": 0.8368947505950928,
+      "Pred050": "FACTURA",
+      "Correct": true
+    },
+    {
+      "GroupId": "factura-homologacion-c-00004-00000002",
+      "LabelBinario": "FACTURA",
+      "Files": 3,
+      "PFactura": 0.7551020185152689,
+      "Pred050": "FACTURA",
+      "Correct": true
+    },
+    {
+      "GroupId": "flightaware-newsletter",
+      "LabelBinario": "NO_FACTURA",
+      "Files": 4,
+      "PFactura": 0.18491945322602987,
+      "Pred050": "NO_FACTURA",
+      "Correct": true
+    },
+    {
+      "GroupId": "otro-solicitud-nota-credito-banco-patagonia",
+      "LabelBinario": "NO_FACTURA",
+      "Files": 1,
+      "PFactura": 0.3265968859195709,
+      "Pred050": "NO_FACTURA",
+      "Correct": true
+    }
+  ],
+  "gates": {
+    "A_integrity": true,
+    "B_factura_to_no_factura_fuerte_zero": true,
+    "C_no_no_factura_to_factura_fuerte": true,
+    "D_all_groups_correct_050": true,
+    "E_conceptual_predictions": true
+  },
+  "status": "H1D9C APROBADO",
+  "ort_inference_mean_ms": 8.123539999905915,
+  "ort_inference_p95_ms": 9.467800000493298,
+  "training_performed": false,
+  "threshold_tuning_performed": false
+}

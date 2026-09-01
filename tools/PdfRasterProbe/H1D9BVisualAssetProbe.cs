@@ -17,6 +17,10 @@ namespace PdfRasterProbe
         private const string DatasetHash = "AFECA7A2F995CE1B2DF6F9DAF3501A392CC7FB4DD1509900A19D1588E26794C2";
         private const string FrozenHash = "FADEA71A298125E8CE0EB65C31F6232EAAE72EB71F33141B912D23F4E59603E4";
         private const int PdfDpi = 300;
+        private static readonly string[] ExpectedFrozenGroups = {
+            "factura-familia-arillo", "factura-homologacion-c-00004-00000002", "flightaware-newsletter",
+            "comprobante-pago-bancario", "otro-solicitud-nota-credito-banco-patagonia"
+        };
 
         internal static int Run(string[] args)
         {
@@ -41,44 +45,7 @@ namespace PdfRasterProbe
                 var test = all.Where(x => frozenGroups.Contains(x.GroupId)).ToList();
                 ValidateUniverse(all, development, test, frozenGroups);
 
-                var assets = Path.Combine(output, "assets");
-                Directory.CreateDirectory(assets);
-                var manifest = new List<string> { "Sha256,GroupId,LabelOriginal,LabelBinario,SourceType,CorpusPath,VisualAssetPath,Width,Height,Method,Dpi" };
-                foreach (var row in development)
-                {
-                    var target = Path.Combine(assets, row.Sha256 + ".png");
-                    int width;
-                    int height;
-                    string method;
-                    int? dpi;
-                    if (string.Equals(row.SourceType, "PDF", StringComparison.OrdinalIgnoreCase))
-                    {
-                        Conversion.SavePng(target, File.ReadAllBytes(row.Path), 0, options: new RenderOptions { Dpi = PdfDpi });
-                        using (var image = Image.FromFile(target)) { width = image.Width; height = image.Height; }
-                        method = "PDFTOIMAGE_FIRST_PAGE_300_DPI_NO_CROP";
-                        dpi = PdfDpi;
-                    }
-                    else
-                    {
-                        using (var image = Image.FromFile(row.Path))
-                        {
-                            ApplyExifOrientation(image);
-                            width = image.Width;
-                            height = image.Height;
-                            image.Save(target, ImageFormat.Png);
-                        }
-                        method = "SYSTEM_DRAWING_EXIF_ORIENTED_PNG_NO_CROP";
-                        dpi = null;
-                    }
-                    ValidatePng(target, width, height);
-                    manifest.Add(Join(row.Sha256, row.GroupId, row.Label, row.Label == "FACTURA" ? "FACTURA" : "NO_FACTURA", row.SourceType,
-                        row.Path, target, width.ToString(CultureInfo.InvariantCulture), height.ToString(CultureInfo.InvariantCulture), method,
-                        dpi.HasValue ? dpi.Value.ToString(CultureInfo.InvariantCulture) : string.Empty));
-                    Console.WriteLine("H1D9B_ASSET | " + manifest.Count.ToString(CultureInfo.InvariantCulture) + "/71 | Sha256=" + row.Sha256 + " | " + width + "x" + height + " | " + method);
-                }
-                if (manifest.Count != 71 || Directory.GetFiles(assets, "*.png").Length != 70)
-                    throw new InvalidDataException("Gate de assets H1D9B falló: se esperaban exactamente 70 assets.");
-                File.WriteAllLines(Path.Combine(output, "asset-manifest.csv"), manifest, new UTF8Encoding(false));
+                ExportRows(development, output, "asset-manifest.csv", "H1D9B_ASSET");
                 Console.WriteLine("H1D9B_ASSETS | Gate=PASS | Development=70 | TestExcluido=10 | Assets=70 | Output=" + output);
                 return 0;
             }
@@ -88,6 +55,83 @@ namespace PdfRasterProbe
                 Console.Error.WriteLine(ex.ToString());
                 return 1;
             }
+        }
+
+        internal static int RunTest(string[] args)
+        {
+            if (args.Length != 4)
+            {
+                Console.Error.WriteLine("Uso: --h1d9c-export-test-assets <dataset.csv> <frozen-test-groups.txt> <output>");
+                return 2;
+            }
+            try
+            {
+                var dataset = Path.GetFullPath(args[1]);
+                var frozen = Path.GetFullPath(args[2]);
+                var output = Path.GetFullPath(args[3]);
+                ValidateHash(dataset, DatasetHash);
+                ValidateHash(frozen, FrozenHash);
+                if (Directory.Exists(output)) throw new IOException("La salida H1D9C ya existe: " + output);
+                var frozenGroups = new HashSet<string>(File.ReadAllLines(frozen).Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim()), StringComparer.Ordinal);
+                if (!frozenGroups.SetEquals(ExpectedFrozenGroups)) throw new InvalidDataException("Los GroupId frozen no coinciden con los cinco grupos pre-registrados.");
+                var all = Load(dataset);
+                var development = all.Where(x => !frozenGroups.Contains(x.GroupId)).ToList();
+                var test = all.Where(x => frozenGroups.Contains(x.GroupId)).ToList();
+                ValidateUniverse(all, development, test, frozenGroups);
+                if (test.Count(x => x.Label == "FACTURA") != 4 || test.Select(x => new { x.GroupId, x.Label }).Distinct().Count(x => x.Label == "FACTURA") != 2)
+                    throw new InvalidDataException("La composición FACTURA del TEST no coincide con 4 archivos/2 grupos.");
+                ExportRows(test, output, "test-asset-manifest.csv", "H1D9C_TEST_ASSET");
+                Console.WriteLine("H1D9C_TEST_ASSETS | Gate=PASS | Test=10 | Groups=5 | Assets=10 | Output=" + output);
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("H1D9C_TEST_ASSETS | Gate=FAIL");
+                Console.Error.WriteLine(ex.ToString());
+                return 1;
+            }
+        }
+
+        private static void ExportRows(List<Row> rows, string output, string manifestName, string logPrefix)
+        {
+            var assets = Path.Combine(output, "assets");
+            Directory.CreateDirectory(assets);
+            var manifest = new List<string> { "Sha256,GroupId,LabelOriginal,LabelBinario,SourceType,CorpusPath,VisualAssetPath,Width,Height,Method,Dpi" };
+            foreach (var row in rows)
+            {
+                var target = Path.Combine(assets, row.Sha256 + ".png");
+                int width;
+                int height;
+                string method;
+                int? dpi;
+                if (string.Equals(row.SourceType, "PDF", StringComparison.OrdinalIgnoreCase))
+                {
+                    Conversion.SavePng(target, File.ReadAllBytes(row.Path), 0, options: new RenderOptions { Dpi = PdfDpi });
+                    using (var image = Image.FromFile(target)) { width = image.Width; height = image.Height; }
+                    method = "PDFTOIMAGE_FIRST_PAGE_300_DPI_NO_CROP";
+                    dpi = PdfDpi;
+                }
+                else
+                {
+                    using (var image = Image.FromFile(row.Path))
+                    {
+                        ApplyExifOrientation(image);
+                        width = image.Width;
+                        height = image.Height;
+                        image.Save(target, ImageFormat.Png);
+                    }
+                    method = "SYSTEM_DRAWING_EXIF_ORIENTED_PNG_NO_CROP";
+                    dpi = null;
+                }
+                ValidatePng(target, width, height);
+                manifest.Add(Join(row.Sha256, row.GroupId, row.Label, row.Label == "FACTURA" ? "FACTURA" : "NO_FACTURA", row.SourceType,
+                    row.Path, target, width.ToString(CultureInfo.InvariantCulture), height.ToString(CultureInfo.InvariantCulture), method,
+                    dpi.HasValue ? dpi.Value.ToString(CultureInfo.InvariantCulture) : string.Empty));
+                Console.WriteLine(logPrefix + " | " + (manifest.Count - 1).ToString(CultureInfo.InvariantCulture) + "/" + rows.Count.ToString(CultureInfo.InvariantCulture) + " | Sha256=" + row.Sha256 + " | " + width + "x" + height + " | " + method);
+            }
+            if (manifest.Count != rows.Count + 1 || Directory.GetFiles(assets, "*.png").Length != rows.Count)
+                throw new InvalidDataException("Gate de assets falló: se esperaban exactamente " + rows.Count.ToString(CultureInfo.InvariantCulture) + " assets.");
+            File.WriteAllText(Path.Combine(output, manifestName), string.Join("\n", manifest) + "\n", new UTF8Encoding(false));
         }
 
         private static void ValidateUniverse(List<Row> all, List<Row> development, List<Row> test, HashSet<string> frozenGroups)
