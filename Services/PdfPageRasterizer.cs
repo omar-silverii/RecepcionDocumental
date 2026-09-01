@@ -15,6 +15,7 @@ namespace RecepcionDocumental.Services
         public string FailureReason { get; set; }
         public int PageCount { get; set; }
         public int DurationMilliseconds { get; set; }
+        public int PagesRendered { get; set; }
     }
 
     public static class PdfPageRasterizer
@@ -29,7 +30,7 @@ namespace RecepcionDocumental.Services
                 var source=new FileInfo(path);if(!source.Exists)return Failure(result,"No se encontró el PDF para rasterizar.",false,stopwatch);
                 if(source.Length>OcrLimits.MaxSourceBytes)return Limited(result,"El PDF supera el tamaño de origen permitido para OCR.",stopwatch);
                 var pdf=File.ReadAllBytes(path);result.PageCount=Conversion.GetPageCount(pdf);if(result.PageCount<=0)return Failure(result,"El PDF no contiene páginas rasterizables.",false,stopwatch);
-                var output=workspace.CreatePath(".png");Conversion.SavePng(output,pdf,0,options:new RenderOptions(OcrLimits.PdfRasterDpi));
+                var output=workspace.CreatePath(".png");Conversion.SavePng(output,pdf,0,options:new RenderOptions(OcrLimits.PdfRasterDpi));result.PagesRendered=1;
                 int width,height;using(var image=Image.FromFile(output)){width=image.Width;height=image.Height;}var pixels=(long)width*height;
                 if(width<=0||height<=0||pixels>OcrLimits.MaxTotalPixels)return Limited(result,"La primera página rasterizada supera el límite de seguridad visual.",stopwatch);
                 result.Images.Add(new OcrImageData{Bytes=File.ReadAllBytes(output),Width=width,Height=height});Stop(result,stopwatch);return result;
@@ -62,6 +63,7 @@ namespace RecepcionDocumental.Services
                 {
                     var output = workspace.CreatePath(".png");
                     Conversion.SavePng(output, pdf, page, options: options);
+                    result.PagesRendered++;
                     int width;
                     int height;
                     using (var image = Image.FromFile(output)) { width = image.Width; height = image.Height; }

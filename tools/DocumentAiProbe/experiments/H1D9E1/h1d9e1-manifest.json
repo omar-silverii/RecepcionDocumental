@@ -1,0 +1,18 @@
+{
+  "milestone": "H1D9E1",
+  "status": "NO_APROBADO",
+  "source_zip_sha256": "E26AA3DB7CD4A6FEFA157833F6F960907A4F3CBB344F1A2C198ED349FA1FFF33",
+  "configured_model_version": "H1D9B-CANDIDATE-001",
+  "effective_model_version": "H1D9B-CANDIDATE-001",
+  "model_sha256": "A1DC24FE90C3C14303C3319EC0BD6D9EF95E91CC82C9B38E2FBAAEB0EF826811",
+  "full_manifest_contract": "APROBADO",
+  "unsupported_version": { "status": "ERROR", "code": "MODEL_VERSION_UNSUPPORTED", "eligible": 70, "sessions_created": 0, "fallback": false },
+  "contract_corruption_cases": { "architecture": "CONTRACT_INVALID", "preprocessing": "CONTRACT_INVALID", "class_mapping": "CONTRACT_INVALID", "threshold": "CONTRACT_INVALID", "external_data": "CONTRACT_INVALID", "sessions_created": 0 },
+  "normal_regression": { "documents": 80, "factura": 18, "revisar": 52, "descartar": 10, "eligible": 70, "ok": 70, "classifications_changed": 0, "sessions_created": 1 },
+  "parity": { "pred050_equal": 70, "zone_equal": 70, "max_abs_delta": 0 },
+  "raster_gate": { "status": "FAILED", "sha256": "70943A213A862A315DB451BAFBADDBFE5C0E45D694BF40FD8E5430FF47A032BA", "rasterizer_calls": 2, "pages_rendered_for_ocr": 1, "pages_rendered_for_shadow": 1 },
+  "sql_modified": false,
+  "ui_modified": false,
+  "training_performed": false,
+  "threshold_tuning_performed": false
+}

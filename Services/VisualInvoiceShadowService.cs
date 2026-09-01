@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.ML.OnnxRuntime;
 using Newtonsoft.Json;
+using RecepcionDocumental.Configuration;
 
 namespace RecepcionDocumental.Services
 {
@@ -52,6 +53,12 @@ namespace RecepcionDocumental.Services
 
         public static int SessionsCreated { get { return _sessionsCreated; } }
 
+        public static VisualShadowResult CreateVersionErrorIfUnsupported(string source)
+        {
+            try { ValidateModelVersion(GetConfiguredModelVersion()); return null; }
+            catch (ModelVersionUnsupportedException ex) { var result=Base(source,false,ex.ModelVersion);result.ErrorCode="MODEL_VERSION_UNSUPPORTED";result.ErrorReason=SafeReason(ex);return result; }
+        }
+
         public static VisualShadowResult CreateRasterError(string source,string reason)
         { var result=Base(source,false);result.ErrorCode="PDF_RASTER_ERROR";result.ErrorReason=string.IsNullOrWhiteSpace(reason)?"No se obtuvo la primera página.":reason;return result; }
 
@@ -60,18 +67,22 @@ namespace RecepcionDocumental.Services
 
         public static VisualShadowResult EvaluateCanonicalPng(byte[] png, string visualSource, bool rasterReused)
         {
-            return EvaluateCanonicalPngCore(png, visualSource, rasterReused, null);
+            return EvaluateCanonicalPngCore(png, visualSource, rasterReused, null, GetConfiguredModelVersion());
         }
 
         public static VisualShadowResult EvaluateCanonicalPngForValidation(byte[] png,string modelDirectory)
-        { return EvaluateCanonicalPngCore(png,"VALIDATION",false,modelDirectory); }
+        { return EvaluateCanonicalPngCore(png,"VALIDATION",false,modelDirectory,ExpectedModelVersion); }
 
-        internal static VisualShadowResult EvaluateCanonicalPngCore(byte[] png, string visualSource, bool rasterReused, string modelDirectoryOverride)
+        public static VisualShadowResult EvaluateConfiguredVersionForValidation(byte[] png,string modelVersion)
+        { return EvaluateCanonicalPngCore(png,"VERSION_VALIDATION",false,null,modelVersion); }
+
+        internal static VisualShadowResult EvaluateCanonicalPngCore(byte[] png, string visualSource, bool rasterReused, string modelDirectoryOverride,string modelVersion)
         {
             var total = Stopwatch.StartNew();
-            var result = Base(visualSource, rasterReused);
+            var result = Base(visualSource, rasterReused,modelVersion);
             try
             {
+                ValidateModelVersion(modelVersion);
                 int width, height;
                 var decode = Stopwatch.StartNew();
                 var source = DecodeRgbDirect(png, out width, out height);
@@ -94,7 +105,7 @@ namespace RecepcionDocumental.Services
                 var normalizeWatch = Stopwatch.StartNew();
                 var tensor = Normalize(target);
                 normalizeWatch.Stop(); result.NormalizeMilliseconds = Ms(normalizeWatch);
-                var state = modelDirectoryOverride == null ? Runtime.Value : LoadRuntime(modelDirectoryOverride);
+                var state = modelDirectoryOverride == null ? Runtime.Value : LoadRuntime(modelDirectoryOverride,modelVersion);
                 var onnxWatch = Stopwatch.StartNew();
                 float pFactura;
                 using (var input = OrtValue.CreateTensorValueFromMemory(tensor, new long[] { 1, 3, Size, Size }))
@@ -116,7 +127,8 @@ namespace RecepcionDocumental.Services
 
         public static VisualShadowResult EvaluateImageFile(string path)
         {
-            var result = Base("IMAGE_CANONICAL_PNG", false);
+            var version=GetConfiguredModelVersion();var result = Base("IMAGE_CANONICAL_PNG", false,version);
+            var versionError=CreateVersionErrorIfUnsupported("IMAGE_CANONICAL_PNG");if(versionError!=null)return versionError;
             try { return EvaluateCanonicalPng(CanonicalizeImage(path), "IMAGE_CANONICAL_PNG", false); }
             catch (Exception ex) { result.Status = "ERROR"; result.ErrorCode = ErrorCode(ex); result.ErrorReason = SafeReason(ex); return result; }
         }
@@ -138,15 +150,16 @@ namespace RecepcionDocumental.Services
             }
         }
 
-        private static RuntimeState LoadRuntime() { return LoadRuntime(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data", "DocumentAi", "Models", ExpectedModelVersion)); }
-        private static RuntimeState LoadRuntime(string directory)
+        private static RuntimeState LoadRuntime() { var version=GetConfiguredModelVersion();ValidateModelVersion(version);return LoadRuntime(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data", "DocumentAi", "Models", version),version); }
+        private static RuntimeState LoadRuntime(string directory,string modelVersion)
         {
+            ValidateModelVersion(modelVersion);
             if (!Environment.Is64BitProcess) throw new BadImageFormatException("Visual shadow requiere un proceso x64.");
             var manifestPath = Path.Combine(directory, "runtime-manifest.json"); var modelPath = Path.Combine(directory, "candidate.onnx");
             if (!File.Exists(manifestPath)) throw new FileNotFoundException("No se encontró el manifest visual.");
             if (!File.Exists(modelPath)) throw new FileNotFoundException("No se encontró el modelo visual.");
             var manifest = JsonConvert.DeserializeObject<RuntimeManifest>(File.ReadAllText(manifestPath));
-            if (manifest == null || manifest.model_version != ExpectedModelVersion || manifest.onnx_sha256 != ExpectedModelSha256 || manifest.onnx_bytes != ExpectedModelBytes || manifest.ort_version != "1.29.0")
+            if (!ManifestIsValid(manifest,modelVersion))
                 throw new InvalidDataException("El manifest visual no coincide con el contrato congelado.");
             var info = new FileInfo(modelPath); if (info.Length != ExpectedModelBytes) throw new InvalidDataException("El tamaño del modelo visual es incorrecto.");
             using (var stream = File.OpenRead(modelPath)) using (var sha = SHA256.Create())
@@ -164,6 +177,23 @@ namespace RecepcionDocumental.Services
             NodeMetadata input, output;
             if (!session.InputMetadata.TryGetValue("image", out input) || !input.Dimensions.SequenceEqual(new[] { 1, 3, 224, 224 })) throw new InvalidDataException("Metadata ONNX de entrada inválida.");
             if (!session.OutputMetadata.TryGetValue("probabilities", out output) || !output.Dimensions.SequenceEqual(new[] { 1, 2 })) throw new InvalidDataException("Metadata ONNX de salida inválida.");
+        }
+
+        private static bool ManifestIsValid(RuntimeManifest manifest,string modelVersion)
+        {
+            string class0,class1;
+            return manifest!=null&&manifest.model_version==modelVersion&&manifest.architecture=="EfficientNet-B0"&&manifest.status=="SHADOW"&&
+                manifest.onnx_sha256==ExpectedModelSha256&&manifest.onnx_bytes==ExpectedModelBytes&&manifest.input!=null&&manifest.input.name=="image"&&Shape(manifest.input.shape,1,3,224,224)&&
+                manifest.output!=null&&manifest.output.name=="probabilities"&&Shape(manifest.output.shape,1,2)&&manifest.classes!=null&&manifest.classes.TryGetValue("0",out class0)&&class0=="NO_FACTURA"&&manifest.classes.TryGetValue("1",out class1)&&class1=="FACTURA"&&manifest.classes.Count==2&&
+                manifest.preprocessing_version==PreprocessingVersion&&manifest.t_no_factura==TNoFactura&&manifest.t_factura==TFactura&&manifest.ort_version=="1.29.0"&&!manifest.external_data;
+        }
+
+        private static bool Shape(int[] actual,params int[] expected){return actual!=null&&actual.SequenceEqual(expected);}
+        private static string GetConfiguredModelVersion(){return ConfiguracionSistema.Actual.VisionShadowModelVersion;}
+        private static void ValidateModelVersion(string version)
+        {
+            if(string.IsNullOrWhiteSpace(version)||version.IndexOf("..",StringComparison.Ordinal)>=0||version.IndexOf(Path.DirectorySeparatorChar)>=0||version.IndexOf(Path.AltDirectorySeparatorChar)>=0||version.IndexOfAny(Path.GetInvalidFileNameChars())>=0||version!=ExpectedModelVersion)
+                throw new ModelVersionUnsupportedException(version);
         }
 
         private static byte[] DecodeRgbDirect(byte[] bytes, out int width, out int height)
@@ -184,12 +214,14 @@ namespace RecepcionDocumental.Services
         private static double Cubic(double x){x=Math.Abs(x);return x<1?((1.5*x-2.5)*x*x+1):x<2?(((-.5*x+2.5)*x-4)*x+2):0;}
         private static byte Clip(long value){return value<0?(byte)0:value>255?(byte)255:(byte)value;}
         private static float[] Normalize(byte[] bytes){var result=new float[Size*Size*3];for(int i=0;i<Size*Size;i++)for(int c=0;c<3;c++)result[c*Size*Size+i]=((bytes[i*3+c]/255f)-Mean[c])/Std[c];return result;}
-        private static VisualShadowResult Base(string source,bool reused){return new VisualShadowResult{Attempted=true,Status="ERROR",ModelVersion=ExpectedModelVersion,ModelSha256=ExpectedModelSha256,PreprocessingVersion=PreprocessingVersion,VisualSource=source,RasterReused=reused};}
+        private static VisualShadowResult Base(string source,bool reused,string modelVersion=null){return new VisualShadowResult{Attempted=true,Status="ERROR",ModelVersion=string.IsNullOrWhiteSpace(modelVersion)?ExpectedModelVersion:modelVersion,ModelSha256=ExpectedModelSha256,PreprocessingVersion=PreprocessingVersion,VisualSource=source,RasterReused=reused};}
         private static int Ms(Stopwatch watch){return (int)Math.Min(int.MaxValue,watch.ElapsedMilliseconds);}
-        private static string ErrorCode(Exception ex){if(ex is FileNotFoundException)return "MODEL_MISSING";if(ex is BadImageFormatException)return "PROCESS_OR_RUNTIME_X64";if(ex is InvalidDataException&&ex.Message.IndexOf("SHA-256",StringComparison.OrdinalIgnoreCase)>=0)return "MODEL_HASH_INVALID";if(ex is InvalidDataException)return "CONTRACT_INVALID";return "VISUAL_INFERENCE_ERROR";}
+        private static string ErrorCode(Exception ex){if(ex is ModelVersionUnsupportedException)return "MODEL_VERSION_UNSUPPORTED";if(ex is FileNotFoundException)return "MODEL_MISSING";if(ex is BadImageFormatException)return "PROCESS_OR_RUNTIME_X64";if(ex is InvalidDataException&&ex.Message.IndexOf("SHA-256",StringComparison.OrdinalIgnoreCase)>=0)return "MODEL_HASH_INVALID";if(ex is InvalidDataException)return "CONTRACT_INVALID";return "VISUAL_INFERENCE_ERROR";}
         private static string SafeReason(Exception ex){var text=ex.GetType().Name+": "+ex.Message;return text.Length<=1000?text:text.Substring(0,1000);}
         private sealed class Coeff{public int Start;public int[] Values;}
         private sealed class RuntimeState{public InferenceSession Session;}
-        private sealed class RuntimeManifest{public string model_version {get;set;} public string onnx_sha256 {get;set;} public long onnx_bytes {get;set;} public string ort_version {get;set;}}
+        private sealed class ModelVersionUnsupportedException:InvalidOperationException{public ModelVersionUnsupportedException(string version):base("La versión visual configurada no está aprobada."){ModelVersion=version;}public string ModelVersion{get;private set;}}
+        private sealed class TensorContract{public string name{get;set;}public int[] shape{get;set;}}
+        private sealed class RuntimeManifest{public string model_version{get;set;}public string architecture{get;set;}public string status{get;set;}public string onnx_sha256{get;set;}public long onnx_bytes{get;set;}public TensorContract input{get;set;}public TensorContract output{get;set;}public Dictionary<string,string> classes{get;set;}public string preprocessing_version{get;set;}public double t_no_factura{get;set;}public double t_factura{get;set;}public string ort_version{get;set;}public bool external_data{get;set;}}
     }
 }

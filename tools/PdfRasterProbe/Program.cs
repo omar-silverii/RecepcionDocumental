@@ -76,6 +76,8 @@ namespace PdfRasterProbe
                 if(args.Length!=3)return 2;var value=VisualInvoiceShadowService.EvaluateCanonicalPngForValidation(System.IO.File.ReadAllBytes(args[1]),args[2]);
                 Console.WriteLine(value.Status+"|"+value.ErrorCode);return value.Status=="ERROR"?0:1;
             }
+            if (args.Length > 0 && string.Equals(args[0], "--h1d9e1-version-failopen", StringComparison.OrdinalIgnoreCase)) return H1D9E1ContractProbe.RunVersion(args);
+            if (args.Length > 0 && string.Equals(args[0], "--h1d9e1-manifest-contract", StringComparison.OrdinalIgnoreCase)) return H1D9E1ContractProbe.RunManifest(args);
             if (args.Length != 2) { Console.Error.WriteLine("Uso: PdfRasterProbe <pdf1> <pdf2>"); return 2; }
             var failed = false;
             foreach (var path in args)
