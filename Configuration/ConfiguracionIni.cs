@@ -53,7 +53,8 @@ namespace RecepcionDocumental.Configuration
                 Obtener(valores, "Rutas/Trabajo"), Obtener(valores, "Rutas/Facturas"), Obtener(valores, "Rutas/Revisar"),
                 ObtenerEntero(valores, "Zip/MaxEntradas"), ObtenerLong(valores, "Zip/MaxBytesPorArchivo"),
                 ObtenerLong(valores, "Zip/MaxBytesDescomprimidos"), ObtenerEntero(valores, "Zip/MaxProfundidad"),
-                Obtener(valores, "Gmail/RedirectUri"));
+                Obtener(valores, "Gmail/RedirectUri"), ObtenerBooleanoOpcional(valores, "VisionShadow/Enabled", false),
+                ObtenerOpcional(valores, "VisionShadow/ModelVersion", "H1D9B-CANDIDATE-001"));
         }
 
         private static string Obtener(IDictionary<string, string> valores, string clave)
@@ -68,6 +69,12 @@ namespace RecepcionDocumental.Configuration
 
         private static long ObtenerLong(IDictionary<string, string> valores, string clave)
         { long valor; if (!long.TryParse(Obtener(valores, clave), out valor)) throw new ConfiguracionAplicacionException(clave + " debe ser un entero válido."); return valor; }
+
+        private static string ObtenerOpcional(IDictionary<string, string> valores, string clave, string valorPredeterminado)
+        { string valor; return valores.TryGetValue(clave, out valor) && !string.IsNullOrWhiteSpace(valor) ? valor : valorPredeterminado; }
+
+        private static bool ObtenerBooleanoOpcional(IDictionary<string, string> valores, string clave, bool valorPredeterminado)
+        { string texto; bool valor; if (!valores.TryGetValue(clave, out texto)) return valorPredeterminado; if (!bool.TryParse(texto, out valor)) throw new ConfiguracionAplicacionException(clave + " debe ser true o false."); return valor; }
 
         private static ConfiguracionAplicacionException ErrorLinea(int indice, string detalle)
         { return new ConfiguracionAplicacionException("INI inválido en la línea " + (indice + 1) + ". " + detalle); }

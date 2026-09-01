@@ -260,6 +260,12 @@ namespace RecepcionDocumental.Services
                             var stored = DocumentStorage.Save(candidate.SourcePath, candidate.Selection.Classification, record.MessageDateUtc, message.Id, candidate.OriginalName, candidate.OriginHash);
                             if (DocumentRepository.Save(databaseMessageId.Value, part.PartId, candidate, stored))
                             {
+                                if(candidate.VisualShadow!=null&&candidate.VisualShadow.Attempted)
+                                {
+                                    var documentId=DocumentRepository.GetId(databaseMessageId.Value,part.PartId,candidate.OriginHash);
+                                    if(documentId.HasValue)VisualShadowRepository.Save(documentId.Value,candidate.VisualShadow);
+                                    else Logs.LogError("VisualShadow | Operación=Persistir | Estado=ERROR | Codigo=DOCUMENT_ID_NOT_FOUND");
+                                }
                                 result.AdjuntosDescargados++;
                                 if (candidate.Selection.Classification == "FACTURA") result.FacturasDetectadas++; else result.ParaRevisar++;
                                 Logs.LogProc("DocumentAnalysis | Documento conservado | GmailMessageId=" + Logs.SanitizarMensaje(message.Id) + " | PartId=" + Logs.SanitizarMensaje(part.PartId) + " | Clasificacion=" + candidate.Selection.Classification);

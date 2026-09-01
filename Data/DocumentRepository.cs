@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using RecepcionDocumental.Services;
+using RecepcionDocumental.Infrastructure;
 
 namespace RecepcionDocumental.Data
 {
@@ -60,6 +61,13 @@ WHERE NOT EXISTS (SELECT 1 FROM dbo.DocumentoRecepcion WITH (UPDLOCK,SERIALIZABL
                 }
             }
             catch (SqlException ex) when (ex.Number == 2601 || ex.Number == 2627) { return false; }
+        }
+
+        public static long? GetId(long messageId,string partId,string originHash)
+        {
+            const string sql="SELECT Id FROM dbo.DocumentoRecepcion WHERE GmailMensajeId=@MessageId AND GmailPartId=@PartId AND OrigenHash=@Hash;";
+            try{using(var cn=new SqlConnection(ConnectionString))using(var cmd=new SqlCommand(sql,cn)){cmd.Parameters.Add("@MessageId",SqlDbType.BigInt).Value=messageId;cmd.Parameters.Add("@PartId",SqlDbType.NVarChar,255).Value=partId;cmd.Parameters.Add("@Hash",SqlDbType.Char,64).Value=originHash;cn.Open();var value=cmd.ExecuteScalar();return value==null||value==DBNull.Value?(long?)null:Convert.ToInt64(value);}}
+            catch(Exception ex){Logs.LogError("VisualShadow | Operación=ObtenerDocumentoId | Estado=ERROR | "+Logs.DescribirExcepcion(ex));return null;}
         }
 
         public static IList<DocumentInfo> List(string classification)

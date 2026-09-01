@@ -76,6 +76,7 @@
     <Compile Include="H1D9D1PillowParityProbe.cs" />
     <Compile Include="H1D9D1BDirectRgbProbe.cs" />
     <Compile Include="H1D9D1CResamplerParityProbe.cs" />
+    <Compile Include="H1D9EShadowProductProbe.cs" />
     <None Include="App.config" />
     <None Include="Assets\H1D9A\mul_1.onnx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -92,6 +93,8 @@
       <Link>App_Data\Tessdata\spa.traineddata</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\..\App_Data\DocumentAi\Models\H1D9B-CANDIDATE-001\candidate.onnx"><Link>App_Data\DocumentAi\Models\H1D9B-CANDIDATE-001\candidate.onnx</Link><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
+    <None Include="..\..\App_Data\DocumentAi\Models\H1D9B-CANDIDATE-001\runtime-manifest.json"><Link>App_Data\DocumentAi\Models\H1D9B-CANDIDATE-001\runtime-manifest.json</Link><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
   </ItemGroup>
   <Import Project="packages\SkiaSharp.NativeAssets.Win32.4.150.1\build\net48\SkiaSharp.NativeAssets.Win32.targets" />
   <Import Project="packages\bblanchon.PDFium.Win32.152.0.7961\build\net461\bblanchon.PDFium.Win32.targets" />

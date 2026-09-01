@@ -16,7 +16,7 @@
     <AssemblyName>RecepcionDocumental</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
-    <Use64BitIISExpress />
+    <Use64BitIISExpress>true</Use64BitIISExpress>
     <IISExpressSSLPort>44320</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -93,6 +93,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.ML.OnnxRuntime">
+      <HintPath>packages\Microsoft.ML.OnnxRuntime.Managed.1.29.0\lib\netstandard2.0\Microsoft.ML.OnnxRuntime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -166,6 +170,14 @@
     <Content Include="About.aspx" />
     <Content Include="App_Data\Tessdata\LICENSE-tessdata_fast.txt" />
     <Content Include="App_Data\Tessdata\spa.traineddata" />
+    <Content Include="App_Data\DocumentAi\Models\H1D9B-CANDIDATE-001\candidate.onnx" />
+    <Content Include="App_Data\DocumentAi\Models\H1D9B-CANDIDATE-001\runtime-manifest.json" />
+    <Content Include="packages\Microsoft.ML.OnnxRuntime.1.29.0\runtimes\win-x64\native\onnxruntime.dll">
+      <Link>bin\onnxruntime.dll</Link>
+    </Content>
+    <Content Include="packages\Microsoft.ML.OnnxRuntime.1.29.0\runtimes\win-x64\native\onnxruntime_providers_shared.dll">
+      <Link>bin\onnxruntime_providers_shared.dll</Link>
+    </Content>
     <Content Include="Contact.aspx" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
@@ -291,6 +303,7 @@
     </Compile>
     <Compile Include="Data\GmailRepository.cs" />
     <Compile Include="Data\DocumentRepository.cs" />
+    <Compile Include="Data\VisualShadowRepository.cs" />
     <Compile Include="Configuration\ConfiguracionAplicacion.cs" />
     <Compile Include="Configuration\ConfiguracionIni.cs" />
     <Compile Include="Configuration\ConfiguracionSistema.cs" />
@@ -303,6 +316,7 @@
     <Compile Include="Services\AttachmentWorkspace.cs" />
     <Compile Include="Services\ArcaQrDecoder.cs" />
     <Compile Include="Services\DocumentAnalysisService.cs" />
+    <Compile Include="Services\VisualInvoiceShadowService.cs" />
     <Compile Include="Services\DocumentOcrService.cs" />
     <Compile Include="Services\DocumentStorage.cs" />
     <Compile Include="Services\DocumentReviewService.cs" />
@@ -411,6 +425,8 @@
   <Import Project="packages\Tesseract.5.2.0\build\Tesseract.targets" Condition="Exists('packages\Tesseract.5.2.0\build\Tesseract.targets')" />
   <Import Project="packages\SkiaSharp.NativeAssets.Win32.4.150.1\build\net48\SkiaSharp.NativeAssets.Win32.targets" Condition="Exists('packages\SkiaSharp.NativeAssets.Win32.4.150.1\build\net48\SkiaSharp.NativeAssets.Win32.targets')" />
   <Import Project="packages\bblanchon.PDFium.Win32.152.0.7961\build\net461\bblanchon.PDFium.Win32.targets" Condition="Exists('packages\bblanchon.PDFium.Win32.152.0.7961\build\net461\bblanchon.PDFium.Win32.targets')" />
+  <Import Project="packages\Microsoft.ML.OnnxRuntime.Managed.1.29.0\build\netstandard2.0\Microsoft.ML.OnnxRuntime.Managed.targets" Condition="Exists('packages\Microsoft.ML.OnnxRuntime.Managed.1.29.0\build\netstandard2.0\Microsoft.ML.OnnxRuntime.Managed.targets')" />
+  <Import Project="packages\Microsoft.ML.OnnxRuntime.1.29.0\build\native\Microsoft.ML.OnnxRuntime.targets" Condition="Exists('packages\Microsoft.ML.OnnxRuntime.1.29.0\build\native\Microsoft.ML.OnnxRuntime.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
   <ProjectExtensions>
@@ -441,6 +457,10 @@
     <Error Condition="!Exists('packages\SkiaSharp.4.150.1\lib\net48\SkiaSharp.dll')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SkiaSharp.4.150.1\lib\net48\SkiaSharp.dll'))" />
     <Error Condition="!Exists('packages\SkiaSharp.NativeAssets.Win32.4.150.1\build\net48\SkiaSharp.NativeAssets.Win32.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SkiaSharp.NativeAssets.Win32.4.150.1\build\net48\SkiaSharp.NativeAssets.Win32.targets'))" />
     <Error Condition="!Exists('packages\bblanchon.PDFium.Win32.152.0.7961\build\net461\bblanchon.PDFium.Win32.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\bblanchon.PDFium.Win32.152.0.7961\build\net461\bblanchon.PDFium.Win32.targets'))" />
+    <Error Condition="!Exists('packages\Microsoft.ML.OnnxRuntime.1.29.0\build\native\Microsoft.ML.OnnxRuntime.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.ML.OnnxRuntime.1.29.0\build\native\Microsoft.ML.OnnxRuntime.targets'))" />
+  </Target>
+  <Target Name="CopyOnnxRuntimeX64" AfterTargets="Build">
+    <Copy SourceFiles="packages\Microsoft.ML.OnnxRuntime.1.29.0\runtimes\win-x64\native\onnxruntime.dll;packages\Microsoft.ML.OnnxRuntime.1.29.0\runtimes\win-x64\native\onnxruntime_providers_shared.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

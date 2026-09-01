@@ -19,6 +19,24 @@ namespace RecepcionDocumental.Services
 
     public static class PdfPageRasterizer
     {
+        public static PdfPageRasterizationResult RasterizeFirstPage(string path, AttachmentWorkspace workspace)
+        {
+            if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException("path");
+            if (workspace == null) throw new ArgumentNullException("workspace");
+            var stopwatch=Stopwatch.StartNew();var result=new PdfPageRasterizationResult();
+            try
+            {
+                var source=new FileInfo(path);if(!source.Exists)return Failure(result,"No se encontró el PDF para rasterizar.",false,stopwatch);
+                if(source.Length>OcrLimits.MaxSourceBytes)return Limited(result,"El PDF supera el tamaño de origen permitido para OCR.",stopwatch);
+                var pdf=File.ReadAllBytes(path);result.PageCount=Conversion.GetPageCount(pdf);if(result.PageCount<=0)return Failure(result,"El PDF no contiene páginas rasterizables.",false,stopwatch);
+                var output=workspace.CreatePath(".png");Conversion.SavePng(output,pdf,0,options:new RenderOptions(OcrLimits.PdfRasterDpi));
+                int width,height;using(var image=Image.FromFile(output)){width=image.Width;height=image.Height;}var pixels=(long)width*height;
+                if(width<=0||height<=0||pixels>OcrLimits.MaxTotalPixels)return Limited(result,"La primera página rasterizada supera el límite de seguridad visual.",stopwatch);
+                result.Images.Add(new OcrImageData{Bytes=File.ReadAllBytes(output),Width=width,Height=height});Stop(result,stopwatch);return result;
+            }
+            catch(Exception ex){return Failure(result,IsStructuralFailure(ex)?"El renderer PDF no está disponible o es incompatible.":"No se pudo rasterizar la primera página del PDF.",IsStructuralFailure(ex),stopwatch);}
+        }
+
         public static PdfPageRasterizationResult Rasterize(string path, AttachmentWorkspace workspace)
         {
             if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException("path");

@@ -1,0 +1,22 @@
+{
+  "milestone": "H1D9E",
+  "status": "APROBADO_SHADOW_PRODUCTIVO",
+  "source_zip_sha256": "5C3C820CF0613B2C29919D2858E9CFD231920BB40DA86F42E637CFB6F504B625",
+  "model_version": "H1D9B-CANDIDATE-001",
+  "model_sha256": "A1DC24FE90C3C14303C3319EC0BD6D9EF95E91CC82C9B38E2FBAAEB0EF826811",
+  "ort_version": "1.29.0",
+  "preprocessing_version": "H1D9D1C-PILLOW-12.3.0-BICUBIC-FIXED22",
+  "disabled_validation": { "documents": 80, "visual_activity": 0, "sessions": 0 },
+  "enabled_validation": { "documents": 80, "eligible": 70, "attempted": 70, "ok": 70, "errors": 0, "discarded_not_evaluated": 10 },
+  "classification_counts": { "FACTURA": 18, "REVISAR": 52, "DESCARTAR": 10 },
+  "classifications_changed": 0,
+  "raster": { "ocr_reused": 19, "shadow_first_page": 11, "canonical_images": 40 },
+  "probability_parity": { "count": 70, "pred050_equal": 70, "zone_equal": 70, "max_abs_delta": 0 },
+  "sql_result": "APROBADO_IDEMPOTENTE_CLEANUP_OK",
+  "fail_open_result": "APROBADO",
+  "product_modified": true,
+  "classification_behavior_modified": false,
+  "training_performed": false,
+  "threshold_tuning_performed": false,
+  "ui_modified": false
+}

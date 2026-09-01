@@ -1,0 +1,5 @@
+Microsoft.ML.OnnxRuntime.dll | managed | 1.29.0 | bin
+onnxruntime.dll | native CPU | win-x64 | bin | 16149344 bytes
+onnxruntime_providers_shared.dll | native provider support | win-x64 | bin | 21856 bytes
+App_Data/DocumentAi/Models/H1D9B-CANDIDATE-001/candidate.onnx | A1DC24FE90C3C14303C3319EC0BD6D9EF95E91CC82C9B38E2FBAAEB0EF826811 | 16708744 bytes
+App_Data/DocumentAi/Models/H1D9B-CANDIDATE-001/runtime-manifest.json
