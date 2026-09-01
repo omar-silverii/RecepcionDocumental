@@ -312,6 +312,7 @@
     <Compile Include="Services\MdocPdfImageExtractor.cs" />
     <Compile Include="Services\OcrLimits.cs" />
     <Compile Include="Services\PdfPageRasterizer.cs" />
+    <Compile Include="Services\RasterQrDetector.cs" />
     <Compile Include="Services\GoogleOAuthSettings.cs" />
     <Compile Include="Gmail_Bandeja.aspx.cs">
       <DependentUpon>Gmail_Bandeja.aspx</DependentUpon>

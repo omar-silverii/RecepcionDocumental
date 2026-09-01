@@ -23,6 +23,13 @@ namespace RecepcionDocumental.Services
         public InvoiceSelection Selection { get; set; }
         public bool QrDetected { get; set; }
         public int? TipoComprobanteArca { get; set; }
+        public string QrSource { get; set; }
+        public int RasterQrDurationMilliseconds { get; set; }
+        public int PdfRasterizationCount { get; set; }
+        public bool EmbeddedQrDetected { get; set; }
+        public bool RasterQrDetected { get; set; }
+        public bool RasterQrArcaValid { get; set; }
+        public int? RasterTipoComprobanteArca { get; set; }
     }
 
     public sealed class AttachmentAnalysis
@@ -34,6 +41,7 @@ namespace RecepcionDocumental.Services
     }
 
     internal sealed class ZipBudget { public int Entries; public long TotalBytes; }
+    internal sealed class PdfOcrAnalysisResult { public InvoiceSelection Selection; public ArcaQrEvidence RasterQr=new ArcaQrEvidence(); public int RasterQrDurationMilliseconds; public int RasterizationCount; }
 
     public static class DocumentAnalysisService
     {
@@ -122,9 +130,11 @@ namespace RecepcionDocumental.Services
         {
             InvoiceSelection selection;
             var qr = new ArcaQrEvidence();
+            var qrSource = "NINGUNO";var rasterQrDuration=0;var rasterizationCount=0;var embeddedQrDetected=false;var rasterQrDetected=false;var rasterQrValid=false;int? rasterTipo=null;
             if (string.Equals(Path.GetExtension(name), ".pdf", StringComparison.OrdinalIgnoreCase))
             {
                 qr = MdocPdfQrDetector.Detect(path);
+                embeddedQrDetected=qr.QrDetected;
                 Logs.LogProc("DocumentAnalysis | QR detectado=" + (qr.QrDetected ? "Sí" : "No") + " | QR ARCA válido=" + (qr.IsValid ? "Sí" : "No") + (qr.IsValid ? " | Versión=1 | TipoCmp=" + qr.TipoComprobante.Value : string.Empty));
                 var pdf = MdocPdfTextExtractor.Extract(path);
                 var mdocSelection = InvoiceSelector.SelectPdf(pdf.Text, pdf.HasUsefulText);
@@ -134,18 +144,28 @@ namespace RecepcionDocumental.Services
                 {
                     var ocrReason = pdf.HasUsefulText ? "MDOC_REVISAR" : "MDOC_SIN_TEXTO";
                     Logs.LogProc("DocumentAnalysis | OCR requerido=Sí | Motivo=" + ocrReason);
-                    var ocrSelection = AnalyzePdfWithOcr(path, pdf, workspace);
+                    var ocrAnalysis = AnalyzePdfWithOcr(path, pdf, workspace);var ocrSelection=ocrAnalysis.Selection;rasterQrDuration=ocrAnalysis.RasterQrDurationMilliseconds;rasterizationCount=ocrAnalysis.RasterizationCount;rasterQrDetected=ocrAnalysis.RasterQr.QrDetected;rasterQrValid=ocrAnalysis.RasterQr.IsValid;rasterTipo=ocrAnalysis.RasterQr.TipoComprobante;
                     textSelection = FusePdfSelections(mdocSelection, ocrSelection);
                     Logs.LogProc("DocumentAnalysis | OCR resultado=" + ocrSelection.Classification + " | FusionAccion=" + FusionAction(mdocSelection, ocrSelection));
+                    if(qr.IsValid&&ocrAnalysis.RasterQr.IsValid&&qr.TipoComprobante!=ocrAnalysis.RasterQr.TipoComprobante)
+                    {
+                        selection=InvoiceSelector.Review("QR_FUENTES_CONFLICTO","Los QR ARCA embedded y raster informan tipos de comprobante distintos.",70);qr=new ArcaQrEvidence{QrDetected=true};qrSource="CONFLICTO";
+                        Logs.LogProc("DocumentAnalysis | QR efectivo=CONFLICTO | Fuentes=EMBEDDED+RASTER | DuracionDecodeRasterMs="+rasterQrDuration);
+                        goto SelectionReady;
+                    }
+                    if(!qr.IsValid&&ocrAnalysis.RasterQr.IsValid){qr=ocrAnalysis.RasterQr;qrSource="RASTER";}else if(qr.IsValid)qrSource="EMBEDDED";
+                    Logs.LogProc("DocumentAnalysis | QR raster detectado="+(ocrAnalysis.RasterQr.QrDetected?"Sí":"No")+" | QR raster ARCA válido="+(ocrAnalysis.RasterQr.IsValid?"Sí":"No")+" | DuracionDecodeRasterMs="+rasterQrDuration);
                 }
                 else Logs.LogProc("DocumentAnalysis | OCR requerido=No | Motivo=MDOC_CONCLUYENTE | FusionAccion=MDOC_CONSERVADO");
+                if(qr.IsValid&&qrSource=="NINGUNO")qrSource="EMBEDDED";
                 selection = ArcaQrDecoder.Combine(qr, textSelection);
             }
             else if (IsImage(name)) selection = AnalyzeImageWithOcr(path, Path.GetExtension(name));
             else selection = InvoiceSelector.SelectNonPdf(name);
+        SelectionReady:
             Logs.LogProc("DocumentAnalysis | Documento clasificado | Clasificacion=" + selection.Classification + " | Metodo=" + selection.DetectionMethod);
             if (selection.Classification == "DESCARTAR") { result.Discarded++; Logs.LogProc("DocumentAnalysis | Documento descartado | Metodo=" + selection.DetectionMethod); return; }
-            result.Candidates.Add(new DocumentCandidate { SourcePath = path, OriginalName = SafeOriginalName(name), MimeType = mime, OriginType = originType, InternalContainerPath = internalPath, OriginHash = originHash, SizeBytes = new FileInfo(path).Length, Selection = selection, QrDetected = qr.QrDetected, TipoComprobanteArca = qr.IsValid ? qr.TipoComprobante : null });
+            result.Candidates.Add(new DocumentCandidate { SourcePath = path, OriginalName = SafeOriginalName(name), MimeType = mime, OriginType = originType, InternalContainerPath = internalPath, OriginHash = originHash, SizeBytes = new FileInfo(path).Length, Selection = selection, QrDetected = qr.QrDetected, TipoComprobanteArca = qr.IsValid ? qr.TipoComprobante : null,QrSource=qrSource,RasterQrDurationMilliseconds=rasterQrDuration,PdfRasterizationCount=rasterizationCount,EmbeddedQrDetected=embeddedQrDetected,RasterQrDetected=rasterQrDetected,RasterQrArcaValid=rasterQrValid,RasterTipoComprobanteArca=rasterTipo });
         }
 
         internal static InvoiceSelection FusePdfSelections(InvoiceSelection mdocSelection, InvoiceSelection ocrSelection)
@@ -167,20 +187,20 @@ namespace RecepcionDocumental.Services
             return "OCR_MANTIENE_REVISAR";
         }
 
-        private static InvoiceSelection AnalyzePdfWithOcr(string path, PdfTextResult pdf, AttachmentWorkspace workspace)
+        private static PdfOcrAnalysisResult AnalyzePdfWithOcr(string path, PdfTextResult pdf, AttachmentWorkspace workspace)
         {
             Logs.LogProc("DocumentAnalysis | FuenteOCR=RASTER_PAGINA");
-            var raster = PdfPageRasterizer.Rasterize(path, workspace);
+            var output=new PdfOcrAnalysisResult();var raster = PdfPageRasterizer.Rasterize(path, workspace);output.RasterizationCount=1;
             Logs.LogProc("PDFRaster | Ejecutado=Sí | Paginas=" + raster.PageCount + " | DPI=" + OcrLimits.PdfRasterDpi + " | DuracionMs=" + raster.DurationMilliseconds);
             if (raster.LimitExceeded)
-                return InvoiceSelector.Review("OCR_LIMITE", raster.FailureReason, null);
+            { output.Selection=InvoiceSelector.Review("OCR_LIMITE", raster.FailureReason, null);return output; }
             if (raster.Images.Count == 0)
             {
                 if (raster.StructuralFailure)
                     Logs.LogError("PDFRaster | Operación=Rasterizar | Estado=FalloEstructural | Motivo=" + Logs.SanitizarMensaje(raster.FailureReason));
-                return InvoiceSelector.Review("OCR_RENDER_ERROR", raster.FailureReason ?? pdf.FailureReason ?? "No se pudo obtener una imagen procesable para OCR.", null);
+                output.Selection=InvoiceSelector.Review("OCR_RENDER_ERROR", raster.FailureReason ?? pdf.FailureReason ?? "No se pudo obtener una imagen procesable para OCR.", null);return output;
             }
-            return SelectOcr(raster.Images, "PDF_RASTER");
+            var rasterQr=RasterQrDetector.Detect(raster.Images);output.RasterQr=rasterQr.Evidence;output.RasterQrDurationMilliseconds=rasterQr.DurationMilliseconds;output.Selection=SelectOcr(raster.Images,"PDF_RASTER");return output;
         }
 
         private static InvoiceSelection AnalyzeImageWithOcr(string path, string extension)

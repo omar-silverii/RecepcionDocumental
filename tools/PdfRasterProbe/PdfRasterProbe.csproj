@@ -68,6 +68,7 @@
     <Compile Include="H1D7BVisualShadowProbe.cs" />
     <Compile Include="H1D7B2VisualShadowProbe.cs" />
     <Compile Include="H1D8AFiscalEvidenceProbe.cs" />
+    <Compile Include="H1D8BProductRegressionProbe.cs" />
     <None Include="App.config" />
     <None Include="..\..\bin\*.dll">
       <Link>%(Filename)%(Extension)</Link>
