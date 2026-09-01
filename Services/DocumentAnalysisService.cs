@@ -29,6 +29,8 @@ namespace RecepcionDocumental.Services
         public int PdfRasterizationCount { get; set; }
         public int PdfPagesRenderedForOcr { get; set; }
         public int PdfPagesRenderedForShadow { get; set; }
+        public bool PdfFirstPageRenderedByOcr { get; set; }
+        public bool PdfFirstPageReusedByShadow { get; set; }
         public bool EmbeddedQrDetected { get; set; }
         public bool RasterQrDetected { get; set; }
         public bool RasterQrArcaValid { get; set; }
@@ -44,7 +46,7 @@ namespace RecepcionDocumental.Services
     }
 
     internal sealed class ZipBudget { public int Entries; public long TotalBytes; }
-    internal sealed class PdfOcrAnalysisResult { public InvoiceSelection Selection; public ArcaQrEvidence RasterQr=new ArcaQrEvidence(); public int RasterQrDurationMilliseconds; public int RasterizationCount; public int PagesRendered; public OcrImageData FirstRasterImage; }
+    internal sealed class PdfOcrAnalysisResult { public InvoiceSelection Selection; public ArcaQrEvidence RasterQr=new ArcaQrEvidence(); public int RasterQrDurationMilliseconds; public int RasterizationCount; public int PagesRendered; public bool FirstPageRendered; public string FirstPageVisualFailureReason; public OcrImageData FirstRasterImage; }
 
     public static class DocumentAnalysisService
     {
@@ -133,7 +135,7 @@ namespace RecepcionDocumental.Services
         {
             InvoiceSelection selection;
             var qr = new ArcaQrEvidence();
-            var qrSource = "NINGUNO";var rasterQrDuration=0;var rasterizationCount=0;var pagesRenderedForOcr=0;var pagesRenderedForShadow=0;var embeddedQrDetected=false;var rasterQrDetected=false;var rasterQrValid=false;int? rasterTipo=null;OcrImageData visualRaster=null;
+            var qrSource = "NINGUNO";var rasterQrDuration=0;var rasterizationCount=0;var pagesRenderedForOcr=0;var pagesRenderedForShadow=0;var firstPageRenderedByOcr=false;var firstPageReusedByShadow=false;string firstPageVisualFailureReason=null;var embeddedQrDetected=false;var rasterQrDetected=false;var rasterQrValid=false;int? rasterTipo=null;OcrImageData visualRaster=null;
             if (string.Equals(Path.GetExtension(name), ".pdf", StringComparison.OrdinalIgnoreCase))
             {
                 qr = MdocPdfQrDetector.Detect(path);
@@ -147,7 +149,7 @@ namespace RecepcionDocumental.Services
                 {
                     var ocrReason = pdf.HasUsefulText ? "MDOC_REVISAR" : "MDOC_SIN_TEXTO";
                     Logs.LogProc("DocumentAnalysis | OCR requerido=Sí | Motivo=" + ocrReason);
-                    var ocrAnalysis = AnalyzePdfWithOcr(path, pdf, workspace);visualRaster=ocrAnalysis.FirstRasterImage;var ocrSelection=ocrAnalysis.Selection;rasterQrDuration=ocrAnalysis.RasterQrDurationMilliseconds;rasterizationCount=ocrAnalysis.RasterizationCount;pagesRenderedForOcr=ocrAnalysis.PagesRendered;rasterQrDetected=ocrAnalysis.RasterQr.QrDetected;rasterQrValid=ocrAnalysis.RasterQr.IsValid;rasterTipo=ocrAnalysis.RasterQr.TipoComprobante;
+                    var ocrAnalysis = AnalyzePdfWithOcr(path, pdf, workspace);visualRaster=ocrAnalysis.FirstRasterImage;firstPageRenderedByOcr=ocrAnalysis.FirstPageRendered;firstPageVisualFailureReason=ocrAnalysis.FirstPageVisualFailureReason;var ocrSelection=ocrAnalysis.Selection;rasterQrDuration=ocrAnalysis.RasterQrDurationMilliseconds;rasterizationCount=ocrAnalysis.RasterizationCount;pagesRenderedForOcr=ocrAnalysis.PagesRendered;rasterQrDetected=ocrAnalysis.RasterQr.QrDetected;rasterQrValid=ocrAnalysis.RasterQr.IsValid;rasterTipo=ocrAnalysis.RasterQr.TipoComprobante;
                     textSelection = FusePdfSelections(mdocSelection, ocrSelection);
                     Logs.LogProc("DocumentAnalysis | OCR resultado=" + ocrSelection.Classification + " | FusionAccion=" + FusionAction(mdocSelection, ocrSelection));
                     if(qr.IsValid&&ocrAnalysis.RasterQr.IsValid&&qr.TipoComprobante!=ocrAnalysis.RasterQr.TipoComprobante)
@@ -174,14 +176,15 @@ namespace RecepcionDocumental.Services
                 visualShadow=VisualInvoiceShadowService.CreateVersionErrorIfUnsupported("MODEL_VERSION_VALIDATION");
                 if(visualShadow==null&&string.Equals(Path.GetExtension(name),".pdf",StringComparison.OrdinalIgnoreCase))
                 {
-                    if(visualRaster!=null) visualShadow=VisualInvoiceShadowService.EvaluateCanonicalPng(visualRaster.Bytes,"PDF_OCR_RASTER_REUSED",true);
+                    if(visualRaster!=null){firstPageReusedByShadow=true;visualShadow=VisualInvoiceShadowService.EvaluateCanonicalPng(visualRaster.Bytes,"PDF_OCR_RASTER_REUSED",true);}
+                    else if(firstPageRenderedByOcr) visualShadow=VisualInvoiceShadowService.CreateRasterError("PDF_OCR_RASTER_NOT_REUSABLE",firstPageVisualFailureReason);
                     else { var first=PdfPageRasterizer.RasterizeFirstPage(path,workspace);rasterizationCount++;pagesRenderedForShadow=first.PagesRendered;visualShadow=first.Images.Count==0?VisualInvoiceShadowService.CreateRasterError("PDF_SHADOW_FIRST_PAGE",first.FailureReason):VisualInvoiceShadowService.EvaluateCanonicalPng(first.Images[0].Bytes,"PDF_SHADOW_FIRST_PAGE",false); }
                 }
                 else if(visualShadow==null&&IsImage(name)) visualShadow=VisualInvoiceShadowService.EvaluateImageFile(path);
                 else if(visualShadow==null) visualShadow=VisualInvoiceShadowService.CreateUnsupportedError();
                 LogVisualShadow(visualShadow);
             }
-            result.Candidates.Add(new DocumentCandidate { SourcePath = path, OriginalName = SafeOriginalName(name), MimeType = mime, OriginType = originType, InternalContainerPath = internalPath, OriginHash = originHash, SizeBytes = new FileInfo(path).Length, Selection = selection, VisualShadow=visualShadow, QrDetected = qr.QrDetected, TipoComprobanteArca = qr.IsValid ? qr.TipoComprobante : null,QrSource=qrSource,RasterQrDurationMilliseconds=rasterQrDuration,PdfRasterizationCount=rasterizationCount,PdfPagesRenderedForOcr=pagesRenderedForOcr,PdfPagesRenderedForShadow=pagesRenderedForShadow,EmbeddedQrDetected=embeddedQrDetected,RasterQrDetected=rasterQrDetected,RasterQrArcaValid=rasterQrValid,RasterTipoComprobanteArca=rasterTipo });
+            result.Candidates.Add(new DocumentCandidate { SourcePath = path, OriginalName = SafeOriginalName(name), MimeType = mime, OriginType = originType, InternalContainerPath = internalPath, OriginHash = originHash, SizeBytes = new FileInfo(path).Length, Selection = selection, VisualShadow=visualShadow, QrDetected = qr.QrDetected, TipoComprobanteArca = qr.IsValid ? qr.TipoComprobante : null,QrSource=qrSource,RasterQrDurationMilliseconds=rasterQrDuration,PdfRasterizationCount=rasterizationCount,PdfPagesRenderedForOcr=pagesRenderedForOcr,PdfPagesRenderedForShadow=pagesRenderedForShadow,PdfFirstPageRenderedByOcr=firstPageRenderedByOcr,PdfFirstPageReusedByShadow=firstPageReusedByShadow,EmbeddedQrDetected=embeddedQrDetected,RasterQrDetected=rasterQrDetected,RasterQrArcaValid=rasterQrValid,RasterTipoComprobanteArca=rasterTipo });
         }
 
         private static void LogVisualShadow(VisualShadowResult value)
@@ -213,7 +216,7 @@ namespace RecepcionDocumental.Services
         private static PdfOcrAnalysisResult AnalyzePdfWithOcr(string path, PdfTextResult pdf, AttachmentWorkspace workspace)
         {
             Logs.LogProc("DocumentAnalysis | FuenteOCR=RASTER_PAGINA");
-            var output=new PdfOcrAnalysisResult();var raster = PdfPageRasterizer.Rasterize(path, workspace);output.RasterizationCount=1;output.PagesRendered=raster.PagesRendered;if(raster.Images.Count>0)output.FirstRasterImage=raster.Images[0];
+            var output=new PdfOcrAnalysisResult();var raster = PdfPageRasterizer.Rasterize(path, workspace);output.RasterizationCount=1;output.PagesRendered=raster.PagesRendered;output.FirstPageRendered=raster.FirstPageRendered;output.FirstPageVisualFailureReason=raster.FirstPageVisualFailureReason;output.FirstRasterImage=raster.FirstPageForVisualReuse;
             Logs.LogProc("PDFRaster | Ejecutado=Sí | Paginas=" + raster.PageCount + " | DPI=" + OcrLimits.PdfRasterDpi + " | DuracionMs=" + raster.DurationMilliseconds);
             if (raster.LimitExceeded)
             { output.Selection=InvoiceSelector.Review("OCR_LIMITE", raster.FailureReason, null);return output; }

@@ -16,6 +16,9 @@ namespace RecepcionDocumental.Services
         public int PageCount { get; set; }
         public int DurationMilliseconds { get; set; }
         public int PagesRendered { get; set; }
+        public bool FirstPageRendered { get; set; }
+        public OcrImageData FirstPageForVisualReuse { get; set; }
+        public string FirstPageVisualFailureReason { get; set; }
     }
 
     public static class PdfPageRasterizer
@@ -30,12 +33,12 @@ namespace RecepcionDocumental.Services
                 var source=new FileInfo(path);if(!source.Exists)return Failure(result,"No se encontró el PDF para rasterizar.",false,stopwatch);
                 if(source.Length>OcrLimits.MaxSourceBytes)return Limited(result,"El PDF supera el tamaño de origen permitido para OCR.",stopwatch);
                 var pdf=File.ReadAllBytes(path);result.PageCount=Conversion.GetPageCount(pdf);if(result.PageCount<=0)return Failure(result,"El PDF no contiene páginas rasterizables.",false,stopwatch);
-                var output=workspace.CreatePath(".png");Conversion.SavePng(output,pdf,0,options:new RenderOptions(OcrLimits.PdfRasterDpi));result.PagesRendered=1;
+                var output=workspace.CreatePath(".png");Conversion.SavePng(output,pdf,0,options:new RenderOptions(OcrLimits.PdfRasterDpi));result.PagesRendered=1;result.FirstPageRendered=true;
                 int width,height;using(var image=Image.FromFile(output)){width=image.Width;height=image.Height;}var pixels=(long)width*height;
-                if(width<=0||height<=0||pixels>OcrLimits.MaxTotalPixels)return Limited(result,"La primera página rasterizada supera el límite de seguridad visual.",stopwatch);
-                result.Images.Add(new OcrImageData{Bytes=File.ReadAllBytes(output),Width=width,Height=height});Stop(result,stopwatch);return result;
+                if(width<=0||height<=0||pixels>OcrLimits.MaxTotalPixels){result.FirstPageVisualFailureReason="La primera página rasterizada supera el límite de seguridad visual.";return Limited(result,result.FirstPageVisualFailureReason,stopwatch);}
+                result.FirstPageForVisualReuse=new OcrImageData{Bytes=File.ReadAllBytes(output),Width=width,Height=height};result.Images.Add(result.FirstPageForVisualReuse);Stop(result,stopwatch);return result;
             }
-            catch(Exception ex){return Failure(result,IsStructuralFailure(ex)?"El renderer PDF no está disponible o es incompatible.":"No se pudo rasterizar la primera página del PDF.",IsStructuralFailure(ex),stopwatch);}
+            catch(Exception ex){if(result.FirstPageRendered&&string.IsNullOrWhiteSpace(result.FirstPageVisualFailureReason))result.FirstPageVisualFailureReason="La primera página fue renderizada pero no pudo validarse para visión.";return Failure(result,IsStructuralFailure(ex)?"El renderer PDF no está disponible o es incompatible.":"No se pudo rasterizar la primera página del PDF.",IsStructuralFailure(ex),stopwatch);}
         }
 
         public static PdfPageRasterizationResult Rasterize(string path, AttachmentWorkspace workspace)
@@ -64,22 +67,31 @@ namespace RecepcionDocumental.Services
                     var output = workspace.CreatePath(".png");
                     Conversion.SavePng(output, pdf, page, options: options);
                     result.PagesRendered++;
+                    if(page==0)result.FirstPageRendered=true;
                     int width;
                     int height;
                     using (var image = Image.FromFile(output)) { width = image.Width; height = image.Height; }
                     var pixels = (long)width * height;
                     totalPixels += pixels;
+                    OcrImageData cachedImage=null;
+                    if(page==0)
+                    {
+                        if(width>0&&height>0&&pixels<=OcrLimits.MaxTotalPixels)
+                        { cachedImage=new OcrImageData{Bytes=File.ReadAllBytes(output),Width=width,Height=height};result.FirstPageForVisualReuse=cachedImage; }
+                        else result.FirstPageVisualFailureReason="La primera página renderizada supera el contrato de seguridad visual.";
+                    }
                     if (width <= 0 || height <= 0 || pixels > OcrLimits.MaxPixelsPerImage)
                         return Limited(result, "Una página rasterizada supera el límite de píxeles OCR.", stopwatch);
                     if (totalPixels > OcrLimits.MaxTotalPixels)
                         return Limited(result, "El PDF rasterizado supera el límite total de píxeles OCR.", stopwatch);
-                    result.Images.Add(new OcrImageData { Bytes = File.ReadAllBytes(output), Width = width, Height = height });
+                    result.Images.Add(cachedImage??new OcrImageData { Bytes = File.ReadAllBytes(output), Width = width, Height = height });
                 }
                 Stop(result, stopwatch);
                 return result;
             }
             catch (Exception ex)
             {
+                if(result.FirstPageRendered&&result.FirstPageForVisualReuse==null&&string.IsNullOrWhiteSpace(result.FirstPageVisualFailureReason))result.FirstPageVisualFailureReason="La primera página fue renderizada pero no pudo validarse para visión.";
                 return Failure(result,
                     IsStructuralFailure(ex) ? "El renderer PDF no está disponible o es incompatible." : "No se pudo rasterizar el PDF.",
                     IsStructuralFailure(ex), stopwatch);
