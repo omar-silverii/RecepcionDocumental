@@ -57,7 +57,6 @@ namespace RecepcionDocumental.Services
             ".pptx", ".pptm", ".potx", ".potm", ".ppsx", ".ppsm",
             ".odt", ".ods", ".odp"
         };
-        private static readonly string[] ImageExtensions = { ".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff" };
 
         public static AttachmentAnalysis Analyze(byte[] bytes, string fileName, string mimeType, AttachmentWorkspace workspace)
         {
@@ -170,28 +169,10 @@ namespace RecepcionDocumental.Services
         SelectionReady:
             Logs.LogProc("DocumentAnalysis | Documento clasificado | Clasificacion=" + selection.Classification + " | Metodo=" + selection.DetectionMethod);
             if (selection.Classification == "DESCARTAR") { result.Discarded++; Logs.LogProc("DocumentAnalysis | Documento descartado | Metodo=" + selection.DetectionMethod); return; }
-            VisualShadowResult visualShadow=null;
-            if(ConfiguracionSistema.Actual.VisionShadowEnabled)
-            {
-                visualShadow=VisualInvoiceShadowService.CreateVersionErrorIfUnsupported("MODEL_VERSION_VALIDATION");
-                if(visualShadow==null&&string.Equals(Path.GetExtension(name),".pdf",StringComparison.OrdinalIgnoreCase))
-                {
-                    if(visualRaster!=null){firstPageReusedByShadow=true;visualShadow=VisualInvoiceShadowService.EvaluateCanonicalPng(visualRaster.Bytes,"PDF_OCR_RASTER_REUSED",true);}
-                    else if(firstPageRenderedByOcr) visualShadow=VisualInvoiceShadowService.CreateRasterError("PDF_OCR_RASTER_NOT_REUSABLE",firstPageVisualFailureReason);
-                    else { var first=PdfPageRasterizer.RasterizeFirstPage(path,workspace);rasterizationCount++;pagesRenderedForShadow=first.PagesRendered;visualShadow=first.Images.Count==0?VisualInvoiceShadowService.CreateRasterError("PDF_SHADOW_FIRST_PAGE",first.FailureReason):VisualInvoiceShadowService.EvaluateCanonicalPng(first.Images[0].Bytes,"PDF_SHADOW_FIRST_PAGE",false); }
-                }
-                else if(visualShadow==null&&IsImage(name)) visualShadow=VisualInvoiceShadowService.EvaluateImageFile(path);
-                else if(visualShadow==null) visualShadow=VisualInvoiceShadowService.CreateUnsupportedError();
-                LogVisualShadow(visualShadow);
-            }
+            var visualEvaluation=VisualDocumentShadowService.Evaluate(path,name,workspace,visualRaster,firstPageRenderedByOcr,firstPageVisualFailureReason);
+            var visualShadow=visualEvaluation.Result;
+            rasterizationCount+=visualEvaluation.RasterizerCalls;pagesRenderedForShadow=visualEvaluation.PagesRendered;firstPageReusedByShadow=visualEvaluation.FirstPageReused;
             result.Candidates.Add(new DocumentCandidate { SourcePath = path, OriginalName = SafeOriginalName(name), MimeType = mime, OriginType = originType, InternalContainerPath = internalPath, OriginHash = originHash, SizeBytes = new FileInfo(path).Length, Selection = selection, VisualShadow=visualShadow, QrDetected = qr.QrDetected, TipoComprobanteArca = qr.IsValid ? qr.TipoComprobante : null,QrSource=qrSource,RasterQrDurationMilliseconds=rasterQrDuration,PdfRasterizationCount=rasterizationCount,PdfPagesRenderedForOcr=pagesRenderedForOcr,PdfPagesRenderedForShadow=pagesRenderedForShadow,PdfFirstPageRenderedByOcr=firstPageRenderedByOcr,PdfFirstPageReusedByShadow=firstPageReusedByShadow,EmbeddedQrDetected=embeddedQrDetected,RasterQrDetected=rasterQrDetected,RasterQrArcaValid=rasterQrValid,RasterTipoComprobanteArca=rasterTipo });
-        }
-
-        private static void LogVisualShadow(VisualShadowResult value)
-        {
-            if(value==null)return;
-            if(value.Status=="OK")Logs.LogProc("VisualShadow | DocumentoConservado=true | Estado=OK | Modelo="+value.ModelVersion+" | Zona="+value.Zone+" | PFactura="+value.PFactura.Value.ToString("0.#########",System.Globalization.CultureInfo.InvariantCulture)+" | RasterReutilizado="+value.RasterReused+" | TotalMs="+value.TotalMilliseconds);
-            else Logs.LogError("VisualShadow | Estado=ERROR | Codigo="+Logs.SanitizarMensaje(value.ErrorCode));
         }
 
         internal static InvoiceSelection FusePdfSelections(InvoiceSelection mdocSelection, InvoiceSelection ocrSelection)
@@ -302,7 +283,7 @@ namespace RecepcionDocumental.Services
             if (string.Equals(extension, ".tif", StringComparison.OrdinalIgnoreCase) || string.Equals(extension, ".tiff", StringComparison.OrdinalIgnoreCase)) return "image/tiff";
             return string.Equals(extension, ".7z", StringComparison.OrdinalIgnoreCase) ? "application/x-7z-compressed" : null;
         }
-        private static bool IsImage(string name) { return ImageExtensions.Contains(Path.GetExtension(name ?? string.Empty), StringComparer.OrdinalIgnoreCase); }
+        private static bool IsImage(string name) { return VisualDocumentShadowService.IsImage(name); }
         private static string StableZipOriginHash(string chain, string path) { return HashBytes(Encoding.UTF8.GetBytes((chain ?? string.Empty) + "|" + HashFile(path))); }
         internal static string HashFile(string path) { using (var stream = File.OpenRead(path)) using (var sha = SHA256.Create()) return ToHex(sha.ComputeHash(stream)); }
         private static string HashBytes(byte[] bytes) { using (var sha = SHA256.Create()) return ToHex(sha.ComputeHash(bytes)); }

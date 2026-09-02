@@ -80,6 +80,7 @@
     <Compile Include="H1D9D1BDirectRgbProbe.cs" />
     <Compile Include="H1D9D1CResamplerParityProbe.cs" />
     <Compile Include="H1D9EShadowProductProbe.cs" />
+    <Compile Include="H1D9EBackfill.cs" />
     <Compile Include="H1D9E1ContractProbe.cs" />
     <None Include="App.config" />
     <None Include="Assets\H1D9A\mul_1.onnx">

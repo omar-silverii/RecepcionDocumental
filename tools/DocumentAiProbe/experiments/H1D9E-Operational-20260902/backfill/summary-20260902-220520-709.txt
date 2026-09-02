@@ -1,0 +1,10 @@
+﻿Documents=125
+Inserted=123
+Existing=0
+SkippedMissing=2
+OK=122
+ERROR=1
+ShadowBefore=dbo.DocumentoVisionShadow	0	6D1CCBE97BC3F18E58878D568F344EB8B513B54FF20C7F05352B1146EF542E4A
+ShadowAfter=dbo.DocumentoVisionShadow	123	01DA1D87F316F6C34D5FB30E535884C0A8A3B2F501B8CB96C1E39F4C8A8DD22D
+ProtectedDatabaseUnchanged=True
+ProtectedFilesUnchanged=True

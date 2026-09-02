@@ -324,6 +324,7 @@
     <Compile Include="Services\ArcaQrDecoder.cs" />
     <Compile Include="Services\DocumentAnalysisService.cs" />
     <Compile Include="Services\VisualInvoiceShadowService.cs" />
+    <Compile Include="Services\VisualDocumentShadowService.cs" />
     <Compile Include="Services\DocumentOcrService.cs" />
     <Compile Include="Services\DocumentStorage.cs" />
     <Compile Include="Services\DocumentReviewService.cs" />
