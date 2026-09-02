@@ -19,6 +19,8 @@ namespace PdfRasterProbe
 
         private static int Main(string[] args)
         {
+            if(args.Length>0&&args[0]=="--h1d7c2-sample")return H1D7C2InvoiceSampleProbe.Run(args);
+            if(args.Length>0&&args[0]=="--h1d7c2-sample-inner")return H1D7C2InvoiceSampleProbe.RunInner(args);
             if (args.Length > 0 && string.Equals(args[0], "--mime", StringComparison.OrdinalIgnoreCase))
                 return GmailMimeProbe.Run(args);
             if (args.Length > 0 && string.Equals(args[0], "--product", StringComparison.OrdinalIgnoreCase))

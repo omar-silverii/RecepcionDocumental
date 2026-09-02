@@ -17,6 +17,9 @@ namespace RecepcionDocumental
         protected void Filtro_Changed(object sender, EventArgs e) { LoadDocuments(); }
         private void LoadDocuments()
         {
+            lnkSample.Visible=false;
+            try {var count=InvoiceSampleRepository.CountPending();lnkSample.Visible=count>0;lnkSample.Text="Revisión de control ("+count+")";}
+            catch(SqlException){ /* Sampling availability must not hide the operational list. */ }
             try { var items=DocumentRepository.List(ddlClasificacion.SelectedValue);var first=ddlClasificacion.SelectedValue=="REVISAR"?DocumentRepository.GetFirstPending():null;pnlComenzarRevision.Visible=first.HasValue;if(first.HasValue)lnkComenzarRevision.NavigateUrl="Documento_Revisar.aspx?id="+first.Value;pnlError.Visible=false;pnlVacio.Visible=items.Count==0;pnlTabla.Visible=items.Count>0;rptDocumentos.DataSource=items;rptDocumentos.DataBind(); }
             catch(SqlException){pnlError.Visible=true;pnlVacio.Visible=false;pnlTabla.Visible=false;pnlComenzarRevision.Visible=false;}
         }

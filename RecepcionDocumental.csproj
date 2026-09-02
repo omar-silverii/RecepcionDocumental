@@ -205,6 +205,7 @@
     <Content Include="Database\005_SelectorFacturaBase.sql" />
     <Content Include="Database\006_RevisionDocumental.sql" />
     <Content Include="Database\007_EtiquetaRevisionDocumental.sql" />
+    <Content Include="Database\010_MuestraFacturaHumana.sql" />
     <Content Include="Documento_Ver.aspx" />
     <Content Include="Documento_Revisar.aspx" />
     <Content Include="Documentos.aspx" />
@@ -303,6 +304,8 @@
     </Compile>
     <Compile Include="Data\GmailRepository.cs" />
     <Compile Include="Data\DocumentRepository.cs" />
+    <Compile Include="Data\InvoiceSampleRepository.cs" />
+    <Compile Include="Services\InvoiceSampleService.cs" />
     <Compile Include="Data\VisualShadowRepository.cs" />
     <Compile Include="Configuration\ConfiguracionAplicacion.cs" />
     <Compile Include="Configuration\ConfiguracionIni.cs" />

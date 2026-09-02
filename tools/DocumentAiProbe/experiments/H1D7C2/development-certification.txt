@@ -1,0 +1,76 @@
+**********************
+PowerShell transcript start
+Start time: 20260902162222
+Username: OMARD\omard
+RunAs User: OMARD\omard
+Configuration Name: 
+Machine: OMARD (Microsoft Windows NT 10.0.19045.0)
+Host Application: C:\Users\omard\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+& .\tools\DocumentAiProbe\Certify-H1D7C2Development.ps1
+Process ID: 5232
+PSVersion: 7.6.4
+PSEdition: Core
+GitCommitId: 7.6.4
+OS: Microsoft Windows 10.0.19045
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is C:\Users\omard\source\repos\RecepcionDocumental\RecepcionDocumental\tools\DocumentAiProbe\experiments\H1D7C2\development-certification.txt
+
+MigrationRun=1 ExitCode=0
+Changed database context to 'RecepcionDocumental'.
+
+(0 rows affected)
+Elegibles   Seleccionadas Porcentaje  RevisadasExcluidas DuplicadosEvitados Insertadas
+----------- ------------- ----------- ------------------ ------------------ -----------
+         22             0         .00                  0                  0           0
+
+(1 rows affected)
+AfterMigration1
+
+FacturaElegibles MuestrasSeleccionadas MuestrasPendientes GroundTruthExistentes
+---------------- --------------------- ------------------ ---------------------
+              22                     0                  0                     0
+
+
+MigrationRun=2 ExitCode=0
+Changed database context to 'RecepcionDocumental'.
+
+(0 rows affected)
+Elegibles   Seleccionadas Porcentaje  RevisadasExcluidas DuplicadosEvitados Insertadas
+----------- ------------- ----------- ------------------ ------------------ -----------
+         22             0         .00                  0                  0           0
+
+(1 rows affected)
+AfterMigration2
+
+FacturaElegibles MuestrasSeleccionadas MuestrasPendientes GroundTruthExistentes
+---------------- --------------------- ------------------ ---------------------
+              22                     0                  0                     0
+
+MigrationIdempotent=True
+HistoricalDecisionsUnchanged=True
+PdfRasterProbeCount=0
+DllExclusiveOpen=True
+
+WebFormsBuildExitCode=0
+
+ProbeBuildExitCode=0
+
+ProbeExitCode=0
+PdfRasterProbeCount=0
+DllExclusiveOpen=True
+AfterProbeCleanup
+
+FacturaElegibles MuestrasSeleccionadas MuestrasPendientes GroundTruthExistentes
+---------------- --------------------- ------------------ ---------------------
+              22                     0                  0                     0
+
+DevelopmentCertificationCompleted=True
+**********************
+PowerShell transcript end
+End time: 20260902162230
+**********************

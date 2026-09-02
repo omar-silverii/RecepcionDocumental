@@ -67,6 +67,7 @@
     <Compile Include="H1D6AOperationalGmailProbe.cs" />
     <Compile Include="H1D7AReviewValidationProbe.cs" />
     <Compile Include="H1D7C1GroundTruthProbe.cs" />
+    <Compile Include="H1D7C2InvoiceSampleProbe.cs" />
     <Compile Include="H1D7BVisualShadowProbe.cs" />
     <Compile Include="H1D7B2VisualShadowProbe.cs" />
     <Compile Include="H1D8AFiscalEvidenceProbe.cs" />

@@ -1,0 +1,75 @@
+**********************
+PowerShell transcript start
+Start time: 20260902161741
+Username: OMARD\omard
+RunAs User: OMARD\omard
+Configuration Name: 
+Machine: OMARD (Microsoft Windows NT 10.0.19045.0)
+Host Application: C:\Users\omard\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.dll -Command try { [Console]::OutputEncoding=[System.Text.Encoding]::UTF8 } catch {}
+& .\tools\DocumentAiProbe\Test-H1D7C2Migration.ps1
+Process ID: 14056
+PSVersion: 7.6.4
+PSEdition: Core
+GitCommitId: 7.6.4
+OS: Microsoft Windows 10.0.19045
+Platform: Win32NT
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1, 6.0, 7.0
+PSRemotingProtocolVersion: 2.4
+SerializationVersion: 1.1.0.1
+WSManStackVersion: 3.0
+**********************
+Transcript started, output file is C:\Users\omard\source\repos\RecepcionDocumental\RecepcionDocumental\tools\DocumentAiProbe\experiments\H1D7C2\migration-evidence.txt
+LegacyMarkerMatches=1
+InjectionPointMatches=1
+OriginalSqlByteIdentical=True
+InjectedThrowCount=1; ThrowBeforeCommit=True; InsideTransactionAfterDDL=True; AlteredSqlDifferent=True
+AlteredSqlTail:
+@Inserted AS Insertadas;');
+ -- H1D7C2_ROLLBACK_TEST_POINT
+ THROW 51001,'H1D7C2 controlled rollback before commit',1;
+ COMMIT;
+END TRY
+BEGIN CATCH
+ IF XACT_STATE()<>0 ROLLBACK;
+ THROW;
+END CATCH;
+GO
+OriginalSqlSHA256=6051BBA70A5EB0D0B6616576A3EC7FD532819CCD6B703D5DE39085FA54BA33B0
+LegacyMarkerMatches=1
+InjectionPointMatches=1
+OriginalSqlByteIdentical=True
+InjectedThrowCount=1; ThrowBeforeCommit=True; InsideTransactionAfterDDL=True; AlteredSqlDifferent=True
+AlteredSqlTail:
+@Inserted AS Insertadas;');
+ -- H1D7C2_ROLLBACK_TEST_POINT
+ THROW 51001,'H1D7C2 controlled rollback before commit',1;
+ COMMIT;
+END TRY
+BEGIN CATCH
+ IF XACT_STATE()<>0 ROLLBACK;
+ THROW;
+END CATCH;
+GO
+Elegibles=2; Seleccionadas=1; Porcentaje=50.00; RevisadasExcluidas=1; DuplicadosEvitados=0; Insertadas=1
+PS>TerminatingError(): "Exception calling "NextResult" with "0" argument(s): "H1D7C2 controlled rollback before commit""
+ObservedSqlError=51001; H1D7C2 controlled rollback before commit
+InjectedFailureObserved=True
+RollbackObjects=0; RollbackIndexes=0; OriginalCheckRestoredExactly=True; PartialBackfill=0 (sample table absent); GroundTruthRows=0; DocumentsUnchanged=4
+MigrationRollbackClean=True
+OriginalSqlByteIdentical=True
+Elegibles=2; Seleccionadas=1; Porcentaje=50.00; RevisadasExcluidas=1; DuplicadosEvitados=0; Insertadas=1
+OriginalMigrationFirstExitCode=0
+CompleteSchema=True; Columns=9; Keys=2; ForeignKeys=2; Checks=4; Indexes=3; PendingIndexUnfiltered=True; SourceCheckPreservedAndExtended=True; BoundBucketFunction=True
+OriginalSqlByteIdentical=True
+Elegibles=2; Seleccionadas=1; Porcentaje=50.00; RevisadasExcluidas=1; DuplicadosEvitados=1; Insertadas=0
+OriginalMigrationSecondExitCode=0
+CompleteSchema=True; Columns=9; Keys=2; ForeignKeys=2; Checks=4; Indexes=3; PendingIndexUnfiltered=True; SourceCheckPreservedAndExtended=True; BoundBucketFunction=True
+SampleRowsIdentical=True
+MigrationIdempotent=True; TemporaryBackfill=1/2; ReviewedExcluded=1; ReviewExcluded=1
+OriginalSqlByteIdentical=True
+MigrationGate=True
+TemporaryDatabaseRemoved=True
+**********************
+PowerShell transcript end
+End time: 20260902161742
+**********************

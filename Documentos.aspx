@@ -11,6 +11,7 @@
 <asp:Panel ID="pnlVacio" runat="server" Visible="false" CssClass="empty-state">No hay documentos para el filtro seleccionado.</asp:Panel>
 <asp:Panel ID="pnlResultado" runat="server" Visible="false" CssClass="alert alert-info"><asp:Literal ID="litResultado" runat="server" /></asp:Panel>
 <asp:Panel ID="pnlComenzarRevision" runat="server" Visible="false" CssClass="mb-3"><asp:HyperLink ID="lnkComenzarRevision" runat="server" CssClass="btn btn-primary">Comenzar revisión</asp:HyperLink></asp:Panel>
+<asp:HyperLink ID="lnkSample" runat="server" Visible="false" NavigateUrl="Documento_Revisar.aspx?muestra=1" CssClass="btn btn-outline-secondary mb-3">Revisión de control</asp:HyperLink>
 <asp:Panel ID="pnlTabla" runat="server" CssClass="card border-0 shadow-sm overflow-hidden documents-table-card">
 <div class="table-responsive documents-table-wrap">
     <asp:Repeater ID="rptDocumentos" runat="server">

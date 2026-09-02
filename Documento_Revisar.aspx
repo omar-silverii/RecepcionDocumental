@@ -2,8 +2,8 @@
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 <main class="review-station">
     <header class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-2">
-        <div><p class="eyebrow">Ground truth humano</p><h1>Revisión documental</h1><asp:Literal ID="litPosition" runat="server" /></div>
-        <a class="btn btn-outline-secondary" href="Documentos.aspx?clasificacion=REVISAR">Volver a lista</a>
+        <div><p class="eyebrow">Ground truth humano</p><h1><%= IsSample ? "Revisión de control" : "Revisión documental" %></h1><asp:Literal ID="litPosition" runat="server" /></div>
+        <a class="btn btn-outline-secondary" href="Documentos.aspx">Volver a lista</a>
     </header>
     <asp:Panel ID="pnlMessage" runat="server" Visible="false" CssClass="alert alert-info"><asp:Literal ID="litMessage" runat="server" /> <asp:HyperLink ID="lnkContinue" runat="server" Visible="false" CssClass="alert-link">Continuar con el siguiente pendiente</asp:HyperLink></asp:Panel>
     <asp:Panel ID="pnlEmpty" runat="server" Visible="false" CssClass="empty-state"><h2>No quedan documentos pendientes.</h2><p class="text-secondary mb-3">La cola de revisión está completa.</p><a class="btn btn-outline-primary" href="Documentos.aspx?clasificacion=REVISAR">Volver a documentos</a></asp:Panel>
@@ -20,10 +20,12 @@
                     <dt>Fecha</dt><dd><asp:Literal ID="litDate" runat="server" /></dd>
                     <dt>Remitente</dt><dd><asp:Literal ID="litSender" runat="server" /></dd>
                     <dt>Asunto</dt><dd><asp:Literal ID="litSubject" runat="server" /></dd>
+                    <asp:PlaceHolder ID="phAutomatic" runat="server" EnableViewState="false">
                     <dt>Clasificación automática</dt><dd><asp:Literal ID="litClassification" runat="server" /></dd>
                     <dt>Método</dt><dd><asp:Literal ID="litMethod" runat="server" /></dd>
                     <dt>Confianza</dt><dd><asp:Literal ID="litConfidence" runat="server" /></dd>
                     <dt>Motivo</dt><dd><asp:Literal ID="litReason" runat="server" /></dd>
+                    </asp:PlaceHolder>
                 </dl>
                 <label for="<%= txtObservation.ClientID %>" class="form-label fw-semibold">Observación opcional</label>
                 <asp:TextBox ID="txtObservation" runat="server" TextMode="MultiLine" Rows="3" MaxLength="1000" CssClass="form-control review-observation" />
