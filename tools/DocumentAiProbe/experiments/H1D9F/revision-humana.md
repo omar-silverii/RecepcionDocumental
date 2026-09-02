@@ -1,0 +1,40 @@
+# H1D9F — revisión humana
+
+Cohorte original: 36 documentos; 3 resueltos humanamente, 33 pendientes. Abrir sólo estos enlaces: «Siguiente pendiente» recorre toda la cola. No se alteraron documentos para preparar esta lista. La UI muestra información del clasificador productivo, no la zona shadow; no es totalmente ciega.
+
+- [x] [Id 6](https://localhost:44320/Documento_Revisar.aspx?id=6) — OTRO_DOCUMENTO
+- [x] [Id 26](https://localhost:44320/Documento_Revisar.aspx?id=26) — FACTURA
+- [ ] [Id 28](https://localhost:44320/Documento_Revisar.aspx?id=28)
+- [ ] [Id 29](https://localhost:44320/Documento_Revisar.aspx?id=29)
+- [ ] [Id 31](https://localhost:44320/Documento_Revisar.aspx?id=31)
+- [ ] [Id 35](https://localhost:44320/Documento_Revisar.aspx?id=35)
+- [ ] [Id 37](https://localhost:44320/Documento_Revisar.aspx?id=37)
+- [ ] [Id 43](https://localhost:44320/Documento_Revisar.aspx?id=43)
+- [ ] [Id 45](https://localhost:44320/Documento_Revisar.aspx?id=45)
+- [ ] [Id 47](https://localhost:44320/Documento_Revisar.aspx?id=47)
+- [ ] [Id 48](https://localhost:44320/Documento_Revisar.aspx?id=48)
+- [ ] [Id 50](https://localhost:44320/Documento_Revisar.aspx?id=50)
+- [ ] [Id 51](https://localhost:44320/Documento_Revisar.aspx?id=51)
+- [ ] [Id 53](https://localhost:44320/Documento_Revisar.aspx?id=53)
+- [ ] [Id 56](https://localhost:44320/Documento_Revisar.aspx?id=56)
+- [ ] [Id 57](https://localhost:44320/Documento_Revisar.aspx?id=57)
+- [ ] [Id 61](https://localhost:44320/Documento_Revisar.aspx?id=61)
+- [ ] [Id 62](https://localhost:44320/Documento_Revisar.aspx?id=62)
+- [ ] [Id 63](https://localhost:44320/Documento_Revisar.aspx?id=63)
+- [ ] [Id 67](https://localhost:44320/Documento_Revisar.aspx?id=67)
+- [ ] [Id 71](https://localhost:44320/Documento_Revisar.aspx?id=71)
+- [ ] [Id 75](https://localhost:44320/Documento_Revisar.aspx?id=75)
+- [ ] [Id 82](https://localhost:44320/Documento_Revisar.aspx?id=82)
+- [ ] [Id 10082](https://localhost:44320/Documento_Revisar.aspx?id=10082)
+- [ ] [Id 10091](https://localhost:44320/Documento_Revisar.aspx?id=10091)
+- [ ] [Id 10094](https://localhost:44320/Documento_Revisar.aspx?id=10094)
+- [ ] [Id 10096](https://localhost:44320/Documento_Revisar.aspx?id=10096)
+- [ ] [Id 10097](https://localhost:44320/Documento_Revisar.aspx?id=10097)
+- [ ] [Id 10098](https://localhost:44320/Documento_Revisar.aspx?id=10098)
+- [ ] [Id 10100](https://localhost:44320/Documento_Revisar.aspx?id=10100)
+- [ ] [Id 10103](https://localhost:44320/Documento_Revisar.aspx?id=10103)
+- [ ] [Id 10105](https://localhost:44320/Documento_Revisar.aspx?id=10105)
+- [ ] [Id 10106](https://localhost:44320/Documento_Revisar.aspx?id=10106)
+- [ ] [Id 10112](https://localhost:44320/Documento_Revisar.aspx?id=10112)
+- [ ] [Id 10114](https://localhost:44320/Documento_Revisar.aspx?id=10114)
+- [x] [Id 10118](https://localhost:44320/Documento_Revisar.aspx?id=10118) — FACTURA
