@@ -1,0 +1,44 @@
+﻿**********************
+Inicio de la transcripción de Windows PowerShell
+Hora de inicio: 20260902153553
+Nombre de usuario: OMARD\omard
+Usuario RunAs: OMARD\omard
+Nombre de la configuración: 
+Máquina: OMARD (Microsoft Windows NT 10.0.19045.0)
+Aplicación host: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Users\omard\AppData\Local\Temp\H1D7C1-admin-f6846c2e238b449d989de78290b0984b\release-owner.ps1
+Id. de proceso: 4824
+PSVersion: 5.1.19041.7663
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.19041.7663
+BuildVersion: 10.0.19041.7663
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+La transcripción ha comenzado. El archivo de salida es C:\Users\omard\AppData\Local\Temp\H1D7C1-admin-f6846c2e238b449d989de78290b0984b\release-owner.txt
+
+
+ProcessId       : 23360
+ExecutablePath  : C:\Users\omard\source\repos\RecepcionDocumental\RecepcionDocumental\tools\PdfRasterProbe\bin\PdfRaste
+                  rProbe.exe
+CommandLine     : "C:\Users\omard\source\repos\RecepcionDocumental\RecepcionDocumental\tools\PdfRasterProbe\bin\PdfRast
+                  erProbe.exe" --h1d7c1-ground-truth .\RecepcionDocumental.ini
+                  .\tools\DocumentAiProbe\experiments\H1D7C1
+CreationDate    : 2/9/2026 12:26:26
+ParentProcessId : 18744
+ThreadCount     : 0
+HandleCount     : 0
+
+
+
+DebuggerQuerySucceeded=True DebuggerAttached=False
+Termination reason: abandoned H1D7C1 test, exact executable and command line confirmed; Process Explorer search identifies exact mapped DLL in PID 23360.
+PdfRasterProbeCount=0
+No matching handles found.
+>> ErrorTerminación(handle64.exe): "Se detuvo el comando en ejecución porque la variable de preferencia "ErrorActionPreference" o un parámetro común se han establecido en Stop: System.Management.Automation.RemoteException"
+STOP:
+**********************
+Fin de la transcripción de Windows PowerShell
+Hora de finalización: 20260902153556
+**********************

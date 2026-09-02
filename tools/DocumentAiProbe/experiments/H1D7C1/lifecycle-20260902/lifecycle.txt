@@ -1,0 +1,55 @@
+﻿**********************
+Inicio de la transcripción de Windows PowerShell
+Hora de inicio: 20260902153702
+Nombre de usuario: OMARD\omard
+Usuario RunAs: OMARD\omard
+Nombre de la configuración: 
+Máquina: OMARD (Microsoft Windows NT 10.0.19045.0)
+Aplicación host: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Users\omard\AppData\Local\Temp\H1D7C1-admin-f6846c2e238b449d989de78290b0984b\lifecycle.ps1
+Id. de proceso: 5292
+PSVersion: 5.1.19041.7663
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.19041.7663
+BuildVersion: 10.0.19041.7663
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+La transcripción ha comenzado. El archivo de salida es C:\Users\omard\source\repos\RecepcionDocumental\RecepcionDocumental\tools\DocumentAiProbe\experiments\H1D7C1\lifecycle-20260902\lifecycle.txt
+Administrator=True
+cycle-1-before PdfRasterProbeCount=0
+cycle-1-before HandleExitCode=1
+cycle-1-before ExclusiveOpen=True
+cycle-1-initial BuildExitCode=0
+cycle-1 ProbeExitCode=0
+H1D7C1 | Labels=True | Files=True | Idempotent=True | Concurrency=True | ConcurrentPhysical=True | PreexistingSafe=True | Atomic=True | ShadowOptional=True | Gmail=True | OrphanInvoiceFiles=0 | Gate=True
+cycle-1-after PdfRasterProbeCount=0
+cycle-1-after HandleExitCode=1
+cycle-1-after ExclusiveOpen=True
+cycle-1-rebuild BuildExitCode=0
+cycle-2-before PdfRasterProbeCount=0
+cycle-2-before HandleExitCode=1
+cycle-2-before ExclusiveOpen=True
+cycle-2-initial BuildExitCode=0
+cycle-2 ProbeExitCode=0
+H1D7C1 | Labels=True | Files=True | Idempotent=True | Concurrency=True | ConcurrentPhysical=True | PreexistingSafe=True | Atomic=True | ShadowOptional=True | Gmail=True | OrphanInvoiceFiles=0 | Gate=True
+cycle-2-after PdfRasterProbeCount=0
+cycle-2-after HandleExitCode=1
+cycle-2-after ExclusiveOpen=True
+cycle-2-rebuild BuildExitCode=0
+cycle-3-before PdfRasterProbeCount=0
+cycle-3-before HandleExitCode=1
+cycle-3-before ExclusiveOpen=True
+cycle-3-initial BuildExitCode=0
+cycle-3 ProbeExitCode=0
+H1D7C1 | Labels=True | Files=True | Idempotent=True | Concurrency=True | ConcurrentPhysical=True | PreexistingSafe=True | Atomic=True | ShadowOptional=True | Gmail=True | OrphanInvoiceFiles=0 | Gate=True
+cycle-3-after PdfRasterProbeCount=0
+cycle-3-after HandleExitCode=1
+cycle-3-after ExclusiveOpen=True
+cycle-3-rebuild BuildExitCode=0
+ProbeLifecycleClean=True
+**********************
+Fin de la transcripción de Windows PowerShell
+Hora de finalización: 20260902153718
+**********************

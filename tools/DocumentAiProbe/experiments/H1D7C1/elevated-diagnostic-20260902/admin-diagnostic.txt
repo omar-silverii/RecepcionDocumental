@@ -1,0 +1,177 @@
+﻿**********************
+Inicio de la transcripción de Windows PowerShell
+Hora de inicio: 20260902153009
+Nombre de usuario: OMARD\omard
+Usuario RunAs: OMARD\omard
+Nombre de la configuración: 
+Máquina: OMARD (Microsoft Windows NT 10.0.19045.0)
+Aplicación host: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Users\omard\AppData\Local\Temp\H1D7C1-admin-f6846c2e238b449d989de78290b0984b\diagnose.ps1
+Id. de proceso: 12800
+PSVersion: 5.1.19041.7663
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.19041.7663
+BuildVersion: 10.0.19041.7663
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+La transcripción ha comenzado. El archivo de salida es C:\Users\omard\AppData\Local\Temp\H1D7C1-admin-f6846c2e238b449d989de78290b0984b\admin-diagnostic.txt
+Administrator=True
+2026-09-02T15:30:09.2212414-03:00
+
+Nthandle v5.0 - Handle viewer
+Copyright (C) 1997-2022 Mark Russinovich
+Sysinternals - www.sysinternals.com
+
+No matching handles found.
+HandleExitCode=1
+
+
+ProcessId       : 23360
+Name            : PdfRasterProbe.exe
+ExecutablePath  : C:\Users\omard\source\repos\RecepcionDocumental\RecepcionDocumental\tools\PdfRasterProbe\bin\PdfRaste
+                  rProbe.exe
+CommandLine     : "C:\Users\omard\source\repos\RecepcionDocumental\RecepcionDocumental\tools\PdfRasterProbe\bin\PdfRast
+                  erProbe.exe" --h1d7c1-ground-truth .\RecepcionDocumental.ini
+                  .\tools\DocumentAiProbe\experiments\H1D7C1
+ParentProcessId : 18744
+CreationDate    : 2/9/2026 12:26:26
+ThreadCount     : 0
+HandleCount     : 0
+ExecutionState  :
+KernelModeTime  : 0
+UserModeTime    : 0
+
+
+
+
+
+Domain         : OMARD
+ReturnValue    : 0
+User           : omard
+PSComputerName :
+
+
+
+
+
+ProcessId       : 23360
+Name            : PdfRasterProbe.exe
+ExecutablePath  : C:\Users\omard\source\repos\RecepcionDocumental\RecepcionDocumental\tools\PdfRasterProbe\bin\PdfRaste
+                  rProbe.exe
+CommandLine     : "C:\Users\omard\source\repos\RecepcionDocumental\RecepcionDocumental\tools\PdfRasterProbe\bin\PdfRast
+                  erProbe.exe" --h1d7c1-ground-truth .\RecepcionDocumental.ini
+                  .\tools\DocumentAiProbe\experiments\H1D7C1
+ParentProcessId : 18744
+CreationDate    : 2/9/2026 12:26:26
+
+
+
+
+
+Id          : 23360
+Path        : C:\Users\omard\source\repos\RecepcionDocumental\RecepcionDocumental\tools\PdfRasterProbe\bin\PdfRasterPro
+              be.exe
+StartTime   : 2/9/2026 12:26:26
+HasExited   : False
+ExitCode    :
+HandleCount : 0
+
+
+
+
+ModuleName                            FileName
+----------                            --------
+PdfRasterProbe.exe                    C:\Users\omard\source\repos\RecepcionDocumental\RecepcionDocumental\tools\PdfR...
+ntdll.dll                             C:\WINDOWS\SYSTEM32\ntdll.dll
+MSCOREE.DLL                           C:\WINDOWS\SYSTEM32\MSCOREE.DLL
+aswhook.dll                           C:\Program Files\Norton\Suite\aswhook.dll
+KERNEL32.dll                          C:\WINDOWS\System32\KERNEL32.dll
+KERNELBASE.dll                        C:\WINDOWS\System32\KERNELBASE.dll
+ADVAPI32.dll                          C:\WINDOWS\System32\ADVAPI32.dll
+msvcrt.dll                            C:\WINDOWS\System32\msvcrt.dll
+sechost.dll                           C:\WINDOWS\System32\sechost.dll
+RPCRT4.dll                            C:\WINDOWS\System32\RPCRT4.dll
+bcrypt.dll                            C:\WINDOWS\System32\bcrypt.dll
+mscoreei.dll                          C:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscoreei.dll
+SHLWAPI.dll                           C:\WINDOWS\System32\SHLWAPI.dll
+kernel.appcore.dll                    C:\WINDOWS\SYSTEM32\kernel.appcore.dll
+VERSION.dll                           C:\WINDOWS\SYSTEM32\VERSION.dll
+clr.dll                               C:\Windows\Microsoft.NET\Framework64\v4.0.30319\clr.dll
+USER32.dll                            C:\WINDOWS\System32\USER32.dll
+win32u.dll                            C:\WINDOWS\System32\win32u.dll
+GDI32.dll                             C:\WINDOWS\System32\GDI32.dll
+VCRUNTIME140_1_CLR0400.dll            C:\WINDOWS\SYSTEM32\VCRUNTIME140_1_CLR0400.dll
+gdi32full.dll                         C:\WINDOWS\System32\gdi32full.dll
+VCRUNTIME140_CLR0400.dll              C:\WINDOWS\SYSTEM32\VCRUNTIME140_CLR0400.dll
+ucrtbase_clr0400.dll                  C:\WINDOWS\SYSTEM32\ucrtbase_clr0400.dll
+msvcp_win.dll                         C:\WINDOWS\System32\msvcp_win.dll
+ucrtbase.dll                          C:\WINDOWS\System32\ucrtbase.dll
+IMM32.DLL                             C:\WINDOWS\System32\IMM32.DLL
+mscorlib.ni.dll                       C:\WINDOWS\assembly\NativeImages_v4.0.30319_64\mscorlib\40ddcb8ab86958936ecbc2...
+ole32.dll                             C:\WINDOWS\System32\ole32.dll
+combase.dll                           C:\WINDOWS\System32\combase.dll
+bcryptPrimitives.dll                  C:\WINDOWS\System32\bcryptPrimitives.dll
+clrjit.dll                            C:\Windows\Microsoft.NET\Framework64\v4.0.30319\clrjit.dll
+CRYPTSP.dll                           C:\WINDOWS\SYSTEM32\CRYPTSP.dll
+rsaenh.dll                            C:\WINDOWS\system32\rsaenh.dll
+CRYPTBASE.dll                         C:\WINDOWS\SYSTEM32\CRYPTBASE.dll
+urlmon.dll                            C:\WINDOWS\SYSTEM32\urlmon.dll
+iertutil.dll                          C:\WINDOWS\SYSTEM32\iertutil.dll
+srvcli.dll                            C:\WINDOWS\SYSTEM32\srvcli.dll
+windows.storage.dll                   C:\WINDOWS\SYSTEM32\windows.storage.dll
+netutils.dll                          C:\WINDOWS\SYSTEM32\netutils.dll
+shcore.dll                            C:\WINDOWS\System32\shcore.dll
+Wldp.dll                              C:\WINDOWS\SYSTEM32\Wldp.dll
+OLEAUT32.dll                          C:\WINDOWS\System32\OLEAUT32.dll
+SspiCli.dll                           C:\WINDOWS\SYSTEM32\SspiCli.dll
+PROPSYS.dll                           C:\WINDOWS\SYSTEM32\PROPSYS.dll
+virtdisk.dll                          C:\WINDOWS\SYSTEM32\virtdisk.dll
+FLTLIB.DLL                            C:\WINDOWS\SYSTEM32\FLTLIB.DLL
+System.ni.dll                         C:\WINDOWS\assembly\NativeImages_v4.0.30319_64\System\e4fc02ab4ba57a35c86a776b...
+System.Core.ni.dll                    C:\WINDOWS\assembly\NativeImages_v4.0.30319_64\System.Core\a224a4179ae3066e49e...
+System.Data.ni.dll                    C:\WINDOWS\assembly\NativeImages_v4.0.30319_64\System.Data\6a6056eb20244a44532...
+System.Data.dll                       C:\WINDOWS\Microsoft.Net\assembly\GAC_64\System.Data\v4.0_4.0.0.0__b77a5c56193...
+WS2_32.dll                            C:\WINDOWS\System32\WS2_32.dll
+CRYPT32.dll                           C:\WINDOWS\System32\CRYPT32.dll
+System.Configuration.ni.dll           C:\WINDOWS\assembly\NativeImages_v4.0.30319_64\System.Configuration\b032708c9b...
+System.Xml.ni.dll                     C:\WINDOWS\assembly\NativeImages_v4.0.30319_64\System.Xml\27f5393bd85a8e15cfb5...
+shell32.dll                           C:\WINDOWS\System32\shell32.dll
+profapi.dll                           C:\WINDOWS\SYSTEM32\profapi.dll
+System.Transactions.ni.dll            C:\WINDOWS\assembly\NativeImages_v4.0.30319_64\System.Transactions\f395fd1e709...
+System.Transactions.dll               C:\WINDOWS\Microsoft.Net\assembly\GAC_64\System.Transactions\v4.0_4.0.0.0__b77...
+System.EnterpriseServices.ni.dll      C:\WINDOWS\assembly\NativeImages_v4.0.30319_64\System.Ente96d83b35#\3efb40c316...
+System.EnterpriseServices.Wrapper.dll C:\WINDOWS\Microsoft.Net\assembly\GAC_64\System.EnterpriseServices\v4.0_4.0.0....
+security.dll                          C:\WINDOWS\system32\security.dll
+SECUR32.DLL                           C:\WINDOWS\SYSTEM32\SECUR32.DLL
+schannel.DLL                          C:\WINDOWS\system32\schannel.DLL
+kerberos.DLL                          C:\WINDOWS\system32\kerberos.DLL
+MSASN1.dll                            C:\WINDOWS\SYSTEM32\MSASN1.dll
+USERENV.dll                           C:\WINDOWS\SYSTEM32\USERENV.dll
+msv1_0.DLL                            C:\WINDOWS\system32\msv1_0.DLL
+NtlmShared.dll                        C:\WINDOWS\SYSTEM32\NtlmShared.dll
+cryptdll.dll                          C:\WINDOWS\SYSTEM32\cryptdll.dll
+ntdsapi.dll                           C:\WINDOWS\system32\ntdsapi.dll
+DSPARSE.DLL                           C:\WINDOWS\SYSTEM32\DSPARSE.DLL
+netapi32.dll                          C:\WINDOWS\system32\netapi32.dll
+LOGONCLI.DLL                          C:\WINDOWS\SYSTEM32\LOGONCLI.DLL
+mswsock.dll                           C:\WINDOWS\system32\mswsock.dll
+DNSAPI.dll                            C:\WINDOWS\SYSTEM32\DNSAPI.dll
+IPHLPAPI.DLL                          C:\WINDOWS\SYSTEM32\IPHLPAPI.DLL
+NSI.dll                               C:\WINDOWS\System32\NSI.dll
+rasadhlp.dll                          C:\Windows\System32\rasadhlp.dll
+fwpuclnt.dll                          C:\WINDOWS\System32\fwpuclnt.dll
+mskeyprotect.dll                      C:\WINDOWS\SYSTEM32\mskeyprotect.dll
+NTASN1.dll                            C:\WINDOWS\SYSTEM32\NTASN1.dll
+ncrypt.dll                            C:\WINDOWS\SYSTEM32\ncrypt.dll
+ncryptsslp.dll                        C:\WINDOWS\system32\ncryptsslp.dll
+clbcatq.dll                           C:\WINDOWS\System32\clbcatq.dll
+diasymreader.dll                      C:\Windows\Microsoft.NET\Framework64\v4.0.30319\diasymreader.dll
+
+
+ExclusiveOpen=False Excepción al llamar a "Open" con los argumentos "4": "El proceso no puede obtener acceso al archivo 'C:\Users\omard\source\repos\RecepcionDocumental\RecepcionDocumental\tools\PdfRasterProbe\bin\RecepcionDocumental.dll' porque está siendo utilizado en otro proceso."
+**********************
+Fin de la transcripción de Windows PowerShell
+Hora de finalización: 20260902153010
+**********************
