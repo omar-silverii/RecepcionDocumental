@@ -1,0 +1,80 @@
+{
+  "milestone": "H1D9E1A",
+  "status": "APROBADO",
+  "workspace_commit": "09f3cd25f86b6c59dcee889fe5778069b995475b",
+  "source_zip_sha256": "4F446086D2A0F7611F3C85870794923A1BE7B00D29E9E119306989DF5351037B",
+  "model": "H1D9B-CANDIDATE-001",
+  "model_sha256": "A1DC24FE90C3C14303C3319EC0BD6D9EF95E91CC82C9B38E2FBAAEB0EF826811",
+  "frozen_hashes": {
+    "dataset.csv": "AFECA7A2F995CE1B2DF6F9DAF3501A392CC7FB4DD1509900A19D1588E26794C2",
+    "frozen-test-groups.txt": "FADEA71A298125E8CE0EB65C31F6232EAAE72EB71F33141B912D23F4E59603E4",
+    "fold-manifest.csv": "9E4A9ACC7DB4B042A96A28502745ADC32F78AF7866A45918000668C127D895D9",
+    "candidate.onnx": "A1DC24FE90C3C14303C3319EC0BD6D9EF95E91CC82C9B38E2FBAAEB0EF826811",
+    "candidate-checkpoint.pt": "F6F552CF5FAD856D7FB57352C63C4CD68C3E3E0F6C039C3C7623B030FD965F27"
+  },
+  "build": {
+    "solution_configuration": "Release|Any CPU",
+    "solution_exit_code": 0,
+    "probe_target_framework": "net48",
+    "probe_platform_target": "x64",
+    "probe_prefer_32_bit": false,
+    "probe_pe_machine": "0x8664",
+    "probe_build_exit_code": 0
+  },
+  "certification": {
+    "documents": 80,
+    "factura": 18,
+    "revisar": 52,
+    "descartar": 10,
+    "eligible": 70,
+    "shadow_ok": 70,
+    "classifications_changed": 0,
+    "pred050_equal": 70,
+    "zone_equal": 70,
+    "max_abs_delta": 0,
+    "duplicate_first_page_render": 0,
+    "sessions_created": 1,
+    "process_64_bit": true,
+    "gate": true,
+    "probe_exit_code": 0
+  },
+  "critical_cases": {
+    "70943A213A862A315DB451BAFBADDBFE5C0E45D694BF40FD8E5430FF47A032BA": {
+      "classification": "REVISAR",
+      "p_factura": 0.28898564,
+      "visual_delta": 0,
+      "visual_source": "PDF_OCR_RASTER_REUSED",
+      "rasterizer_calls": 1,
+      "pages_rendered_for_ocr": 1,
+      "pages_rendered_for_shadow": 0,
+      "first_page_rendered_by_ocr": true,
+      "first_page_reused_by_shadow": true,
+      "raster_reused": true,
+      "duplicate_first_page": false
+    },
+    "31371F0EA09BFB13ECAECD39B9C36CF70E4662CB0E31F2ABE26B8E74402003F5": {
+      "classification": "REVISAR",
+      "p_factura": 0.326596886,
+      "visual_delta": 0,
+      "visual_source": "PDF_SHADOW_FIRST_PAGE",
+      "rasterizer_calls": 2,
+      "pages_rendered_for_ocr": 0,
+      "pages_rendered_for_shadow": 1,
+      "first_page_rendered_by_ocr": false,
+      "first_page_reused_by_shadow": false,
+      "raster_reused": false,
+      "duplicate_first_page": false
+    }
+  },
+  "h1d8b_documents_unchanged": 80,
+  "model_version_runtime_contract_h1d9e1": "INTACTO",
+  "sql_modified": false,
+  "gmail_modified": false,
+  "ui_modified": false,
+  "ocr_limits_modified": false,
+  "dpi_modified": false,
+  "thresholds_modified": false,
+  "model_modified": false,
+  "training_performed": false,
+  "threshold_tuning_performed": false
+}
