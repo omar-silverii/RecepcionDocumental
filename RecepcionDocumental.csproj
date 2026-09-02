@@ -206,6 +206,7 @@
     <Content Include="Database\006_RevisionDocumental.sql" />
     <Content Include="Database\007_EtiquetaRevisionDocumental.sql" />
     <Content Include="Database\010_MuestraFacturaHumana.sql" />
+    <Content Include="Database\011_GmailSyncEjecucion.sql" />
     <Content Include="Documento_Ver.aspx" />
     <Content Include="Documento_Revisar.aspx" />
     <Content Include="Documentos.aspx" />
@@ -312,6 +313,9 @@
     <Compile Include="Configuration\ConfiguracionSistema.cs" />
     <Compile Include="Infrastructure\Logs.cs" />
     <Compile Include="Data\GmailSyncRepository.cs" />
+    <Compile Include="Data\GmailSyncLease.cs" />
+    <Compile Include="Data\GmailSyncAuditRepository.cs" />
+    <Compile Include="Services\GmailSyncExecution.cs" />
     <Compile Include="Security\RefreshTokenProtector.cs" />
     <Compile Include="Services\GmailOAuthService.cs" />
     <Compile Include="Services\GmailSyncService.cs" />

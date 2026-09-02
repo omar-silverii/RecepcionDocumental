@@ -1,0 +1,24 @@
+InjectionPointUnique=True
+InjectedFailureObserved=True
+MigrationRollbackClean=True
+MigrationSchema=True
+MigrationIdempotent=True
+MigrationOriginalIntact=True
+WinnerReadsOriginalCursor=True
+SingleProcessor=True
+LoserDoesNotChangeCursor=True
+WebWinsRunnerSkips=True
+WinnerCompletesCursor=True
+RunnerAcquires=True
+RunnerWinsWebSkips=True
+RunnerCleanExit=True
+IntentionalFailure=True
+LockReleasedAfterFailure=True
+ErrorPreservesCursor=True
+AuditStatesAndTimestamps=True
+AuditSanitized=True
+ControlledFinishFailurePropagated=False | UnfinishedAudits=1
+FAIL: InvalidOperationException | Gate failed: AuditFinalizationFailureNotSilent
+Gate=False | InvalidOperationException | Gate failed: IsolatedProbe
+TemporaryDatabaseRemoved=True
+H1E1 | Gate=False

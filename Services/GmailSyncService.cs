@@ -17,6 +17,7 @@ namespace RecepcionDocumental.Services
 {
     public sealed class GmailSyncResult
     {
+        public bool AlreadyRunning { get; set; }
         public int MensajesEncontrados { get; set; }
         public int MensajesNuevos { get; set; }
         public int AdjuntosDescargados { get; set; }
@@ -64,10 +65,10 @@ namespace RecepcionDocumental.Services
         private const int HistoryPageSize = 100;
         private const string InitialSearchQuery = "newer_than:30d";
 
-        public static async Task<GmailSyncResult> SynchronizeAsync()
+        public static async Task<GmailSyncResult> SynchronizeAsync(string origin="WEB")
         {
             var total = Stopwatch.StartNew();
-            try { return await SynchronizeCoreAsync(total); }
+            try { return await GmailSyncExecution.RunAsync(origin,(account,lease)=>SynchronizeCoreAsync(total,account,lease)); }
             catch (Exception ex)
             {
                 Logs.LogError("GmailSyncService | Operación=Sincronización | " + Logs.DescribirExcepcion(ex));
@@ -75,9 +76,8 @@ namespace RecepcionDocumental.Services
             }
         }
 
-        private static async Task<GmailSyncResult> SynchronizeCoreAsync(Stopwatch total)
+        private static async Task<GmailSyncResult> SynchronizeCoreAsync(Stopwatch total,GmailSyncAccount account,GmailSyncLease lease)
         {
-            var account = GmailSyncRepository.GetActiveAccount();
             if (account == null) throw new InvalidOperationException("No hay una cuenta Gmail activa.");
             if (account.ProtectedRefreshToken == null || account.ProtectedRefreshToken.Length == 0) throw new InvalidOperationException("La cuenta Gmail activa no tiene autorización persistida.");
 
@@ -114,6 +114,7 @@ namespace RecepcionDocumental.Services
                     var attachmentsFound = 0;
                     try
                     {
+                        lease.AssertHeld();
                         var processed = await ProcessMessageAsync(client.Service, account.Id, batch.MessageIds[index], result);
                         attachmentsFound = processed.AttachmentsFound;
                     }
@@ -137,6 +138,7 @@ namespace RecepcionDocumental.Services
                 var cursorEstado = "conservado";
                 if (result.Errores == 0)
                 {
+                    lease.AssertHeld();
                     GmailSyncRepository.CompleteSync(account.Id, batch.CompletionHistoryId);
                     cursorEstado = string.IsNullOrWhiteSpace(batch.CompletionHistoryId) ? "actualizado a NULL" : "avanzado";
                 }

@@ -1,0 +1,54 @@
+InjectionPointUnique=True
+InjectedFailureObserved=True
+MigrationRollbackClean=True
+MigrationSchema=True
+MigrationIdempotent=True
+MigrationOriginalIntact=True
+ProcessX64=True
+WinnerReadsOriginalCursor=True
+SingleProcessor=True
+LoserDoesNotChangeCursor=True
+WebWinsRunnerSkips=True
+AlreadyRunningSummary=True
+AlreadyRunningAudit=True
+WinnerCompletesCursor=True
+RunnerAcquires=True
+RunnerWinsWebSkips=True
+RunnerCleanExit=True
+IntentionalFailure=True
+LockReleasedAfterFailure=True
+ErrorPreservesCursor=True
+AuditStatesAndTimestamps=True
+AuditSanitized=True
+SyncRunner | Estado=COMPLETADA | Mensajes=0 | Nuevos=0 | Errores=0 | ExitCode=0
+CompletedExitCode=True
+CompletedAudit=True
+SyncRunner | Estado=COMPLETADA_CON_ERRORES | Mensajes=0 | Nuevos=0 | Errores=1 | ExitCode=1
+CompletedWithErrorsExitCode=True
+CompletedWithErrorsAudit=True
+SyncRunner | Failed=IOException | ExitCode=1
+FailedExitCode=True
+FailedAudit=True
+FixtureLeaseAcquired=True
+SyncRunner | Estado=YA_EN_EJECUCION | Mensajes=0 | Nuevos=0 | Errores=0 | ExitCode=10
+AlreadyRunningExitCode=True
+OmittedAudit=True
+SyncRunner | Failed=GmailSyncAuditException | AUDIT_FINALIZATION_FAILED | ExitCode=1
+AuditFailureExitCode=True
+ControlledFinishFailurePropagated=True | UnfinishedAudits=0
+AuditFinalizationFailureNotSilent=True
+AuditFailureClosedAsFailed=True
+SyncRunner | Failed=GmailSyncAuditException | AUDIT_START_FAILED | ExitCode=1
+AuditStartFailureNotSilent=True
+SyncRunner | Failed=GmailSyncAuditException | AUDIT_FINALIZATION_FAILED | ExitCode=1
+MissingAuditRowNotSilent=True
+RunnerFailureProcessExitCode=True
+RunnerFailureReported=True
+RunnerFailureAudit=True
+RunnerSuccessCode=True
+AuditFinalized=True
+ExitCodeConsistent=True
+RunnerDllUnlocked=True
+IsolatedProbe=True
+TemporaryDatabaseRemoved=True
+H1E1 | Gate=True

@@ -30,6 +30,7 @@ namespace RecepcionDocumental
             try
             {
                 var result = await GmailSyncService.SynchronizeAsync();
+                if(result.AlreadyRunning){pnlResultado.Visible=false;ShowError("Ya hay una sincronización de Gmail en curso.");LoadPageData();return;}
                 pnlResultado.Visible = true;
                 pnlResultado.CssClass = result.Errores == 0 ? "alert alert-success" : "alert alert-warning";
                 litEncontrados.Text = result.MensajesEncontrados.ToString(); litNuevos.Text = result.MensajesNuevos.ToString(); litAnalizados.Text = result.AdjuntosAnalizados.ToString(); litFacturas.Text = result.FacturasDetectadas.ToString(); litRevisar.Text = result.ParaRevisar.ToString(); litDescartados.Text = result.Descartados.ToString(); litDocumentosExistentes.Text = result.DocumentosExistentes.ToString(); litErrores.Text = result.Errores.ToString();
@@ -49,6 +50,8 @@ namespace RecepcionDocumental
 
         private void LoadPageData()
         {
+            var latest=GmailSyncAuditRepository.Latest();
+            litSyncStatus.Text=Server.HtmlEncode(latest==null?"Todavía no hay ejecuciones de recepción registradas.":"Última recepción: "+latest.Inicio.ToLocalTime().ToString("dd/MM/yyyy HH:mm")+" | "+latest.Estado+" | "+latest.Origen+" | Mensajes: "+latest.Mensajes+" | Errores: "+latest.Errores);
             try
             {
                 var account = GmailSyncRepository.GetActiveAccount();

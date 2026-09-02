@@ -99,8 +99,10 @@ Validación funcional real completada para adjuntos directos, ZIP, RAR y ZIP ani
 - **H1D7B2 — BENCHMARK APROBADO, NO PRODUCTIVO:** el modelo visual H1D4A se reprodujo, pero no está aprobado para producción y no interviene en decisiones.
 - **H1D7C — IMPLEMENTADO:** estación operativa para revisar un documento pendiente por vez.
 - **H1D7C1 — VALIDADO:** captura durable, transaccional y auditable de ground truth humano para documentos REVISAR. Conserva físicamente FACTURA/NO_FACTURA para aprendizaje posterior, mantiene historial mediante `Secuencia`/`EsVigente`, vincula shadow sólo como auditoría opcional y conserva la IA visual exclusivamente en shadow, sin autoridad operativa.
+- **H1D7C2 — APROBADO Y CERRADO:** muestreo determinístico ciego de FACTURA automáticas, cola independiente, autoridad humana y preservación física certificadas. Migración 010 atómica/idempotente, probe x64 Gate=True, lifecycle limpio y hashes congelados intactos. Evidencia: `tools/DocumentAiProbe/experiments/H1D7C2/resumen.md`. Sin training ni tuning; meta posterior: 100 decisiones humanas muestreadas.
 - **H1D8A — NO APROBADO:** la jerarquía textual candidata no superó el gate y no se integró.
 - **H1D8B — APROBADO E INTEGRADO:** `RasterQrDetector` reutiliza el raster ya generado para OCR y combina QR ARCA mediante la lógica existente. B4C8 y D099 se promovieron correctamente; regresión productiva 80/80, `FACTURA → DESCARTAR = 0` y falsos `FACTURA = 0`.
+- **H1E1 — APROBADO (2026-09-02):** runner net48/x64, exclusión SQL WEB/runner y auditoría final certificadas; dos sincronizaciones reales tras restauración de Norton (Ids 3/4) cerradas, sin duplicados nuevos. AuditFinalized=True y ExitCodeConsistent=True; fallo de cierre ya no produce éxito silencioso. Auditorías históricas 1/2 preservadas. Scheduler preparado, no instalado. Evidencia: `tools/DocumentAiProbe/experiments/H1E1/certificacion-final.md`.
 
 El próximo objetivo es estudiar una IA visual real, local/offline, para `FACTURA` frente a `NO_FACTURA`, conservando la estructura espacial del documento. H1D4A y sus histogramas no continuarán como candidato productivo.
 

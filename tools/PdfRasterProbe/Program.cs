@@ -19,6 +19,9 @@ namespace PdfRasterProbe
 
         private static int Main(string[] args)
         {
+            if(args.Length>0&&args[0]=="--h1e1")return H1E1SyncProbe.Run(args);
+            if(args.Length>0&&args[0]=="--h1e1-setup")return H1E1SyncProbe.Setup(args);
+            if(args.Length>0&&args[0]=="--h1e1-isolated")return H1E1SyncProbe.Isolated(args);
             if(args.Length>0&&args[0]=="--h1d7c2-sample")return H1D7C2InvoiceSampleProbe.Run(args);
             if(args.Length>0&&args[0]=="--h1d7c2-sample-inner")return H1D7C2InvoiceSampleProbe.RunInner(args);
             if (args.Length > 0 && string.Equals(args[0], "--mime", StringComparison.OrdinalIgnoreCase))

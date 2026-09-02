@@ -1,0 +1,2 @@
+SyncRunner | ProcessX64=True
+SyncRunner | Estado=COMPLETADA | Mensajes=0 | Nuevos=0 | Errores=0 | ExitCode=0
