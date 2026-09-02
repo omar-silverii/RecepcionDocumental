@@ -119,8 +119,71 @@ WHERE d.Id=@Id AND d.Clasificacion=N'REVISAR' AND d.ResultadoRevision IS NULL;";
         private static PendingReviewInfo MapPending(SqlDataReader r){return new PendingReviewInfo{Id=r.GetInt64(0),Fecha=r.GetDateTime(1),Remitente=r.GetString(2),Asunto=r.IsDBNull(3)?"(Sin asunto)":r.GetString(3),NombreOriginal=r.GetString(4),Clasificacion=r.GetString(5),MetodoDeteccion=r.GetString(6),Confianza=r.IsDBNull(7)?(byte?)null:r.GetByte(7),Motivo=r.IsDBNull(8)?null:r.GetString(8),OrigenTipo=r.GetString(9),Position=r.GetInt32(10),Total=r.GetInt32(11)};}
         public static bool TryResolve(long id,string result,string label,string user,string observation,DocumentStoredFile stored)
         {
-            const string sql=@"UPDATE dbo.DocumentoRecepcion SET ResultadoRevision=@Result,EtiquetaRevision=@Label,FechaRevisionUtc=SYSUTCDATETIME(),UsuarioRevision=@User,ObservacionRevision=@Observation,RutaLocal=CASE WHEN @Result=N'FACTURA' THEN @Path ELSE RutaLocal END,HashSha256=CASE WHEN @Result=N'FACTURA' THEN @Hash ELSE HashSha256 END,TamanioBytes=CASE WHEN @Result=N'FACTURA' THEN @Size ELSE TamanioBytes END WHERE Id=@Id AND Clasificacion=N'REVISAR' AND ResultadoRevision IS NULL;";
-            using(var cn=new SqlConnection(ConnectionString))using(var cmd=new SqlCommand(sql,cn)){cmd.Parameters.Add("@Id",SqlDbType.BigInt).Value=id;cmd.Parameters.Add("@Result",SqlDbType.NVarChar,20).Value=result;cmd.Parameters.Add("@Label",SqlDbType.NVarChar,30).Value=label;cmd.Parameters.Add("@User",SqlDbType.NVarChar,256).Value=Db(user);cmd.Parameters.Add("@Observation",SqlDbType.NVarChar,1000).Value=Db(observation);cmd.Parameters.Add("@Path",SqlDbType.NVarChar,2000).Value=stored==null?(object)DBNull.Value:stored.FullPath;cmd.Parameters.Add("@Hash",SqlDbType.Char,64).Value=stored==null?(object)DBNull.Value:stored.HashSha256;cmd.Parameters.Add("@Size",SqlDbType.BigInt).Value=stored==null?(object)DBNull.Value:stored.Size;cn.Open();return cmd.ExecuteNonQuery()==1;}
+            var binary=label=="FACTURA"?"FACTURA":label=="OTRO_DOCUMENTO"||label=="NO_DOCUMENTO"?"NO_FACTURA":null;
+            if(binary==null)throw new ArgumentException("Etiqueta de revisión no soportada.","label");
+            const string update=@"DECLARE @Decision TABLE(HashSha256 CHAR(64),TamanioBytes BIGINT,FechaDecisionUtc DATETIME2(0));
+UPDATE dbo.DocumentoRecepcion
+SET ResultadoRevision=@Result,EtiquetaRevision=@Label,FechaRevisionUtc=SYSUTCDATETIME(),UsuarioRevision=@User,ObservacionRevision=@Observation,
+    RutaLocal=CASE WHEN @Result=N'FACTURA' THEN @Path ELSE RutaLocal END,
+    HashSha256=CASE WHEN @Result=N'FACTURA' THEN @Hash ELSE HashSha256 END,
+    TamanioBytes=CASE WHEN @Result=N'FACTURA' THEN @Size ELSE TamanioBytes END
+OUTPUT inserted.HashSha256,inserted.TamanioBytes,inserted.FechaRevisionUtc INTO @Decision
+WHERE Id=@Id AND Clasificacion=N'REVISAR' AND ResultadoRevision IS NULL;
+SELECT HashSha256,TamanioBytes,FechaDecisionUtc FROM @Decision;";
+            const string insert=@"INSERT dbo.DocumentoGroundTruth
+(DocumentoRecepcionId,Secuencia,EsVigente,EtiquetaBinaria,EtiquetaDetallada,Fuente,DocumentoSha256,TamanioBytes,UsuarioRevision,ObservacionRevision,FechaDecisionUtc,DocumentoVisionShadowId)
+SELECT @Id,ISNULL(MAX(gt.Secuencia),0)+1,1,@Binary,@Label,N'REVISION_OPERATIVA',@DocumentHash,@DocumentSize,@User,@Observation,@DecisionUtc,
+       (SELECT TOP (1) s.Id FROM dbo.DocumentoVisionShadow s WHERE s.DocumentoRecepcionId=@Id ORDER BY s.FechaEvaluacionUtc DESC,s.Id DESC)
+FROM dbo.DocumentoGroundTruth gt WITH(UPDLOCK,HOLDLOCK)
+WHERE gt.DocumentoRecepcionId=@Id;";
+            using(var cn=new SqlConnection(ConnectionString))
+            {
+                cn.Open();PrepareGroundTruthSession(cn);using(var tx=cn.BeginTransaction())
+                {
+                    try
+                    {
+                        string hash;long size;DateTime decisionUtc;
+                        using(var cmd=new SqlCommand(update,cn,tx))
+                        {
+                            AddReviewParameters(cmd,id,result,label,user,observation,stored);
+                            bool updated;
+                            using(var reader=cmd.ExecuteReader())
+                            {
+                                if(reader.Read()){hash=reader.GetString(0);size=reader.GetInt64(1);decisionUtc=reader.GetDateTime(2);updated=true;}
+                                else{hash=null;size=0;decisionUtc=default(DateTime);updated=false;}
+                            }
+                            if(!updated){tx.Rollback();return false;}
+                        }
+                        using(var cmd=new SqlCommand(insert,cn,tx))
+                        {
+                            cmd.Parameters.Add("@Id",SqlDbType.BigInt).Value=id;
+                            cmd.Parameters.Add("@Binary",SqlDbType.NVarChar,20).Value=binary;
+                            cmd.Parameters.Add("@Label",SqlDbType.NVarChar,30).Value=label;
+                            cmd.Parameters.Add("@DocumentHash",SqlDbType.Char,64).Value=hash;
+                            cmd.Parameters.Add("@DocumentSize",SqlDbType.BigInt).Value=size;
+                            cmd.Parameters.Add("@User",SqlDbType.NVarChar,256).Value=Db(user);
+                            cmd.Parameters.Add("@Observation",SqlDbType.NVarChar,1000).Value=Db(observation);
+                            cmd.Parameters.Add("@DecisionUtc",SqlDbType.DateTime2).Value=decisionUtc;
+                            if(cmd.ExecuteNonQuery()!=1)throw new DataException("No se pudo registrar DocumentoGroundTruth.");
+                        }
+                        tx.Commit();return true;
+                    }
+                    catch{try{tx.Rollback();}catch{}throw;}
+                }
+            }
+        }
+        private static void AddReviewParameters(SqlCommand cmd,long id,string result,string label,string user,string observation,DocumentStoredFile stored)
+        {cmd.Parameters.Add("@Id",SqlDbType.BigInt).Value=id;cmd.Parameters.Add("@Result",SqlDbType.NVarChar,20).Value=result;cmd.Parameters.Add("@Label",SqlDbType.NVarChar,30).Value=label;cmd.Parameters.Add("@User",SqlDbType.NVarChar,256).Value=Db(user);cmd.Parameters.Add("@Observation",SqlDbType.NVarChar,1000).Value=Db(observation);cmd.Parameters.Add("@Path",SqlDbType.NVarChar,2000).Value=stored==null?(object)DBNull.Value:stored.FullPath;cmd.Parameters.Add("@Hash",SqlDbType.Char,64).Value=stored==null?(object)DBNull.Value:stored.HashSha256;cmd.Parameters.Add("@Size",SqlDbType.BigInt).Value=stored==null?(object)DBNull.Value:stored.Size;}
+        private static void PrepareGroundTruthSession(SqlConnection connection)
+        {
+            const string sql=@"SET ANSI_NULLS ON;
+SET ANSI_PADDING ON;
+SET ANSI_WARNINGS ON;
+SET ARITHABORT ON;
+SET CONCAT_NULL_YIELDS_NULL ON;
+SET QUOTED_IDENTIFIER ON;
+SET NUMERIC_ROUNDABORT OFF;";
+            using(var cmd=new SqlCommand(sql,connection))cmd.ExecuteNonQuery();
         }
         private static object Db(string value) { return string.IsNullOrWhiteSpace(value) ? (object)DBNull.Value : value; }
     }

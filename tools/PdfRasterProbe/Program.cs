@@ -47,6 +47,10 @@ namespace PdfRasterProbe
                 return H1D7AReviewValidationProbe.Run(args);
             if (args.Length > 0 && string.Equals(args[0], "--h1d7a-review-inner", StringComparison.OrdinalIgnoreCase))
                 return H1D7AReviewValidationProbe.RunInner(args);
+            if (args.Length > 0 && string.Equals(args[0], "--h1d7c1-ground-truth", StringComparison.OrdinalIgnoreCase))
+                return H1D7C1GroundTruthProbe.Run(args);
+            if (args.Length > 0 && string.Equals(args[0], "--h1d7c1-ground-truth-inner", StringComparison.OrdinalIgnoreCase))
+                return H1D7C1GroundTruthProbe.RunInner(args);
             if (args.Length > 0 && string.Equals(args[0], "--h1d7b-visual-shadow", StringComparison.OrdinalIgnoreCase))
                 return H1D7BVisualShadowProbe.Run(args);
             if (args.Length > 0 && string.Equals(args[0], "--h1d7b2-visual-shadow", StringComparison.OrdinalIgnoreCase))

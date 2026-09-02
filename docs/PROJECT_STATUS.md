@@ -98,7 +98,7 @@ Validación funcional real completada para adjuntos directos, ZIP, RAR y ZIP ani
 - **H1D7A — VALIDADO:** resolución humana de pendientes como `FACTURA` o `DESCARTAR`, con etiqueta humana explícita.
 - **H1D7B2 — BENCHMARK APROBADO, NO PRODUCTIVO:** el modelo visual H1D4A se reprodujo, pero no está aprobado para producción y no interviene en decisiones.
 - **H1D7C — IMPLEMENTADO:** estación operativa para revisar un documento pendiente por vez.
-- **H1D7C1 — PENDIENTE / NO IMPLEMENTADO.**
+- **H1D7C1 — VALIDADO:** captura durable, transaccional y auditable de ground truth humano para documentos REVISAR. Conserva físicamente FACTURA/NO_FACTURA para aprendizaje posterior, mantiene historial mediante `Secuencia`/`EsVigente`, vincula shadow sólo como auditoría opcional y conserva la IA visual exclusivamente en shadow, sin autoridad operativa.
 - **H1D8A — NO APROBADO:** la jerarquía textual candidata no superó el gate y no se integró.
 - **H1D8B — APROBADO E INTEGRADO:** `RasterQrDetector` reutiliza el raster ya generado para OCR y combina QR ARCA mediante la lógica existente. B4C8 y D099 se promovieron correctamente; regresión productiva 80/80, `FACTURA → DESCARTAR = 0` y falsos `FACTURA = 0`.
 
