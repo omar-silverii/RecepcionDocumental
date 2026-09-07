@@ -1,0 +1,15 @@
+{
+  "NoModelSessions": true,
+  "ShaCrossSplitCount": 0,
+  "FamilyCrossSplitCount": 0,
+  "LinkedTemplateOrEmitterCrossSplitCount": 0,
+  "ObservedHashesInHoldout": 0,
+  "ObservedFamiliesInHoldout": 0,
+  "PhysicalProvenancesPreserved": 1718,
+  "OriginalFilesVerified": 1718,
+  "ExistingGroundTruthUnchanged": true,
+  "NormalizationRegressionPassed": true,
+  "HoldoutHasFacturaAndHardNegatives": true,
+  "TrainingExecuted": false,
+  "Status": "H1D10A APROBADO — PREPARACION"
+}

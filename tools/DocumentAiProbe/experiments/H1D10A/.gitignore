@@ -1,0 +1,7 @@
+# Local document contents and generated runtime; never stage these as source.
+assets/
+text/
+raw/
+bin/
+work/
+*.tsv

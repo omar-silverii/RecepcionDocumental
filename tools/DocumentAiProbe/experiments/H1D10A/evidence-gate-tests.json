@@ -1,0 +1,15 @@
+{
+  "Passed": true,
+  "Fixture": "SYNTHETIC_ONLY",
+  "Tests": [
+    "sha_dedup_all_provenances",
+    "ground_truth_conflict_to_review",
+    "whole_family_split",
+    "observed_family_exclusion",
+    "both_holdout_classes",
+    "idempotent_seal",
+    "seal_change_rejected",
+    "quality_failure_to_review"
+  ],
+  "FixtureDirectory": "C:\\Users\\omard\\AppData\\Local\\Temp\\H1D10A-gate-test-cdqcm1qv"
+}

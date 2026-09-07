@@ -1,0 +1,177 @@
+{
+  "PhysicalDocuments": 1718,
+  "UniqueSha256": 1626,
+  "ExistingGroundTruth": 25,
+  "AutomaticallyLabeledStrong": 919,
+  "Labels": {
+    "REVISAR": 682,
+    "FACTURA": 869,
+    "OTRO_DOCUMENTO": 75,
+    "NO_DOCUMENTO": 0
+  },
+  "DocumentTypes": {
+    "REVISAR": 682,
+    "FACTURA": 869,
+    "NOTA_CREDITO": 31,
+    "OTRO_DOCUMENTO": 36,
+    "NOTA_DEBITO": 8,
+    "RECIBO": 0,
+    "TRANSFERENCIA_ANTICIPO": 0,
+    "COMPROBANTE_BANCARIO": 0,
+    "IMPUESTO_BOLETA": 0,
+    "NO_DOCUMENTO": 0
+  },
+  "Conflicts": 0,
+  "RequiresHumanReview": 682,
+  "Families": 410,
+  "SealedHoldoutSamples": 43,
+  "SealedHoldoutFamilies": 10,
+  "SealedHoldoutLabels": {
+    "FACTURA": 41,
+    "OTRO_DOCUMENTO": 2
+  },
+  "SealedManifestSha256": "EF2C7A80A5616A5F009087020E3FB9988DD76B5BAED315F84D921AA605BCF7E0",
+  "NormalizationRegressionPassed": true,
+  "HistoricalPreprocessingParity": 80,
+  "OriginalsIntact": true,
+  "ExistingGroundTruthIntact": true,
+  "ModelUsedForLabels": false,
+  "ModelInferenceExecuted": false,
+  "TrainingExecuted": false,
+  "CertificationStatus": "PENDING_INDEPENDENT_HUMAN_LABEL_VALIDATION_AND_FAMILY_AUDIT",
+  "FamilyRules": "Same checksum-valid unambiguous header CUIT before receiver markers OR existing GroupId OR dHash header<=4 AND full<=8 AND aspect delta<.04. Connected components. Unresolved singletons excluded from holdout. FamilyId=SHA256(sorted component document SHA joined by |) first20.",
+  "TitleRules": "Whole standalone documentary-title line within deterministic top35% image, OCR mean confidence>=.80. Native text only strong when header title corroborates. QR type interpreted exclusively by product ArcaQrDecoder. Conflicting strong types/final labels -> REVISAR. No automatic NO_DOCUMENTO inference.",
+  "VisualRules": "Product PDF first page at300DPI; product image canonicalization/EXIF; decoded RGB at native resolution; top35% ceil, whole width.",
+  "ProtectedInputs": [
+    {
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10A\\bank-input.json",
+      "Sha256": "45388877033D07E2F69911316AF16659E4855B2F3BCFD305669ACA836BB82AAB"
+    },
+    {
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10A\\existing-ground-truth.json",
+      "Sha256": "F998CEB6AEE940BC52EDAAC365FDA59E802891033B6708D3B9C88119F5989A1A"
+    },
+    {
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10A\\observed-batch-hashes.txt",
+      "Sha256": "60ED20FA5E4F00B5B4E58B39D364073403A2DDEE0C6C2D9A308A89EB683BBE5A"
+    },
+    {
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10A\\PrepareBank.cs",
+      "Sha256": "AE7948787CB5013AC5CB1201E2E4C406E8D4B89E970E05B23863DF0CB41D6836"
+    },
+    {
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10A\\FinalizeBank.py",
+      "Sha256": "950B7A337BC28FE0A6F9C9488D7C5D22049243CCA8319F4DD2ACC4BDE8F55B8B"
+    },
+    {
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\Services\\VisualInvoiceShadowService.cs",
+      "Sha256": "AD66D98A8E05A5212D9AF2454B27E5332B4CB8BA3D7934FC62DE083BA67B4B06"
+    }
+  ],
+  "Status": "H1D10A APROBADO — PREPARACION",
+  "Gates": {
+    "NoModelSessions": true,
+    "ShaCrossSplitCount": 0,
+    "FamilyCrossSplitCount": 0,
+    "LinkedTemplateOrEmitterCrossSplitCount": 0,
+    "ObservedHashesInHoldout": 0,
+    "ObservedFamiliesInHoldout": 0,
+    "PhysicalProvenancesPreserved": 1718,
+    "OriginalFilesVerified": 1718,
+    "ExistingGroundTruthUnchanged": true,
+    "NormalizationRegressionPassed": true,
+    "HoldoutHasFacturaAndHardNegatives": true,
+    "TrainingExecuted": false,
+    "Status": "H1D10A APROBADO — PREPARACION"
+  },
+  "AutomaticLabels": {
+    "FACTURA": 851,
+    "OTRO_DOCUMENTO": 68,
+    "NO_DOCUMENTO": 0
+  },
+  "LabelSources": {
+    "INSUFFICIENT_EVIDENCE": 681,
+    "QR_ARCA_STRONG": 744,
+    "PDF_TEXT_STRONG": 54,
+    "EXISTING_GROUND_TRUTH": 25,
+    "OCR_STRONG": 121,
+    "QUALITY_REVIEW": 1
+  },
+  "SealedHoldoutDocumentTypes": {
+    "FACTURA": 41,
+    "OTRO_DOCUMENTO": 1,
+    "NOTA_CREDITO": 1
+  },
+  "QualityIssues": 1,
+  "AssetDirectories": [
+    "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10A\\assets",
+    "E:\\RecepcionDocumental-H1D10A-assets"
+  ],
+  "WorkerCompletions": [
+    {
+      "Completed": 407,
+      "SessionsCreated": 0,
+      "ProductAssemblySha256": "4767CB943A20F747444EC6F43E5F3B8A7B9B757DAD819DA82D51394637039AB3",
+      "NormalizationAssemblySha256": "5E2E1192486B4EC9BF36FAD2A2C43ABBAFA3BF2963D751AB4441C8AF35687F91",
+      "AssetRoot": "E:\\RecepcionDocumental-H1D10A-assets"
+    },
+    {
+      "Completed": 407,
+      "SessionsCreated": 0,
+      "ProductAssemblySha256": "4767CB943A20F747444EC6F43E5F3B8A7B9B757DAD819DA82D51394637039AB3",
+      "NormalizationAssemblySha256": "5E2E1192486B4EC9BF36FAD2A2C43ABBAFA3BF2963D751AB4441C8AF35687F91",
+      "AssetRoot": "E:\\RecepcionDocumental-H1D10A-assets"
+    },
+    {
+      "Completed": 406,
+      "SessionsCreated": 0,
+      "ProductAssemblySha256": "4767CB943A20F747444EC6F43E5F3B8A7B9B757DAD819DA82D51394637039AB3",
+      "NormalizationAssemblySha256": "5E2E1192486B4EC9BF36FAD2A2C43ABBAFA3BF2963D751AB4441C8AF35687F91",
+      "AssetRoot": "E:\\RecepcionDocumental-H1D10A-assets"
+    },
+    {
+      "Completed": 406,
+      "SessionsCreated": 0,
+      "ProductAssemblySha256": "4767CB943A20F747444EC6F43E5F3B8A7B9B757DAD819DA82D51394637039AB3",
+      "NormalizationAssemblySha256": "5E2E1192486B4EC9BF36FAD2A2C43ABBAFA3BF2963D751AB4441C8AF35687F91",
+      "AssetRoot": "E:\\RecepcionDocumental-H1D10A-assets"
+    }
+  ],
+  "ObservedBatchHashes": 131,
+  "ObservedBatchFamilies": 44,
+  "VisualAssets": 3252,
+  "PreparationSourceHashes": [
+    {
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10A\\.gitignore",
+      "Sha256": "F96A672520DEE7861426118649A1C471BC6320352895D46C5D86945CD18E94FE"
+    },
+    {
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10A\\Prepare-H1D10A.ps1",
+      "Sha256": "C62172810EB8E5F679349661899A81FBBA5FBB02EEBBE9529D23090415CC1441"
+    },
+    {
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10A\\PrepareBank.cs",
+      "Sha256": "AE7948787CB5013AC5CB1201E2E4C406E8D4B89E970E05B23863DF0CB41D6836"
+    },
+    {
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10A\\FinalizeBank.py",
+      "Sha256": "950B7A337BC28FE0A6F9C9488D7C5D22049243CCA8319F4DD2ACC4BDE8F55B8B"
+    },
+    {
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10A\\TestEvidenceRules.py",
+      "Sha256": "D8F3210BF062EFDDE8DB2973B69C8D06B563CA434319C2B6D4926E7031E160C5"
+    },
+    {
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10A\\TestPreparationGates.py",
+      "Sha256": "0C83D3FCFFA6E85BB31956C6E0DD1D740669A4840652B18621BA36B53BF5EBB1"
+    },
+    {
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10A\\PublishReport.py",
+      "Sha256": "D1D7101D4085A6FC487D95016EC0E331DBEFCBC090826E5B86C43243F12E4E4C"
+    },
+    {
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10A\\README.md",
+      "Sha256": "D3693D6BA848056D6D3DDFE28C2BDBB2C15AF9DA8B9A5ACA7CECF465FB8FEFFA"
+    }
+  ]
+}

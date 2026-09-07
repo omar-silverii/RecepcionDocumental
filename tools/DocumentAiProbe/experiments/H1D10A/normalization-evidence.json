@@ -1,0 +1,16 @@
+{
+  "SourcePath": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\Services\\VisualInvoiceShadowService.cs",
+  "SourceSha256": "AD66D98A8E05A5212D9AF2454B27E5332B4CB8BA3D7934FC62DE083BA67B4B06",
+  "CompiledAssemblySha256": "5E2E1192486B4EC9BF36FAD2A2C43ABBAFA3BF2963D751AB4441C8AF35687F91",
+  "RegressionReportSha256": "567D8FD7FE284095A9F2AB2C69DD25BD46797337960FA9C76B6DE4EA559A0AFB",
+  "OriginalTiffSha256": "77A0EC1DD124A7512A46495983BEB01CA5EAB0F48B06D7DE74C1D779BA2D5625",
+  "HistoricalCases": 80,
+  "SourceRgbEqual": 80,
+  "LetterboxRgbEqual": 80,
+  "TensorEqual": 80,
+  "TiffPixelParity": true,
+  "ModelSessions": 0,
+  "OriginalPixelFormat": "Format1bppIndexed",
+  "PixelCount": 3873384,
+  "OriginalDimensions": "1656x2339"
+}

@@ -201,7 +201,20 @@ namespace RecepcionDocumental.Services
             using (var stream = new MemoryStream(bytes, false)) using (var bitmap = new Bitmap(stream, false))
             {
                 width=bitmap.Width;height=bitmap.Height;var format=bitmap.PixelFormat;
-                if(format!=PixelFormat.Format24bppRgb&&format!=PixelFormat.Format32bppArgb&&format!=PixelFormat.Format8bppIndexed)throw new InvalidDataException("PixelFormat visual no soportado: "+format);
+                if(format!=PixelFormat.Format24bppRgb&&format!=PixelFormat.Format32bppArgb&&format!=PixelFormat.Format8bppIndexed)
+                {
+                    // Normalize decodable indexed/high-depth formats without resizing.
+                    // Keep the validated 24/32/8-bit paths byte-for-byte unchanged.
+                    // GetPixel resolves the source palette without a GDI draw,
+                    // which can resample indexed TIFFs according to their DPI.
+                    var normalized=new byte[checked(width*height*3)];
+                    for(var y=0;y<height;y++)for(var x=0;x<width;x++)
+                    {
+                        var color=bitmap.GetPixel(x,y);var offset=(y*width+x)*3;
+                        normalized[offset]=color.R;normalized[offset+1]=color.G;normalized[offset+2]=color.B;
+                    }
+                    return normalized;
+                }
                 var data=bitmap.LockBits(new Rectangle(0,0,width,height),ImageLockMode.ReadOnly,format);
                 try{var stride=Math.Abs(data.Stride);var raw=new byte[stride*height];Marshal.Copy(data.Scan0,raw,0,raw.Length);var rgb=new byte[width*height*3];var palette=format==PixelFormat.Format8bppIndexed?bitmap.Palette.Entries:null;
                     for(var y=0;y<height;y++){var row=data.Stride>=0?y*stride:(height-1-y)*stride;for(var x=0;x<width;x++){var d=(y*width+x)*3;if(format==PixelFormat.Format24bppRgb){var s=row+x*3;rgb[d]=raw[s+2];rgb[d+1]=raw[s+1];rgb[d+2]=raw[s];}else if(format==PixelFormat.Format32bppArgb){var s=row+x*4;rgb[d]=raw[s+2];rgb[d+1]=raw[s+1];rgb[d+2]=raw[s];}else{var c=palette[raw[row+x]];rgb[d]=c.R;rgb[d+1]=c.G;rgb[d+2]=c.B;}}}return rgb;

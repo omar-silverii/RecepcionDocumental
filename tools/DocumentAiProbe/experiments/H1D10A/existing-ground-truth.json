@@ -1,0 +1,1282 @@
+[
+  {
+    "Sha256": "73938D63A261576FFEB30B2C0E33DBE085B1C870F5DFA41FB6DE596F57A839D8",
+    "Label": "FACTURA",
+    "GroupId": "factura-avon-a-impresa",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\73938d63a261_J0002_QUIROGA_LUISINA_BELEN_CB_96-033-185-889_2016-02-01_2016-03-31_2026-08-05_0.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "94A5BB490143CEE934380D4FEB4659ABE2DD005FCE09BA87046839EC01B9A049",
+    "Label": "FACTURA",
+    "GroupId": "factura-avon-a-impresa",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\94a5bb490143_I0132_246C4E4A.jpg",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "34E7190B10DE1060A821BA5B262D16CF469116C53FAA10A487AE71EDA02DE220",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-aquavita",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\34e7190b10de_Z001023243373.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "83E0306FF5707DBDEBFC9AD88A3634DF1D24B33FAA5A733B74A629090F74A53D",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-aquavita",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\83e0306ff570_Z001023243348.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "030126CE7D614353FF03F90C126B6D2C3746D913B36523810DF4F1B51326D882",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-arca-fce-standard",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\030126ce7d61_Z001023242608.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "53531D26119A3A91D8160D16D8081238C94A83B00EADEEECB6BED96F35C0D21F",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-arca-fce-standard",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\53531d26119a_Z001023242890.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "92914214759A1969F8F6DA6FC3EAF436EEC02704E5B3141C282C9D183B15D2BC",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-arca-fce-standard",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\92914214759a_Z001023242560.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "963E9941D8D3A90BDACCFDDA949B7EEDD535A2ED456FA063B67893EC4D759786",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-arca-fce-standard",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\963e9941d8d3_Z001023242559.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "C2C93818726DAC52E58536C78525B62A417DEC82F9491E4941E8AEE2CFA42B42",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-arca-fce-standard",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\c2c93818726d_Z001023242895.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "7943C6EB1641AD882AF8038E05B5F350A7FA8FBE6C2DF3DF90E9004412040FEF",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-arillo",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\7943c6eb1641_Z001023243375.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TEST"
+  },
+  {
+    "Sha256": "E8066B5FA877947A47862B566C3A752FD1BA514973CD2B01A7AD31803BBDD28B",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-ascensores-orem",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\e8066b5fa877_Z001023243349.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "2D43B3648B73EFBB36772933B8ED7CE0CD779C0945E776A136EC6123FA5D5551",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-branding-merchandising",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\2d43b3648b73_Z001023243329.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "B4C8FA3786E8BA119F3C5F40F1BF5868D7591D0E865FF2AF84F7235674F33C88",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-condominio-pdi",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\b4c8fa3786e8_Z001023243075.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "D0998159322E7036852951E3B6BB4631E0A5EF21ADFC0DFC39679D4F410C959F",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-condominio-pdi",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\d0998159322e_Z001023243074.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "B7004863AED55E481D4397435BD5B06CEA6180397E1059883D51F5D066F1147F",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-excell",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\b7004863aed5_Z001023243369.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "C177CD77BAA5F5587D302FDCC9F5615424F6BCED6057AA300113D6E3A600DC02",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-inmuebles-fce",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\c177cd77baa5_Z001023242796.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "D165FB62E80F26847F1F00B1DBD7E949928E56EC5C2A0EDD2FE929E4ABD85CB0",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-manantial",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\d165fb62e80f_Z001023243377.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "A75839AE32A6A29EBB6CF64EBE45427C346DFFE51E758D5F04D903FC28147D87",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-pediatrics",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\a75839ae32a6_Z001023243181.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "681D494D1EABD2B24BA13F9F99B3AC5F6D565688BB7368714C430C5395C5A868",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-servicios-inmobiliarios",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\681d494d1eab_Z001023243384.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "VALIDATION"
+  },
+  {
+    "Sha256": "B68674F3B9393FDE895EBE47421061B41DCE664D2174AFA8C7904CD4324C5124",
+    "Label": "FACTURA",
+    "GroupId": "factura-familia-vitalis",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\b68674f3b939_Z001023243327.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "VALIDATION"
+  },
+  {
+    "Sha256": "122412579CB7F775A638F44BF40EACB229C173965B54C8B8FBC969D28DA6F2DC",
+    "Label": "FACTURA",
+    "GroupId": "factura-homologacion-c-00004-00000002",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\122412579cb7_FacturaC_PV00004_00000002-1_122412579cb7.jpg",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TEST"
+  },
+  {
+    "Sha256": "8AE4509AEFA61A7ABB180BC7A0514AD169E1E8047C07D7544D3D0CB800B4E3FC",
+    "Label": "FACTURA",
+    "GroupId": "factura-homologacion-c-00004-00000002",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\8ae4509aefa6_PRUEBA_OCR_PDF_MDOC_8ae4509aefa6.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TEST"
+  },
+  {
+    "Sha256": "FA8700C24DBDFE130D17A72C536CC9DCF1639DD4A8C5E313DB18605F70DAEED5",
+    "Label": "FACTURA",
+    "GroupId": "factura-homologacion-c-00004-00000002",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\fa8700c24dbd_FacturaSINQR_fa8700c24dbd.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TEST"
+  },
+  {
+    "Sha256": "5E8DD1B162CD0DD53E297362595BB3BE6CF0D4A3AA3803D214C679FD4CBD69F1",
+    "Label": "FACTURA",
+    "GroupId": "factura-logistica-la-serenisima-zb2b",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\5e8dd1b162cd_J0005_EDMS_7142_7140_ZB2B_001_05003_00036969_70001729_70001729.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "8F6CD87791DE515777752DAA95C010EB45B43DFD9348A6AD6110D4325615EA00",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "alertas-infraestructura-srvedms",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\8f6cd87791de_I0066_image034.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "0A580FEA09DEB190DE1B8FCECAECE18D82D97ED106F75509B1CAFE5475D16253",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "branding-avon-natura",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\0a580fea09de_I0125_image002.jpg",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "4AA692A94759E1F431C7F170D7194BD10D99DC221BB5B63BD9A9654AA70A7515",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "branding-bunge",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\4aa692a94759_I0006_image001.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "CEBD403817596F810B3BB9DCECB123713E7BC8788B8B6DDD32DF87CEED97D03A",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "branding-correo-argentino",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\cebd40381759_I0023_inline-1.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "2AF9DE4CAF9BB15F857FAE3B9E6DFEEDD831219A156B978E43FF62BC315266C6",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "branding-meteomatics",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\2af9de4caf9b_I0106_PastedGraphic-4.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "72047867C7642F6358837C0F9867C83F915A29366A6B64C6508DCE8FEB356E85",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "branding-personal",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\72047867c764_G0005_inline-1.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "A881A4460A42E2C5B06E833B3B6B6A7EE43EC358EDBDB48C3B3BD7B7F6643710",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "branding-renaper",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\a881a4460a42_I0009_RenaperLogo.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "09FA512D0268E721B912C8D816EB01D29B16E440ADDC96B967A462DAAAF784DA",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "capturas-error-edms",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\09fa512d0268_I0007_image002.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "31089A698A1E82394B3667FE64BAF03D2A775892EF73B04FB9C439A916E5CC2A",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "capturas-sistema-posicion-consolidada",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\31089a698a1e_G0025_image009.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "3542D120B3139DB932D4DFB7A8D23F072F1FFBEBD924C55AB6494B68851BD418",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "capturas-sistema-posicion-consolidada",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\3542d120b313_G0024_image001.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "C5DAB04B2642976192FF1B496476C165AAEC82A85C775945E07D2580E0C99279",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "capturas-sistema-posicion-consolidada",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\c5dab04b2642_G0026_image011.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "645D7CE914A8E04CD643296A64581A6DE08FB07730F4CC96646A93AFE83EE991",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "correo-boleta-lanus",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\645d7ce914a8_G0013_inline-0.1.1.jpg",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "9A641C4729F3EF559F7A6D5A621453270D66916A84727E1556C4FB7525EFABC7",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "correo-boleta-lanus",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\9a641c4729f3_G0014_inline-0.1.2.jpg",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "BE8E9456C6B3CD399C535A48BB397D4BF7C91D9CBDC212D5438373DDEFD4B5B5",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "error-impresion-xerox",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\be8e9456c6b3_I0138_11C1BB9D.jpg",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "94F6E14058C816126DE54ADD5ABC33BE7B27923DDB132FBC9590101D1E82C8D7",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "firma-banco",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\94f6e14058c8_image002_94f6e14058c8.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "VALIDATION"
+  },
+  {
+    "Sha256": "0814C60BD510A3E30D86D313B0DDDB0CB088B987E781388B1C942943A13D554E",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "firma-deloitte",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\0814c60bd510_H0008_image001.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "4076445FF73213039D7402664EB4FC48546391227FAB11DAA3224DA874701C8C",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "firma-deloitte",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\4076445ff732_H0009_image002.jpg",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "0EF37A45898658CCA6C6E9A3A57946875F92E0AC0AF3C602DA2E9086380F6AE4",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "flightaware-newsletter",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\0ef37a458986_42_0ef37a458986.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TEST"
+  },
+  {
+    "Sha256": "15ED536B42D37302D1DD306E1E2F9C46AA07C069EC3DE614660DA7B6ECE627C0",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "flightaware-newsletter",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\15ed536b42d3_35_15ed536b42d3.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TEST"
+  },
+  {
+    "Sha256": "B6524C56C8E4C7F199F98CE0E2EBE84BEC72DA783A9E5A1DA9FC17505080F44F",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "flightaware-newsletter",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\b6524c56c8e4_37_b6524c56c8e4.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TEST"
+  },
+  {
+    "Sha256": "D9AFAF729E3D7965CE69B7DA7477640EFE7CB3725C7753E3C22305D06BF77C6B",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "flightaware-newsletter",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\d9afaf729e3d_1_d9afaf729e3d.jpeg",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TEST"
+  },
+  {
+    "Sha256": "74DA980974A41F7B871D2C47FD7A44101AB5661F1393C6FEFD5399CAA02A68DD",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "fotos-familiares",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\74da980974a4_2013-04-29-465_74da980974a4.jpg",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "EC91DE96F8A25E7EE60D3F37BF910A33AE2F346FEE43CEEEF8DFD14BB3F53973",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "fotos-familiares",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\ec91de96f8a2_2012-08-24-031_ec91de96f8a2.jpg",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "966FCC7F039D31C33FC27230D26B6EC27356D2033146FA8A4EE21461EAB0945D",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "mapas-viajes",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\966fcc7f039d_G0015_6a60f5b49e0e0_128ba41717019@sidekiq-default-84d546fbfc-g5vnq.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "D2B2FACB91DDE28A9AED66FDEA2BDBD8E2FD91B94161D10F361C4040553FF392",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "mapas-viajes",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\d2b2facb91dd_G0012_map.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "F6112D3A8671D063327C69FBA50410F72448E6DA21C4C8A6AFCFC3F883CE84A4",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "mapas-viajes",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\f6112d3a8671_G0016_6a60d44ed1591_14225c19926a@sidekiq-default-84d546fbfc-lwrvd.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "131E45D3DC803E82CB78E212E95C4E289E840BF38F309CC9E631F8D3F0668D7B",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "publicidad-ezdrummer",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\131e45d3dc80_I0139_ez mac chica.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "398257AA42671A521BDE2ED73A1695CCE3819975D25652CA5F06383773E842EE",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "publicidad-guia",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\398257aa4267_G0027_1.jpg",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "5EAC3DD7134262EC7667AFFD27336A78CCB94C616157B186FF964556F9635BB7",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "publicidad-samsung-galaxy",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\5eac3dd71342_I0001_Launch.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "DFB5D9B1FC4775F72C0526C008E7C7438380A66D13114E8C65F3FAC5F942FFA3",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "publicidad-websupergoo",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\dfb5d9b1fc47_G0018_inline-1.jpg",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "2D246A2651752808442383D814C806437999B4C22FD2E77D18BEDAF2AC6786AB",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "comprobante-pago-bancario",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\2d246a265175_image001_2d246a265175.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TEST"
+  },
+  {
+    "Sha256": "2CDC2802080A93C44CC6959AF2AC254546F4652B24A22C9B75546BEDFDB0A3EA",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "credencial",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\2cdc2802080a_Credencial_23175875379 (202509) (1)_5b2f530cb3de.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "999FBF2C511BEF61577E45BE48F034B1AABDC5692AEB747159BD61CF408F6BB4",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "orden-compra",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\999fbf2c511b_Orden de Compra_999fbf2c511b.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "7D6906456FD818CCF677B46E7E09A4F9EE6932CEE5AF8FED0DC9CD4D2D7EEE75",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-aviso-cheque-rechazado-banco-patagonia",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\7d6906456fd8_G0022_IMG_1238.jpg",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "AD4F901A339BA7D979DDC8D72FDF48CF5AEA068CE8B78E0A68DB02659CBB784D",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-aviso-cheque-rechazado-banco-patagonia",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\ad4f901a339b_G0019_image005.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "DA7DB06022306B8142F9D0179BDE36BFE71E64CEC4A2D7E10FCCE5D2FDBC7C97",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-aviso-cheque-rechazado-banco-patagonia",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\da7db0602230_G0023_IMG_1239.jpg",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "3E354C1E6A7CB85C4D523AC1B7741EC6E1D498440C0B1FFF531DD3B50320AB78",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-captura-monotributo-pago",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\3e354c1e6a7c_I0031_image.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "50D0A84325CDCF665E473A3E3D0F62F86079E2DCFEF4AE4E4BE0D2A776C0AF97",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-captura-ticket-acceso",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\50d0a84325cd_G0008_image003.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "02523B356AEC13D925C44F336DDAABE81215EE01EE8BCBDEBFC6714A37D55A28",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-confirmacion-compra-web",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\02523b356aec_I0154_Sillon.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "AF9E13927BD6123DA16DE0369AA7435A2892D4D71E8A0B3863F85C6A5E30455A",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-correo-reenvio-factura",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\af9e13927bd6_Z001023242882.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "70943A213A862A315DB451BAFBADDBFE5C0E45D694BF40FD8E5430FF47A032BA",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-impuesto-inmobiliario-rawson",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\70943a213a86_Z001023242889.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "VALIDATION"
+  },
+  {
+    "Sha256": "28FCC8808B0DEE25A850B6F4C5063E17FB94B3CB194917E84422E9F2A8C111A5",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-instruccion-transferencia-banco-patagonia",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\28fcc8808b0d_Z001023243169.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "CA4B144974CDD331E904D3646E7F74FDAE6502B6CCDA4A0B4845C2FA9E2F6DB8",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-instruccion-transferencia-banco-patagonia",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\ca4b144974cd_Z001023243171.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "40D282AFE8457677E743468F7D7EDAAA8FEEDB38D7458D01304953DA8E2E5BE4",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-liquidaciones-comercios-banco-patagonia",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\40d282afe845_I0122_image017.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "675F30D09450E3C2A33AD99C4DC69C108D812EF861FD47858519F8A9913464E3",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-liquidaciones-comercios-banco-patagonia",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\675f30d09450_I0118_image013.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "9B103DB594C0BEE038C97560216C9623601B0050584D5946910513AC662DCE6F",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-liquidaciones-comercios-banco-patagonia",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\9b103db594c0_I0107_image003.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "6DB7AD704B49BFC71197B65C40C94E926183B498F4CFEB7553FAE26B2BC534A3",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-nota-credito-electronica-edi-00002-00000001",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\6db7ad704b49_NC_00002_00000001_af0c85980129.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "1C4DB25AAC0A169B26D121DF0992AB546E8D487A74FD1E45FDEF3490F3708601",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-nota-credito-fiel",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\1c4db25aac0a_Z001023243325.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "382662294B57C459DB9F1231FE0503A77176D130F8EA1BFB709132C3115F1A49",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-recibo-c",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\382662294b57_Z001023243380.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "VALIDATION"
+  },
+  {
+    "Sha256": "4C4A524F6C4F42DB654184D20C435FAAFCACA3F08AE9CF313F55ED571DDEAFE3",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-resumen-costo-trayecto-cabify",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\4c4a524f6c4f_H0022_cabify-sale-ARG25JS1386194.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "D86F134415A04E0606A287E30878EC7914E9DF74B3B4C92B1EF28FD94B366E94",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-resumen-costo-trayecto-cabify",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\d86f134415a0_H0020_cabify-sale-ARG25JS1394537.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "4CB36B9488EDCAA6B27FEF1B0A3524525E14E115CF2045F118B032995E653587",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-resumen-operaciones-banco-comafi",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\4cb36b9488ed_746omar-silverii_edi-sa-comRESDIA201620261635_4cb36b9488ed.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TRAIN"
+  },
+  {
+    "Sha256": "720D554E1CE7B5F36A27E8EB9E0C446EDD580DD15E0AAB7C46E8EB12BE170C51",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-resumen-operaciones-banco-comafi",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\720d554e1ce7_H0001_676omar-silverii_edi-sa-comRESDIA281820251842.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "83C37B5C6E92C9515F9456960E62208CEF94E5985871436E4E5464233C0EA6A0",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-resumen-tarjeta-visa",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\83c37b5c6e92_G0017_image003.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "31371F0EA09BFB13ECAECD39B9C36CF70E4662CB0E31F2ABE26B8E74402003F5",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-solicitud-nota-credito-banco-patagonia",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\31371f0ea09b_Z001023242951.pdf",
+    "Evidence": "dataset.csv + verified content",
+    "Split": "TEST"
+  },
+  {
+    "Sha256": "35784F288939B0D8F196CB8646314FE710549A870D08E33C8E974D21EABBA0D1",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "otro-ticket-servicio-cold",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\35784f288939_I0021_image004.png",
+    "Evidence": "dataset.csv + verified content",
+    "Split": ""
+  },
+  {
+    "Sha256": "030126CE7D614353FF03F90C126B6D2C3746D913B36523810DF4F1B51326D882",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\030126ce7d61_Z001023242608.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "122412579CB7F775A638F44BF40EACB229C173965B54C8B8FBC969D28DA6F2DC",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\122412579cb7_FacturaC_PV00004_00000002-1_122412579cb7.jpg",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "2D43B3648B73EFBB36772933B8ED7CE0CD779C0945E776A136EC6123FA5D5551",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\2d43b3648b73_Z001023243329.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "34E7190B10DE1060A821BA5B262D16CF469116C53FAA10A487AE71EDA02DE220",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\34e7190b10de_Z001023243373.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "53531D26119A3A91D8160D16D8081238C94A83B00EADEEECB6BED96F35C0D21F",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\53531d26119a_Z001023242890.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "5E8DD1B162CD0DD53E297362595BB3BE6CF0D4A3AA3803D214C679FD4CBD69F1",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\5e8dd1b162cd_J0005_EDMS_7142_7140_ZB2B_001_05003_00036969_70001729_70001729.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "681D494D1EABD2B24BA13F9F99B3AC5F6D565688BB7368714C430C5395C5A868",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\681d494d1eab_Z001023243384.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "73938D63A261576FFEB30B2C0E33DBE085B1C870F5DFA41FB6DE596F57A839D8",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\73938d63a261_J0002_QUIROGA_LUISINA_BELEN_CB_96-033-185-889_2016-02-01_2016-03-31_2026-08-05_0.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "7943C6EB1641AD882AF8038E05B5F350A7FA8FBE6C2DF3DF90E9004412040FEF",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\7943c6eb1641_Z001023243375.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "83E0306FF5707DBDEBFC9AD88A3634DF1D24B33FAA5A733B74A629090F74A53D",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\83e0306ff570_Z001023243348.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "8AE4509AEFA61A7ABB180BC7A0514AD169E1E8047C07D7544D3D0CB800B4E3FC",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\8ae4509aefa6_PRUEBA_OCR_PDF_MDOC_8ae4509aefa6.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "92914214759A1969F8F6DA6FC3EAF436EEC02704E5B3141C282C9D183B15D2BC",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\92914214759a_Z001023242560.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "94A5BB490143CEE934380D4FEB4659ABE2DD005FCE09BA87046839EC01B9A049",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\94a5bb490143_I0132_246C4E4A.jpg",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "963E9941D8D3A90BDACCFDDA949B7EEDD535A2ED456FA063B67893EC4D759786",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\963e9941d8d3_Z001023242559.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "A75839AE32A6A29EBB6CF64EBE45427C346DFFE51E758D5F04D903FC28147D87",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\a75839ae32a6_Z001023243181.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "B4C8FA3786E8BA119F3C5F40F1BF5868D7591D0E865FF2AF84F7235674F33C88",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\b4c8fa3786e8_Z001023243075.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "B68674F3B9393FDE895EBE47421061B41DCE664D2174AFA8C7904CD4324C5124",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\b68674f3b939_Z001023243327.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "B7004863AED55E481D4397435BD5B06CEA6180397E1059883D51F5D066F1147F",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\b7004863aed5_Z001023243369.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "C177CD77BAA5F5587D302FDCC9F5615424F6BCED6057AA300113D6E3A600DC02",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\c177cd77baa5_Z001023242796.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "C2C93818726DAC52E58536C78525B62A417DEC82F9491E4941E8AEE2CFA42B42",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\c2c93818726d_Z001023242895.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "D0998159322E7036852951E3B6BB4631E0A5EF21ADFC0DFC39679D4F410C959F",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\d0998159322e_Z001023243074.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "D165FB62E80F26847F1F00B1DBD7E949928E56EC5C2A0EDD2FE929E4ABD85CB0",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\d165fb62e80f_Z001023243377.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "E8066B5FA877947A47862B566C3A752FD1BA514973CD2B01A7AD31803BBDD28B",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\e8066b5fa877_Z001023243349.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "FA8700C24DBDFE130D17A72C536CC9DCF1639DD4A8C5E313DB18605F70DAEED5",
+    "Label": "FACTURA",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\FACTURA\\fa8700c24dbd_FacturaSINQR_fa8700c24dbd.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "02523B356AEC13D925C44F336DDAABE81215EE01EE8BCBDEBFC6714A37D55A28",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\02523b356aec_I0154_Sillon.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "1C4DB25AAC0A169B26D121DF0992AB546E8D487A74FD1E45FDEF3490F3708601",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\1c4db25aac0a_Z001023243325.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "28FCC8808B0DEE25A850B6F4C5063E17FB94B3CB194917E84422E9F2A8C111A5",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\28fcc8808b0d_Z001023243169.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "2CDC2802080A93C44CC6959AF2AC254546F4652B24A22C9B75546BEDFDB0A3EA",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\2cdc2802080a_Credencial_23175875379 (202509) (1)_5b2f530cb3de.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "2D246A2651752808442383D814C806437999B4C22FD2E77D18BEDAF2AC6786AB",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\2d246a265175_image001_2d246a265175.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "31371F0EA09BFB13ECAECD39B9C36CF70E4662CB0E31F2ABE26B8E74402003F5",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\31371f0ea09b_Z001023242951.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "35784F288939B0D8F196CB8646314FE710549A870D08E33C8E974D21EABBA0D1",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\35784f288939_I0021_image004.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "382662294B57C459DB9F1231FE0503A77176D130F8EA1BFB709132C3115F1A49",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\382662294b57_Z001023243380.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "3E354C1E6A7CB85C4D523AC1B7741EC6E1D498440C0B1FFF531DD3B50320AB78",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\3e354c1e6a7c_I0031_image.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "40D282AFE8457677E743468F7D7EDAAA8FEEDB38D7458D01304953DA8E2E5BE4",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\40d282afe845_I0122_image017.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "4C4A524F6C4F42DB654184D20C435FAAFCACA3F08AE9CF313F55ED571DDEAFE3",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\4c4a524f6c4f_H0022_cabify-sale-ARG25JS1386194.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "4CB36B9488EDCAA6B27FEF1B0A3524525E14E115CF2045F118B032995E653587",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\4cb36b9488ed_746omar-silverii_edi-sa-comRESDIA201620261635_4cb36b9488ed.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "50D0A84325CDCF665E473A3E3D0F62F86079E2DCFEF4AE4E4BE0D2A776C0AF97",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\50d0a84325cd_G0008_image003.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "675F30D09450E3C2A33AD99C4DC69C108D812EF861FD47858519F8A9913464E3",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\675f30d09450_I0118_image013.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "6DB7AD704B49BFC71197B65C40C94E926183B498F4CFEB7553FAE26B2BC534A3",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\6db7ad704b49_NC_00002_00000001_af0c85980129.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "70943A213A862A315DB451BAFBADDBFE5C0E45D694BF40FD8E5430FF47A032BA",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\70943a213a86_Z001023242889.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "720D554E1CE7B5F36A27E8EB9E0C446EDD580DD15E0AAB7C46E8EB12BE170C51",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\720d554e1ce7_H0001_676omar-silverii_edi-sa-comRESDIA281820251842.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "7D6906456FD818CCF677B46E7E09A4F9EE6932CEE5AF8FED0DC9CD4D2D7EEE75",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\7d6906456fd8_G0022_IMG_1238.jpg",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "83C37B5C6E92C9515F9456960E62208CEF94E5985871436E4E5464233C0EA6A0",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\83c37b5c6e92_G0017_image003.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "999FBF2C511BEF61577E45BE48F034B1AABDC5692AEB747159BD61CF408F6BB4",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\999fbf2c511b_Orden de Compra_999fbf2c511b.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "9B103DB594C0BEE038C97560216C9623601B0050584D5946910513AC662DCE6F",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\9b103db594c0_I0107_image003.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "AD4F901A339BA7D979DDC8D72FDF48CF5AEA068CE8B78E0A68DB02659CBB784D",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\ad4f901a339b_G0019_image005.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "AF9E13927BD6123DA16DE0369AA7435A2892D4D71E8A0B3863F85C6A5E30455A",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\af9e13927bd6_Z001023242882.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "CA4B144974CDD331E904D3646E7F74FDAE6502B6CCDA4A0B4845C2FA9E2F6DB8",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\ca4b144974cd_Z001023243171.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "D86F134415A04E0606A287E30878EC7914E9DF74B3B4C92B1EF28FD94B366E94",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\d86f134415a0_H0020_cabify-sale-ARG25JS1394537.pdf",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "DA7DB06022306B8142F9D0179BDE36BFE71E64CEC4A2D7E10FCCE5D2FDBC7C97",
+    "Label": "OTRO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\OTRO_DOCUMENTO\\da7db0602230_G0023_IMG_1239.jpg",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "0814C60BD510A3E30D86D313B0DDDB0CB088B987E781388B1C942943A13D554E",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\0814c60bd510_H0008_image001.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "09FA512D0268E721B912C8D816EB01D29B16E440ADDC96B967A462DAAAF784DA",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\09fa512d0268_I0007_image002.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "0A580FEA09DEB190DE1B8FCECAECE18D82D97ED106F75509B1CAFE5475D16253",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\0a580fea09de_I0125_image002.jpg",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "0EF37A45898658CCA6C6E9A3A57946875F92E0AC0AF3C602DA2E9086380F6AE4",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\0ef37a458986_42_0ef37a458986.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "131E45D3DC803E82CB78E212E95C4E289E840BF38F309CC9E631F8D3F0668D7B",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\131e45d3dc80_I0139_ez mac chica.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "15ED536B42D37302D1DD306E1E2F9C46AA07C069EC3DE614660DA7B6ECE627C0",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\15ed536b42d3_35_15ed536b42d3.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "2AF9DE4CAF9BB15F857FAE3B9E6DFEEDD831219A156B978E43FF62BC315266C6",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\2af9de4caf9b_I0106_PastedGraphic-4.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "31089A698A1E82394B3667FE64BAF03D2A775892EF73B04FB9C439A916E5CC2A",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\31089a698a1e_G0025_image009.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "3542D120B3139DB932D4DFB7A8D23F072F1FFBEBD924C55AB6494B68851BD418",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\3542d120b313_G0024_image001.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "398257AA42671A521BDE2ED73A1695CCE3819975D25652CA5F06383773E842EE",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\398257aa4267_G0027_1.jpg",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "4076445FF73213039D7402664EB4FC48546391227FAB11DAA3224DA874701C8C",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\4076445ff732_H0009_image002.jpg",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "4AA692A94759E1F431C7F170D7194BD10D99DC221BB5B63BD9A9654AA70A7515",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\4aa692a94759_I0006_image001.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "5EAC3DD7134262EC7667AFFD27336A78CCB94C616157B186FF964556F9635BB7",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\5eac3dd71342_I0001_Launch.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "645D7CE914A8E04CD643296A64581A6DE08FB07730F4CC96646A93AFE83EE991",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\645d7ce914a8_G0013_inline-0.1.1.jpg",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "72047867C7642F6358837C0F9867C83F915A29366A6B64C6508DCE8FEB356E85",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\72047867c764_G0005_inline-1.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "74DA980974A41F7B871D2C47FD7A44101AB5661F1393C6FEFD5399CAA02A68DD",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\74da980974a4_2013-04-29-465_74da980974a4.jpg",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "8F6CD87791DE515777752DAA95C010EB45B43DFD9348A6AD6110D4325615EA00",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\8f6cd87791de_I0066_image034.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "94F6E14058C816126DE54ADD5ABC33BE7B27923DDB132FBC9590101D1E82C8D7",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\94f6e14058c8_image002_94f6e14058c8.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "966FCC7F039D31C33FC27230D26B6EC27356D2033146FA8A4EE21461EAB0945D",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\966fcc7f039d_G0015_6a60f5b49e0e0_128ba41717019@sidekiq-default-84d546fbfc-g5vnq.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "9A641C4729F3EF559F7A6D5A621453270D66916A84727E1556C4FB7525EFABC7",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\9a641c4729f3_G0014_inline-0.1.2.jpg",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "A881A4460A42E2C5B06E833B3B6B6A7EE43EC358EDBDB48C3B3BD7B7F6643710",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\a881a4460a42_I0009_RenaperLogo.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "B6524C56C8E4C7F199F98CE0E2EBE84BEC72DA783A9E5A1DA9FC17505080F44F",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\b6524c56c8e4_37_b6524c56c8e4.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "BE8E9456C6B3CD399C535A48BB397D4BF7C91D9CBDC212D5438373DDEFD4B5B5",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\be8e9456c6b3_I0138_11C1BB9D.jpg",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "C5DAB04B2642976192FF1B496476C165AAEC82A85C775945E07D2580E0C99279",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\c5dab04b2642_G0026_image011.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "CEBD403817596F810B3BB9DCECB123713E7BC8788B8B6DDD32DF87CEED97D03A",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\cebd40381759_I0023_inline-1.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "D2B2FACB91DDE28A9AED66FDEA2BDBD8E2FD91B94161D10F361C4040553FF392",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\d2b2facb91dd_G0012_map.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "D9AFAF729E3D7965CE69B7DA7477640EFE7CB3725C7753E3C22305D06BF77C6B",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\d9afaf729e3d_1_d9afaf729e3d.jpeg",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "DFB5D9B1FC4775F72C0526C008E7C7438380A66D13114E8C65F3FAC5F942FFA3",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\dfb5d9b1fc47_G0018_inline-1.jpg",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "EC91DE96F8A25E7EE60D3F37BF910A33AE2F346FEE43CEEEF8DFD14BB3F53973",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\ec91de96f8a2_2012-08-24-031_ec91de96f8a2.jpg",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  },
+  {
+    "Sha256": "F6112D3A8671D063327C69FBA50410F72448E6DA21C4C8A6AFCFC3F883CE84A4",
+    "Label": "NO_DOCUMENTO",
+    "GroupId": "",
+    "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\Corpus\\NO_DOCUMENTO\\f6112d3a8671_G0016_6a60d44ed1591_14225c19926a@sidekiq-default-84d546fbfc-lwrvd.png",
+    "Evidence": "existing canonical corpus folder",
+    "Split": ""
+  }
+]
