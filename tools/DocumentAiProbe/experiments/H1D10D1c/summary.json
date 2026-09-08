@@ -1,0 +1,30 @@
+{
+  "Experiment": "H1D10D1c",
+  "TrainingExecuted": false,
+  "ProductionModified": false,
+  "GroundTruthModified": false,
+  "SealedAssetsRead": false,
+  "Rows": 734,
+  "Decisions": 727,
+  "CorrectWhenDecided": 727,
+  "WrongWhenDecided": 0,
+  "PrecisionWhenDecided": 1.0,
+  "NoDecision": 7,
+  "FacturaTitleOnlyBefore": 11,
+  "FacturaTitleOnlyTrueBefore": 8,
+  "FacturaTitleOnlyFalseBefore": 3,
+  "TrueFacturaTitleOnlyRetained": 8,
+  "FalseFacturaTitleOnlyRetained": 0,
+  "FacturaTitleOnlyConvertedToNoDecision": 3,
+  "QrDecisionCount": 719,
+  "QrDecisionsUnchanged": true,
+  "SpecificPrecedenceDecisionsUnchanged": true,
+  "ResolutionReasons": {
+    "QR_ARCA_VALID_FACTURA": 663,
+    "QR_ARCA_VALID_OTHER": 56,
+    "NO_DECISION_SECONDARY_FACTURA": 3,
+    "NO_DECISION": 4,
+    "FACTURA_TITLE_ONLY_STRONG_POSITIONAL": 8
+  },
+  "RemainingWrongCases": []
+}
