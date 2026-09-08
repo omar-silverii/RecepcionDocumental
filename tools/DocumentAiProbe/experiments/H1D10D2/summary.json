@@ -1,0 +1,52 @@
+{
+  "Experiment": "H1D10D2",
+  "Purpose": "Residual real after D1/D1b/D1c deterministic resolver",
+  "SealedAssetsRead": false,
+  "TrainingExecuted": false,
+  "ProductionModified": false,
+  "GroundTruthModified": false,
+  "ModelsPromoted": false,
+  "ModelInferenceExecuted": false,
+  "VisualReferenceIsGroundTruth": false,
+  "Top150Rows": 150,
+  "UniqueSha": 150,
+  "UniqueFamilyId": 64,
+  "DeterministicResolved": 58,
+  "DeterministicResolvedRate": 0.38666666666666666,
+  "ResolvedFactura": 13,
+  "ResolvedOtroDocumento": 45,
+  "ResidualNoDecision": 92,
+  "ResidualRate": 0.6133333333333333,
+  "QrResolved": 0,
+  "ResolutionReasons": {
+    "NO_DECISION": 69,
+    "SPECIFIC_TITLE_PRECEDENCE": 45,
+    "NO_DECISION_SECONDARY_FACTURA": 23,
+    "FACTURA_TITLE_ONLY_STRONG_POSITIONAL": 13
+  },
+  "ResidualByVisualReferenceType": {
+    "OTRO_DOCUMENTO": 46,
+    "TRANSFERENCIA_ANTICIPO": 30,
+    "FACTURA": 7,
+    "RECIBO": 2,
+    "COMPROBANTE_BANCARIO": 4,
+    "NOTA_CREDITO": 2,
+    "IMPUESTO_BOLETA": 1
+  },
+  "ResidualDiagnosticGroups": {
+    "SEMANTIC_CORREO_ADMINISTRATIVO": 32,
+    "SEMANTIC_TRANSFERENCIA_ANTICIPO": 30,
+    "OTHER_ADMIN_OR_GENERIC_DOCUMENT": 14,
+    "KNOWN_FISCAL_OR_RECEIPT_EVIDENCE_GAP": 11,
+    "STRUCTURED_BANK_DOCUMENT": 4,
+    "STRUCTURED_TAX_OR_PAYMENT_DOCUMENT": 1
+  },
+  "ResidualSemanticNeed": {
+    "LIKELY_SEMANTIC_LANGUAGE_CONTEXT": 62,
+    "LIKELY_SEMANTIC_OR_STRUCTURE": 19,
+    "DETERMINISTIC_EVIDENCE_GAP_FIRST": 11
+  },
+  "ResolvedVsVisualReferenceAgreement": 56,
+  "ResolvedVsVisualReferenceDisagreement": 2,
+  "ImportantInterpretation": "Visual-reference agreement is diagnostic only; it is not an accuracy score because ChatGPT visual review is not human ground truth."
+}
