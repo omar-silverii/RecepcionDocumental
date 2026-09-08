@@ -1,0 +1,17 @@
+{
+  "Status": "H1D10B3 APROBADO — GATES; SIN PROMOCION",
+  "OofShaCount": 901,
+  "ShaLeakage": 0,
+  "FamilyLeakage": 0,
+  "HoldoutLeakage": 0,
+  "HoldoutInferred": false,
+  "RevisarUsedAsGroundTruth": false,
+  "LabelsChanged": false,
+  "ProtectedFilesUnchanged": 133,
+  "ReviewScored": 682,
+  "BlindUniqueShaCount": 150,
+  "BlindAssetsHashVerified": 150,
+  "BlindContainsScoresOrReasons": false,
+  "ProductionSqlGmailModified": false,
+  "ModelsPromoted": false
+}

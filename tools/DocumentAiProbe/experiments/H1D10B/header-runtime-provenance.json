@@ -1,0 +1,47 @@
+{
+  "torchvision": {
+    "Version": "0.28.0",
+    "Source": "C:\\Users\\omard\\AppData\\Local\\pip\\cache\\http-v2\\1\\4\\7\\b\\b\\147bb0ac66fd415967cfe3d9feb2f9992e8196cbec446a590d8c5deb.body",
+    "Sha256": "9A45EA67235D965EF52187130D20002A4DE20C54EA3D927A24286961D268DC37"
+  },
+  "mpmath": {
+    "Version": "1.3.0",
+    "Source": "C:\\Users\\omard\\AppData\\Local\\pip\\cache\\http-v2\\3\\d\\2\\3\\a\\3d23a5ad548471fdadffd54fe2363185ef4648db7c0bf11d16c83f16.body",
+    "Sha256": "A0B2B9FE80BBCD81A6647FF13108738CFB482D481D826CC0E02F5B35E5C88D2C"
+  },
+  "filelock": {
+    "Version": "3.32.5",
+    "Source": "C:\\Users\\omard\\AppData\\Local\\pip\\cache\\http-v2\\4\\d\\b\\0\\c\\4db0c5747f65f98e8a02d3ac4f2ec3e6f15e094af68535382160701e.body",
+    "Sha256": "142CD9FA77A872C5E78C62329A0D15278FADC686EB89E760017968961A4FD6B2"
+  },
+  "fsspec": {
+    "Version": "2026.7.0",
+    "Source": "C:\\Users\\omard\\AppData\\Local\\pip\\cache\\http-v2\\5\\d\\7\\d\\3\\5d7d30659acfa5502115137acd7daa285b2e2735e411bd6b72419b3a.body",
+    "Sha256": "B57DDBAFEDFAEF7018C1ECAB32AA200A9D7CA26B77965F64E48B70061249D279"
+  },
+  "typing_extensions": {
+    "Version": "4.16.0",
+    "Source": "C:\\Users\\omard\\AppData\\Local\\pip\\cache\\http-v2\\5\\d\\e\\7\\4\\5de74aa606aaf8588141cbe765382839ecb0982f091a947770ca6fa8.body",
+    "Sha256": "481CAA481374E813C1B176ADA14E97F1F67A4539CE9CFEB3F350D78D6370C2E8"
+  },
+  "networkx": {
+    "Version": "3.6.1",
+    "Source": "C:\\Users\\omard\\AppData\\Local\\pip\\cache\\http-v2\\8\\8\\f\\e\\f\\88fefe607c974c182ed7b0b3b2045547f93fed9af9d75d745b867a87.body",
+    "Sha256": "D47FBF302E7D9CBBB9E2555A0D267983D2AA476BAC30E90DFBE5669BD57F3762"
+  },
+  "pillow": {
+    "Version": "12.3.0",
+    "Source": "C:\\Users\\omard\\AppData\\Local\\pip\\cache\\http-v2\\9\\8\\b\\3\\7\\98b37ea21f5b4c87ef91cc0511258fe66ab03db0e60acfe82911879c.body",
+    "Sha256": "8E95E1385E4998AE9694EEAA4730BA5457FF61185B3A55E2E7BEA0880AEF452A"
+  },
+  "torch": {
+    "Version": "2.13.0",
+    "Source": "C:\\Users\\omard\\AppData\\Local\\pip\\cache\\http-v2\\9\\b\\3\\2\\5\\9b32523043f47185b905890c398c817efbfa865e2ed1b95a64cae7a6.body",
+    "Sha256": "A0D8B11F16A48D60E2015D8213AA0390744CBEBB98E58B62B3514DDDC656E330"
+  },
+  "sympy": {
+    "Version": "1.14.0",
+    "Source": "C:\\Users\\omard\\AppData\\Local\\pip\\cache\\http-v2\\a\\7\\0\\9\\4\\a7094ed5a4cc16f47a5321a9f38285921c17bacfd72d0b4f42bc4cf5.body",
+    "Sha256": "E091CC3E99D2141A0BA2847328F5479B05D94A6635CB96148CCB3F34671BD8F5"
+  }
+}

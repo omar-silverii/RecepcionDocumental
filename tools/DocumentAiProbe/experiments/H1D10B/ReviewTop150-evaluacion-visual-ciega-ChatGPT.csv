@@ -1,0 +1,151 @@
+﻿CandidateId,DocumentType,LabelFinal,Observacion
+R000001,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Correo solicitando nota de crédito sobre factura de alquiler.
+R000002,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Correo/orden de pago de expensas.
+R000003,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Swiss Medical.
+R000004,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000005,FACTURA,FACTURA,Factura Swiss Medical.
+R000006,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Swiss Medical.
+R000007,FACTURA,FACTURA,Factura Swiss Medical.
+R000008,NOTA_DEBITO,OTRO_DOCUMENTO,Nota de débito electrónica.
+R000009,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000010,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Brinks.
+R000011,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000012,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Correo solicitando nota de crédito.
+R000013,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000014,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000015,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000016,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud de transferencia por complemento de depósito en garantía.
+R000017,COMPROBANTE_BANCARIO,OTRO_DOCUMENTO,Comprobante/boleta de depósito.
+R000018,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Correo solicitando nota de crédito.
+R000019,NOTA_DEBITO,OTRO_DOCUMENTO,Nota de débito electrónica.
+R000020,FACTURA,FACTURA,Factura de servicio eléctrico Edesur.
+R000021,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Correo con datos/solicitud de transferencia.
+R000022,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000023,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Correo solicitando nota de crédito.
+R000024,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Swiss Medical.
+R000025,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Correo con datos bancarios para transferencia.
+R000026,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Correo solicitando nota de crédito.
+R000027,FACTURA,FACTURA,Factura Swiss Medical.
+R000028,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000029,NOTA_DEBITO,OTRO_DOCUMENTO,Nota de débito electrónica.
+R000030,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000031,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000032,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Comprobante Swiss Medical distinto de factura.
+R000033,FACTURA,FACTURA,Factura Metrotel.
+R000034,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000035,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Comprobante Swiss Medical distinto de factura.
+R000036,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Correo solicitando nota de crédito.
+R000037,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Correo/solicitud de transferencia.
+R000038,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000039,NOTA_DEBITO,OTRO_DOCUMENTO,Nota de débito electrónica.
+R000040,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000041,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Ignis.
+R000042,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000043,NOTA_DEBITO,OTRO_DOCUMENTO,Nota de débito Brinks.
+R000044,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000045,FACTURA,FACTURA,Factura Veolia.
+R000046,NOTA_DEBITO,OTRO_DOCUMENTO,Nota de débito electrónica.
+R000047,FACTURA,FACTURA,Factura Metrotel.
+R000048,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Formulario/constancia Swiss Medical, no factura."
+R000049,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Correo/gestión de transferencia.
+R000050,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Liquidación de expensas.
+R000051,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Correo/gestión de transferencia.
+R000052,FACTURA,FACTURA,Factura de crédito.
+R000053,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Documento/nota municipal, no factura."
+R000054,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000055,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Swiss Medical.
+R000056,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Swiss Medical.
+R000057,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencias.
+R000058,NOTA_DEBITO,OTRO_DOCUMENTO,Nota de débito Swiss Medical.
+R000059,FACTURA,FACTURA,Factura de crédito de Tradition Argentina.
+R000060,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000061,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Swiss Medical.
+R000062,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/resumen de importes, no factura."
+R000063,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito electrónica.
+R000064,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Swiss Medical.
+R000065,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000066,FACTURA,FACTURA,Factura de crédito electrónica MiPyME Veolia.
+R000067,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000068,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000069,RECIBO,OTRO_DOCUMENTO,Tickets/recibos fiscales escaneados.
+R000070,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Brinks.
+R000071,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000072,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Ignis.
+R000073,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Correo solicitando nota de crédito.
+R000074,COMPROBANTE_BANCARIO,OTRO_DOCUMENTO,Boletas/comprobantes de depósito.
+R000075,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000076,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito electrónica.
+R000077,NOTA_DEBITO,OTRO_DOCUMENTO,Nota de débito electrónica.
+R000078,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Nota/certificación bancaria, no factura."
+R000079,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000080,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Swiss Medical.
+R000081,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Swiss Medical.
+R000082,FACTURA,FACTURA,Factura Metrotel.
+R000083,FACTURA,FACTURA,Factura Swiss Medical.
+R000084,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000085,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000086,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Solicitud de servicios/orden administrativa.
+R000087,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000088,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000089,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000090,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Liquidación de expensas.
+R000091,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Swiss Medical.
+R000092,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Certificación/comprobante municipal, no factura."
+R000093,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000094,FACTURA,FACTURA,Factura Swiss Medical.
+R000095,FACTURA,FACTURA,Factura Swiss Medical.
+R000096,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Swiss Medical.
+R000097,NOTA_DEBITO,OTRO_DOCUMENTO,Nota de débito electrónica.
+R000098,FACTURA,FACTURA,Factura de servicio eléctrico Edesur.
+R000099,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000100,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Swiss Medical.
+R000101,RECIBO,OTRO_DOCUMENTO,Recibo electrónico.
+R000102,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000103,FACTURA,FACTURA,Factura Swiss Medical.
+R000104,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Swiss Medical.
+R000105,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Correo solicitando nota de crédito.
+R000106,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Instrucciones/solicitud de transferencia.
+R000107,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Formulario/constancia Swiss Medical, no factura."
+R000108,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Formulario/constancia Swiss Medical, no factura."
+R000109,RECIBO,OTRO_DOCUMENTO,Comprobante/recibo municipal.
+R000110,IMPUESTO_BOLETA,OTRO_DOCUMENTO,Boleta/cupón municipal de pago.
+R000111,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Cupón de pago de expensas.
+R000112,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000113,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Liquidación/comprobante de servicios públicos, no factura."
+R000114,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000115,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000116,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000117,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Swiss Medical.
+R000118,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Comprobante Swiss Medical distinto de factura.
+R000119,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Liquidación de expensas.
+R000120,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito electrónica.
+R000121,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Correo solicitando/gestionando nota de crédito.
+R000122,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Ignis.
+R000123,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Ignis.
+R000124,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Claro.
+R000125,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Ignis.
+R000126,FACTURA,FACTURA,Factura Movistar.
+R000127,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000128,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Rendición de gastos de consorcio.
+R000129,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/resumen de importes, no factura."
+R000130,FACTURA,FACTURA,Factura Swiss Medical.
+R000131,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Correo solicitando/gestionando nota de crédito.
+R000132,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Brinks.
+R000133,FACTURA,FACTURA,Factura de servicio eléctrico Edesur.
+R000134,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000135,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Swiss Medical.
+R000136,OTRO_DOCUMENTO,OTRO_DOCUMENTO,Cupones/liquidación de expensas.
+R000137,NOTA_DEBITO,OTRO_DOCUMENTO,Nota de débito electrónica MiPyME.
+R000138,FACTURA,FACTURA,Factura Chexa.
+R000139,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000140,COMPROBANTE_BANCARIO,OTRO_DOCUMENTO,Solicitud/boleta de depósito para servicio adicional.
+R000141,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000142,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000143,OTRO_DOCUMENTO,OTRO_DOCUMENTO,"Correo/gestión bancaria, no factura."
+R000144,FACTURA,FACTURA,Factura Swiss Medical.
+R000145,COMPROBANTE_BANCARIO,OTRO_DOCUMENTO,Boletas/comprobantes de depósito.
+R000146,NOTA_DEBITO,OTRO_DOCUMENTO,Nota de débito electrónica.
+R000147,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito Swiss Medical.
+R000148,TRANSFERENCIA_ANTICIPO,OTRO_DOCUMENTO,Solicitud/gestión de transferencia.
+R000149,NOTA_CREDITO,OTRO_DOCUMENTO,Nota de crédito NCR Atleos.
+R000150,FACTURA,FACTURA,Factura Telecom.

@@ -1,0 +1,56 @@
+{
+  "Python": "3.11.3 (tags/v3.11.3:f3909b8, Apr  4 2023, 23:49:59) [MSC v.1934 64 bit (AMD64)]",
+  "Executable": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10B\\header-local\\.venv\\Scripts\\python.exe",
+  "Venv": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10B\\header-local\\.venv",
+  "ImportedVersions": {
+    "torch": "2.13.0+cpu",
+    "torchvision": "0.28.0+cpu",
+    "numpy": "2.4.6",
+    "pillow": "12.3.0"
+  },
+  "InstalledVersions": {
+    "Jinja2": "3.1.6",
+    "torchvision": "0.28.0",
+    "setuptools": "84.0.0",
+    "mpmath": "1.3.0",
+    "filelock": "3.32.5",
+    "fsspec": "2026.7.0",
+    "typing_extensions": "4.16.0",
+    "numpy": "2.4.6",
+    "flatbuffers": "25.12.19",
+    "onnxruntime": "1.29.0",
+    "networkx": "3.6.1",
+    "protobuf": "7.36.1",
+    "pillow": "12.3.0",
+    "torch": "2.13.0",
+    "sympy": "1.14.0",
+    "packaging": "26.3",
+    "onnxscript": "0.7.1",
+    "onnx": "1.22.0",
+    "ml_dtypes": "0.6.0",
+    "onnx-ir": "1.0.0",
+    "MarkupSafe": "3.0.3"
+  },
+  "CudaAvailable": false,
+  "Device": "cpu",
+  "LocalWeights": "C:\\Users\\omard\\.cache\\torch\\hub\\checkpoints\\efficientnet_b0_rwightman-7f5810bc.pth",
+  "LocalWeightsSha256": "7F5810BC96DEF8F7552D5B7E68D53C4786F81167D28291B21C0D90E1FCA14934",
+  "NetworkDisabled": true,
+  "Status": "PASSED",
+  "Sha256": "002865257C71829F722158FBCEDB282C220108C3B1CE07E08876E80BAEEA8EB2",
+  "HeaderAsset": "E:\\RecepcionDocumental-H1D10A-assets\\002865257C71829F722158FBCEDB282C220108C3B1CE07E08876E80BAEEA8EB2.header.png",
+  "HeaderSha256": "1CE5ED13E0D3CC858060FDFBC19B7CE6C0EBFC3F390944B95B53BB378409F54A",
+  "InputShape": [
+    1,
+    3,
+    384,
+    384
+  ],
+  "OutputShape": [
+    1,
+    1000
+  ],
+  "OutputFinite": true,
+  "Holdout": false,
+  "OutputSha256": "63AC83702CAD63F63F0399C797592738F95EF57D7402671936DB33412F1E207C"
+}

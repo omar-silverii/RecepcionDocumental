@@ -1,0 +1,18 @@
+{
+  "Status": "H1D10B2 APROBADO — GATES DE INTEGRIDAD; NO PROMOCION",
+  "ShaLeakage": 0,
+  "FamilyLeakage": 0,
+  "HoldoutLeakage": 0,
+  "HoldoutAssetsOpened": 0,
+  "HoldoutHashUnchanged": true,
+  "B1HashesUnchanged": true,
+  "OofPredictions": 901,
+  "UniqueOofSha256": 901,
+  "InferenceErrors": 0,
+  "FixedFolds": true,
+  "RevisarUsedAsGroundTruth": false,
+  "H1D9BLabelsOrWeightsUsed": false,
+  "ProtectedHistoricalFilesVerified": 83,
+  "ProductionModified": false,
+  "FullPageHybridActiveLearningExecuted": false
+}

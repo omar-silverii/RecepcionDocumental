@@ -1,0 +1,242 @@
+{
+  "AllStrongLabels": {
+    "TEXT_ONLY_WORD": {
+      "Count": 901,
+      "Families": 154,
+      "Factura": 828,
+      "OtroDocumento": 73,
+      "ThresholdDiagnosticOnly": 0.5,
+      "RecallFactura": 0.9963768115942029,
+      "RecallOtroDocumento": 0.3150684931506849,
+      "PrecisionFactura": 0.9428571428571428,
+      "PrecisionOtroDocumento": 0.8846153846153846,
+      "MacroF1": 0.7167624572204725,
+      "BalancedAccuracy": 0.6557226523724439,
+      "RocAuc": 0.8372046853285686,
+      "PrAucFactura": 0.967342073220272,
+      "PrAucOtroDocumento": 0.6243518256426661,
+      "FacturaToOtroDocumento": 3,
+      "OtroDocumentoToFactura": 50,
+      "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro": [
+        [
+          825,
+          3
+        ],
+        [
+          50,
+          23
+        ]
+      ]
+    },
+    "HEADER_ONLY": {
+      "Count": 901,
+      "Families": 154,
+      "Factura": 828,
+      "OtroDocumento": 73,
+      "ThresholdDiagnosticOnly": 0.5,
+      "RecallFactura": 0.8429951690821256,
+      "RecallOtroDocumento": 0.1780821917808219,
+      "PrecisionFactura": 0.920844327176781,
+      "PrecisionOtroDocumento": 0.09090909090909091,
+      "MacroF1": 0.5002860679090188,
+      "BalancedAccuracy": 0.5105386804314738,
+      "RocAuc": 0.5391602144133413,
+      "PrAucFactura": 0.9275350564266959,
+      "PrAucOtroDocumento": 0.09245540260316054,
+      "FacturaToOtroDocumento": 130,
+      "OtroDocumentoToFactura": 60,
+      "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro": [
+        [
+          698,
+          130
+        ],
+        [
+          60,
+          13
+        ]
+      ]
+    }
+  },
+  "IndependentEvidence": {
+    "TEXT_ONLY_WORD": {
+      "Count": 734,
+      "Families": 88,
+      "Factura": 672,
+      "OtroDocumento": 62,
+      "ThresholdDiagnosticOnly": 0.5,
+      "RecallFactura": 0.9985119047619048,
+      "RecallOtroDocumento": 0.3709677419354839,
+      "PrecisionFactura": 0.9450704225352112,
+      "PrecisionOtroDocumento": 0.9583333333333334,
+      "MacroF1": 0.7529700804361728,
+      "BalancedAccuracy": 0.6847398233486943,
+      "RocAuc": 0.8231806835637481,
+      "PrAucFactura": 0.9630486738555719,
+      "PrAucOtroDocumento": 0.6601307698957997,
+      "FacturaToOtroDocumento": 1,
+      "OtroDocumentoToFactura": 39,
+      "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro": [
+        [
+          671,
+          1
+        ],
+        [
+          39,
+          23
+        ]
+      ]
+    },
+    "HEADER_ONLY": {
+      "Count": 734,
+      "Families": 88,
+      "Factura": 672,
+      "OtroDocumento": 62,
+      "ThresholdDiagnosticOnly": 0.5,
+      "RecallFactura": 0.8452380952380952,
+      "RecallOtroDocumento": 0.20967741935483872,
+      "PrecisionFactura": 0.9205834683954619,
+      "PrecisionOtroDocumento": 0.1111111111111111,
+      "MacroF1": 0.513277366283681,
+      "BalancedAccuracy": 0.5274577572964669,
+      "RocAuc": 0.584389400921659,
+      "PrAucFactura": 0.9370574839275692,
+      "PrAucOtroDocumento": 0.15926331773010846,
+      "FacturaToOtroDocumento": 104,
+      "OtroDocumentoToFactura": 49,
+      "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro": [
+        [
+          568,
+          104
+        ],
+        [
+          49,
+          13
+        ]
+      ]
+    }
+  },
+  "PerFold": {
+    "0": {
+      "Count": 225,
+      "Families": 35,
+      "Factura": 208,
+      "OtroDocumento": 17,
+      "ThresholdDiagnosticOnly": 0.5,
+      "RecallFactura": 0.8125,
+      "RecallOtroDocumento": 0.17647058823529413,
+      "PrecisionFactura": 0.9234972677595629,
+      "PrecisionOtroDocumento": 0.07142857142857142,
+      "MacroF1": 0.48307252156573754,
+      "BalancedAccuracy": 0.4944852941176471,
+      "RocAuc": 0.30514705882352944,
+      "PrAucFactura": 0.867197269841281,
+      "PrAucOtroDocumento": 0.17528139718651292,
+      "FacturaToOtroDocumento": 39,
+      "OtroDocumentoToFactura": 14,
+      "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro": [
+        [
+          169,
+          39
+        ],
+        [
+          14,
+          3
+        ]
+      ]
+    },
+    "1": {
+      "Count": 229,
+      "Families": 22,
+      "Factura": 206,
+      "OtroDocumento": 23,
+      "ThresholdDiagnosticOnly": 0.5,
+      "RecallFactura": 0.9563106796116505,
+      "RecallOtroDocumento": 0.0,
+      "PrecisionFactura": 0.8954545454545455,
+      "PrecisionOtroDocumento": 0.0,
+      "MacroF1": 0.4624413145539906,
+      "BalancedAccuracy": 0.47815533980582525,
+      "RocAuc": 0.8898269311945969,
+      "PrAucFactura": 0.9877352985673316,
+      "PrAucOtroDocumento": 0.3339265342903901,
+      "FacturaToOtroDocumento": 9,
+      "OtroDocumentoToFactura": 23,
+      "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro": [
+        [
+          197,
+          9
+        ],
+        [
+          23,
+          0
+        ]
+      ]
+    },
+    "2": {
+      "Count": 223,
+      "Families": 48,
+      "Factura": 206,
+      "OtroDocumento": 17,
+      "ThresholdDiagnosticOnly": 0.5,
+      "RecallFactura": 0.6262135922330098,
+      "RecallOtroDocumento": 0.47058823529411764,
+      "PrecisionFactura": 0.9347826086956522,
+      "PrecisionOtroDocumento": 0.09411764705882353,
+      "MacroF1": 0.4534313725490196,
+      "BalancedAccuracy": 0.5484009137635637,
+      "RocAuc": 0.5708166761850372,
+      "PrAucFactura": 0.9492212622787927,
+      "PrAucOtroDocumento": 0.09066227428402851,
+      "FacturaToOtroDocumento": 77,
+      "OtroDocumentoToFactura": 9,
+      "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro": [
+        [
+          129,
+          77
+        ],
+        [
+          9,
+          8
+        ]
+      ]
+    },
+    "3": {
+      "Count": 224,
+      "Families": 49,
+      "Factura": 208,
+      "OtroDocumento": 16,
+      "ThresholdDiagnosticOnly": 0.5,
+      "RecallFactura": 0.9759615384615384,
+      "RecallOtroDocumento": 0.125,
+      "PrecisionFactura": 0.9354838709677419,
+      "PrecisionOtroDocumento": 0.2857142857142857,
+      "MacroF1": 0.5646035805626599,
+      "BalancedAccuracy": 0.5504807692307692,
+      "RocAuc": 0.6502403846153846,
+      "PrAucFactura": 0.9600246314900507,
+      "PrAucOtroDocumento": 0.23431764336538435,
+      "FacturaToOtroDocumento": 5,
+      "OtroDocumentoToFactura": 14,
+      "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro": [
+        [
+          203,
+          5
+        ],
+        [
+          14,
+          2
+        ]
+      ]
+    }
+  },
+  "Complementarity": {
+    "Outcomes": {
+      "HEADER_NEW_ERROR": 146,
+      "BOTH_CORRECT": 702,
+      "BOTH_WRONG": 44,
+      "HEADER_CORRECTS_TEXT": 9
+    },
+    "StrongProbabilityDisagreementsAbsDeltaAtLeast0_5": 33,
+    "Note": "Diagnostic only, not active learning; no queue, no relabeling."
+  }
+}

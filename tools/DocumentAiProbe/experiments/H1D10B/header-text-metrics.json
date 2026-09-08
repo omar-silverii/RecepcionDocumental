@@ -1,0 +1,231 @@
+{
+  "AllStrongLabels": {
+    "TEXT_ONLY": {
+      "Count": 901,
+      "Families": 154,
+      "Factura": 828,
+      "OtroDocumento": 73,
+      "ThresholdDiagnosticOnly": 0.5,
+      "RecallFactura": 0.9963768115942029,
+      "RecallOtroDocumento": 0.3150684931506849,
+      "PrecisionFactura": 0.9428571428571428,
+      "PrecisionOtroDocumento": 0.8846153846153846,
+      "MacroF1": 0.7167624572204725,
+      "BalancedAccuracy": 0.6557226523724439,
+      "RocAuc": 0.8372046853285686,
+      "PrAucFactura": 0.967342073220272,
+      "PrAucOtroDocumento": 0.6243518256426661,
+      "FacturaToOtroDocumento": 3,
+      "OtroDocumentoToFactura": 50,
+      "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro": [
+        [
+          825,
+          3
+        ],
+        [
+          50,
+          23
+        ]
+      ]
+    },
+    "WORD": {
+      "Count": 901,
+      "Families": 154,
+      "Factura": 828,
+      "OtroDocumento": 73,
+      "ThresholdDiagnosticOnly": 0.5,
+      "RecallFactura": 0.9963768115942029,
+      "RecallOtroDocumento": 0.1780821917808219,
+      "PrecisionFactura": 0.9322033898305084,
+      "PrecisionOtroDocumento": 0.8125,
+      "MacroF1": 0.6276786241366418,
+      "BalancedAccuracy": 0.5872295016875124,
+      "RocAuc": 0.9052676857918073,
+      "PrAucFactura": 0.9838901060768731,
+      "PrAucOtroDocumento": 0.7120275113450957,
+      "FacturaToOtroDocumento": 3,
+      "OtroDocumentoToFactura": 60,
+      "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro": [
+        [
+          825,
+          3
+        ],
+        [
+          60,
+          13
+        ]
+      ]
+    },
+    "CHAR": {
+      "Count": 901,
+      "Families": 154,
+      "Factura": 828,
+      "OtroDocumento": 73,
+      "ThresholdDiagnosticOnly": 0.5,
+      "RecallFactura": 0.9939613526570048,
+      "RecallOtroDocumento": 0.1232876712328767,
+      "PrecisionFactura": 0.9278466741826381,
+      "PrecisionOtroDocumento": 0.6428571428571429,
+      "MacroF1": 0.5833316577862673,
+      "BalancedAccuracy": 0.5586245119449408,
+      "RocAuc": 0.7793825689894779,
+      "PrAucFactura": 0.961868330098819,
+      "PrAucOtroDocumento": 0.3867258815206696,
+      "FacturaToOtroDocumento": 5,
+      "OtroDocumentoToFactura": 64,
+      "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro": [
+        [
+          823,
+          5
+        ],
+        [
+          64,
+          9
+        ]
+      ]
+    },
+    "WORD_CHAR": {
+      "Count": 901,
+      "Families": 154,
+      "Factura": 828,
+      "OtroDocumento": 73,
+      "ThresholdDiagnosticOnly": 0.5,
+      "RecallFactura": 0.9963768115942029,
+      "RecallOtroDocumento": 0.1095890410958904,
+      "PrecisionFactura": 0.9269662921348315,
+      "PrecisionOtroDocumento": 0.7272727272727273,
+      "MacroF1": 0.5754476412217973,
+      "BalancedAccuracy": 0.5529829263450466,
+      "RocAuc": 0.8939679703527231,
+      "PrAucFactura": 0.9775003460911673,
+      "PrAucOtroDocumento": 0.6882846489430935,
+      "FacturaToOtroDocumento": 3,
+      "OtroDocumentoToFactura": 65,
+      "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro": [
+        [
+          825,
+          3
+        ],
+        [
+          65,
+          8
+        ]
+      ]
+    }
+  },
+  "IndependentEvidence": {
+    "TEXT_ONLY": {
+      "Count": 734,
+      "Families": 88,
+      "Factura": 672,
+      "OtroDocumento": 62,
+      "ThresholdDiagnosticOnly": 0.5,
+      "RecallFactura": 0.9985119047619048,
+      "RecallOtroDocumento": 0.3709677419354839,
+      "PrecisionFactura": 0.9450704225352112,
+      "PrecisionOtroDocumento": 0.9583333333333334,
+      "MacroF1": 0.7529700804361728,
+      "BalancedAccuracy": 0.6847398233486943,
+      "RocAuc": 0.8231806835637481,
+      "PrAucFactura": 0.9630486738555719,
+      "PrAucOtroDocumento": 0.6601307698957997,
+      "FacturaToOtroDocumento": 1,
+      "OtroDocumentoToFactura": 39,
+      "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro": [
+        [
+          671,
+          1
+        ],
+        [
+          39,
+          23
+        ]
+      ]
+    },
+    "WORD": {
+      "Count": 734,
+      "Families": 88,
+      "Factura": 672,
+      "OtroDocumento": 62,
+      "ThresholdDiagnosticOnly": 0.5,
+      "RecallFactura": 0.9985119047619048,
+      "RecallOtroDocumento": 0.20967741935483872,
+      "PrecisionFactura": 0.9319444444444445,
+      "PrecisionOtroDocumento": 0.9285714285714286,
+      "MacroF1": 0.6530928614640048,
+      "BalancedAccuracy": 0.6040946620583717,
+      "RocAuc": 0.9098742319508448,
+      "PrAucFactura": 0.9835350695597578,
+      "PrAucOtroDocumento": 0.8131593781008597,
+      "FacturaToOtroDocumento": 1,
+      "OtroDocumentoToFactura": 49,
+      "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro": [
+        [
+          671,
+          1
+        ],
+        [
+          49,
+          13
+        ]
+      ]
+    },
+    "CHAR": {
+      "Count": 734,
+      "Families": 88,
+      "Factura": 672,
+      "OtroDocumento": 62,
+      "ThresholdDiagnosticOnly": 0.5,
+      "RecallFactura": 0.9955357142857143,
+      "RecallOtroDocumento": 0.14516129032258066,
+      "PrecisionFactura": 0.9265927977839336,
+      "PrecisionOtroDocumento": 0.75,
+      "MacroF1": 0.6015355384078483,
+      "BalancedAccuracy": 0.5703485023041475,
+      "RocAuc": 0.7863623271889401,
+      "PrAucFactura": 0.9580664194556336,
+      "PrAucOtroDocumento": 0.4661622007169255,
+      "FacturaToOtroDocumento": 3,
+      "OtroDocumentoToFactura": 53,
+      "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro": [
+        [
+          669,
+          3
+        ],
+        [
+          53,
+          9
+        ]
+      ]
+    },
+    "WORD_CHAR": {
+      "Count": 734,
+      "Families": 88,
+      "Factura": 672,
+      "OtroDocumento": 62,
+      "ThresholdDiagnosticOnly": 0.5,
+      "RecallFactura": 0.9985119047619048,
+      "RecallOtroDocumento": 0.12903225806451613,
+      "PrecisionFactura": 0.9255172413793104,
+      "PrecisionOtroDocumento": 0.8888888888888888,
+      "MacroF1": 0.5929910169679494,
+      "BalancedAccuracy": 0.5637720814132104,
+      "RocAuc": 0.8939132104454686,
+      "PrAucFactura": 0.9752522042963299,
+      "PrAucOtroDocumento": 0.7828831539354929,
+      "FacturaToOtroDocumento": 1,
+      "OtroDocumentoToFactura": 54,
+      "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro": [
+        [
+          671,
+          1
+        ],
+        [
+          54,
+          8
+        ]
+      ]
+    }
+  },
+  "Winner": "WORD"
+}

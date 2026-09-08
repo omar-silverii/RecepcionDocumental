@@ -1,0 +1,18 @@
+{
+  "Status": "PASS",
+  "MetricParityWithSklearn": [
+    "AllStrongLabels/TEXT_ONLY",
+    "AllStrongLabels/WORD",
+    "AllStrongLabels/CHAR",
+    "AllStrongLabels/WORD_CHAR",
+    "IndependentEvidence/TEXT_ONLY",
+    "IndependentEvidence/WORD",
+    "IndependentEvidence/CHAR",
+    "IndependentEvidence/WORD_CHAR"
+  ],
+  "BlindPngCrcVerified": 150,
+  "BlindMetadataChunks": 0,
+  "BlindIndexRows": 150,
+  "B1B2AndH1D10AProtectedHashesUnchanged": true,
+  "BrowserPreview": "CUA unavailable: kernel assets path not found; static HTML and PNG integrity checks passed."
+}

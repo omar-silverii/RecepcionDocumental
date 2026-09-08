@@ -1,0 +1,45 @@
+{
+  "Milestone": "H1D10B1",
+  "Purpose": "TEXT_ONLY development branch; no production promotion",
+  "SourceRepoZipSha256": "95EB89C2CF94FA0119ED6B2A37F5429803446E627A3C76E1B27CF3779EA816E9",
+  "SourceTextZipSha256": "3F9446B508C73409849F6F6B95234FDE58BCDEBD700D7CF27BD2F07E1733C656",
+  "H1D10ASealedManifestSha256": "EF2C7A80A5616A5F009087020E3FB9988DD76B5BAED315F84D921AA605BCF7E0",
+  "ExpectedH1D10ASealedManifestSha256": "EF2C7A80A5616A5F009087020E3FB9988DD76B5BAED315F84D921AA605BCF7E0",
+  "HoldoutReadForScores": false,
+  "DevelopmentDocuments": 901,
+  "DevelopmentFactura": 828,
+  "DevelopmentOtroDocumento": 73,
+  "DevelopmentFamilies": 154,
+  "IndependentEvidenceDocuments": 734,
+  "IndependentEvidenceFactura": 672,
+  "IndependentEvidenceOtroDocumento": 62,
+  "LabelSourceCounts": {
+    "QR_ARCA_STRONG": 709,
+    "OCR_STRONG": 113,
+    "PDF_TEXT_STRONG": 54,
+    "EXISTING_GROUND_TRUTH": 25
+  },
+  "NoDocumentoExistingCorpusDocuments": 30,
+  "NoDocumentoExistingCorpusFamilies": 20,
+  "NoDocumentoLevelAStatus": "PENDING_INSUFFICIENT_COVERAGE_FOR_H1D10B1",
+  "CrossValidation": {
+    "Type": "StratifiedGroupKFold",
+    "Splits": 4,
+    "Shuffle": true,
+    "RandomState": 20260907,
+    "Group": "FamilyId"
+  },
+  "ClassImbalanceStrategy": "LogisticRegression class_weight=balanced; no physical duplication",
+  "Variants": {
+    "WORD": "TF-IDF word ngrams 1-2 + LogisticRegression",
+    "CHAR": "TF-IDF char_wb ngrams 3-5 + LogisticRegression",
+    "WORD_CHAR": "FeatureUnion(word + char_wb) + LogisticRegression"
+  },
+  "Winner": "WORD",
+  "ProductionStatus": "NOT_APPROVED",
+  "Python": "3.13.5",
+  "Pandas": "2.2.3",
+  "Numpy": "2.3.5",
+  "ScikitLearn": "1.8.0",
+  "Joblib": "1.5.3"
+}

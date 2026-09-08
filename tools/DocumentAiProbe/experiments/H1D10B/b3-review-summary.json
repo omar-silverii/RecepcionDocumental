@@ -1,0 +1,25 @@
+{
+  "Scored": 682,
+  "Errors": 0,
+  "TopCount": 150,
+  "ReviewFamilies": 271,
+  "TopFamilies": 64,
+  "AllReasonCountsOverlapping": {
+    "BAJO_PFACTURA": 84,
+    "DESACUERDO_TEXTO_CABECERA": 0,
+    "INCERTIDUMBRE": 125,
+    "FAMILIA_POCO_REPRESENTADA": 525,
+    "SIMILITUD_CON_OTRO_CONOCIDO": 115,
+    "PRIORIDAD_RELATIVA": 88
+  },
+  "TopReasonCountsOverlapping": {
+    "BAJO_PFACTURA": 84,
+    "DESACUERDO_TEXTO_CABECERA": 0,
+    "INCERTIDUMBRE": 85,
+    "FAMILIA_POCO_REPRESENTADA": 102,
+    "SIMILITUD_CON_OTRO_CONOCIDO": 105,
+    "PRIORIDAD_RELATIVA": 1
+  },
+  "TopUnseenTrainingFamilyDocuments": 87,
+  "Note": "Criteria overlap. Scores are review heuristics, never labels. Existing training-family overlap in REVISAR is allowed for prioritization, not validation."
+}

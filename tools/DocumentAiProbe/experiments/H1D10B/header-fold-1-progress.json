@@ -1,0 +1,155 @@
+{
+  "History": [
+    {
+      "Phase": 1,
+      "Epoch": 1,
+      "TrainWeightedLoss": 0.7046687198536736
+    },
+    {
+      "Phase": 1,
+      "Epoch": 2,
+      "TrainWeightedLoss": 0.6573898565201532
+    },
+    {
+      "Phase": 1,
+      "Epoch": 3,
+      "TrainWeightedLoss": 0.60592739709786
+    },
+    {
+      "Phase": 1,
+      "Epoch": 4,
+      "TrainWeightedLoss": 0.5964812742812293
+    },
+    {
+      "Phase": 1,
+      "Epoch": 5,
+      "TrainWeightedLoss": 0.5634194882143111
+    },
+    {
+      "Phase": 1,
+      "Epoch": 6,
+      "TrainWeightedLoss": 0.5680717914586976
+    },
+    {
+      "Phase": 1,
+      "Epoch": 7,
+      "TrainWeightedLoss": 0.5089082764018149
+    },
+    {
+      "Phase": 1,
+      "Epoch": 8,
+      "TrainWeightedLoss": 0.5030767112260773
+    },
+    {
+      "Phase": 2,
+      "Epoch": 1,
+      "TrainWeightedLoss": 0.4387874390397753
+    },
+    {
+      "Phase": 2,
+      "Epoch": 2,
+      "TrainWeightedLoss": 0.34958858433223905
+    },
+    {
+      "Phase": 2,
+      "Epoch": 3,
+      "TrainWeightedLoss": 0.3011269526822226
+    },
+    {
+      "Phase": 2,
+      "Epoch": 4,
+      "TrainWeightedLoss": 0.2845770266084444
+    },
+    {
+      "Phase": 2,
+      "Epoch": 5,
+      "TrainWeightedLoss": 0.24630313508567356
+    },
+    {
+      "Phase": 2,
+      "Epoch": 6,
+      "TrainWeightedLoss": 0.2373965425150735
+    },
+    {
+      "Phase": 2,
+      "Epoch": 7,
+      "TrainWeightedLoss": 0.20992419123649597
+    },
+    {
+      "Phase": 2,
+      "Epoch": 8,
+      "TrainWeightedLoss": 0.20493434972706295
+    },
+    {
+      "Phase": 2,
+      "Epoch": 9,
+      "TrainWeightedLoss": 0.17796141530076662
+    },
+    {
+      "Phase": 2,
+      "Epoch": 10,
+      "TrainWeightedLoss": 0.19241835957481748
+    },
+    {
+      "Phase": 2,
+      "Epoch": 11,
+      "TrainWeightedLoss": 0.16745751847823462
+    },
+    {
+      "Phase": 2,
+      "Epoch": 12,
+      "TrainWeightedLoss": 0.1470831230814968
+    }
+  ],
+  "Config": {
+    "Architecture": "torchvision EfficientNet-B0",
+    "Initialization": "IMAGENET1K_V1 local only",
+    "Device": "cpu",
+    "Threads": 8,
+    "Seed": 20260907,
+    "InputSize": [
+      384,
+      384
+    ],
+    "Input": "Exact H1D10A deterministic header asset, no full page",
+    "Resize": "RGB, PIL BICUBIC, preserve aspect ratio, round dimensions, centered white letterbox",
+    "ImageNetMean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "ImageNetStd": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "Augmentations": [],
+    "Crop": false,
+    "BatchSize": 16,
+    "CacheBatchSize": 4,
+    "Phase1": {
+      "Epochs": 8,
+      "LearningRate": 0.001,
+      "Trainable": "classifier"
+    },
+    "Phase2": {
+      "Epochs": 12,
+      "LearningRate": 0.0001,
+      "Trainable": "features.8 + classifier"
+    },
+    "Optimizer": "AdamW",
+    "WeightDecay": 0.0001,
+    "ClassifierDropout": 0.2,
+    "Loss": "mean(weight[label] * cross_entropy); weight = N_train/(2*N_train_class)",
+    "ClassMapping": {
+      "OTRO_DOCUMENTO": 0,
+      "FACTURA": 1
+    },
+    "FoldSource": "Existing B1 fold-manifest.csv, never generated",
+    "OuterValidationUse": "Once after fixed 8+12 epochs; no early stopping or tuning",
+    "DiagnosticThreshold": 0.5,
+    "OperationalThresholdsChanged": false,
+    "FrozenCache": "features.0..7 eval mode, no gradients, no running-stat updates, ImageNet only",
+    "ProductionPromotion": false
+  }
+}

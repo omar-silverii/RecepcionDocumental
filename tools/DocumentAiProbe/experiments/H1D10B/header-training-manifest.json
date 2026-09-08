@@ -1,0 +1,247 @@
+{
+  "Config": {
+    "Architecture": "torchvision EfficientNet-B0",
+    "Initialization": "IMAGENET1K_V1 local only",
+    "Device": "cpu",
+    "Threads": 8,
+    "Seed": 20260907,
+    "InputSize": [
+      384,
+      384
+    ],
+    "Input": "Exact H1D10A deterministic header asset, no full page",
+    "Resize": "RGB, PIL BICUBIC, preserve aspect ratio, round dimensions, centered white letterbox",
+    "ImageNetMean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "ImageNetStd": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "Augmentations": [],
+    "Crop": false,
+    "BatchSize": 16,
+    "CacheBatchSize": 4,
+    "Phase1": {
+      "Epochs": 8,
+      "LearningRate": 0.001,
+      "Trainable": "classifier"
+    },
+    "Phase2": {
+      "Epochs": 12,
+      "LearningRate": 0.0001,
+      "Trainable": "features.8 + classifier"
+    },
+    "Optimizer": "AdamW",
+    "WeightDecay": 0.0001,
+    "ClassifierDropout": 0.2,
+    "Loss": "mean(weight[label] * cross_entropy); weight = N_train/(2*N_train_class)",
+    "ClassMapping": {
+      "OTRO_DOCUMENTO": 0,
+      "FACTURA": 1
+    },
+    "FoldSource": "Existing B1 fold-manifest.csv, never generated",
+    "OuterValidationUse": "Once after fixed 8+12 epochs; no early stopping or tuning",
+    "DiagnosticThreshold": 0.5,
+    "OperationalThresholdsChanged": false,
+    "FrozenCache": "features.0..7 eval mode, no gradients, no running-stat updates, ImageNet only",
+    "ProductionPromotion": false
+  },
+  "Environment": {
+    "Python": "3.11.3 (tags/v3.11.3:f3909b8, Apr  4 2023, 23:49:59) [MSC v.1934 64 bit (AMD64)]",
+    "Executable": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10B\\header-local\\.venv\\Scripts\\python.exe",
+    "Venv": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10B\\header-local\\.venv",
+    "ImportedVersions": {
+      "torch": "2.13.0+cpu",
+      "torchvision": "0.28.0+cpu",
+      "numpy": "2.4.6",
+      "pillow": "12.3.0"
+    },
+    "InstalledVersions": {
+      "Jinja2": "3.1.6",
+      "torchvision": "0.28.0",
+      "setuptools": "84.0.0",
+      "mpmath": "1.3.0",
+      "filelock": "3.32.5",
+      "fsspec": "2026.7.0",
+      "typing_extensions": "4.16.0",
+      "numpy": "2.4.6",
+      "flatbuffers": "25.12.19",
+      "onnxruntime": "1.29.0",
+      "networkx": "3.6.1",
+      "protobuf": "7.36.1",
+      "pillow": "12.3.0",
+      "torch": "2.13.0",
+      "sympy": "1.14.0",
+      "packaging": "26.3",
+      "onnxscript": "0.7.1",
+      "onnx": "1.22.0",
+      "ml_dtypes": "0.6.0",
+      "onnx-ir": "1.0.0",
+      "MarkupSafe": "3.0.3"
+    },
+    "CudaAvailable": false,
+    "Device": "cpu",
+    "LocalWeights": "C:\\Users\\omard\\.cache\\torch\\hub\\checkpoints\\efficientnet_b0_rwightman-7f5810bc.pth",
+    "LocalWeightsSha256": "7F5810BC96DEF8F7552D5B7E68D53C4786F81167D28291B21C0D90E1FCA14934",
+    "NetworkDisabled": true
+  },
+  "TrainerSha256": "FF22EC538E37BB217C8D938DA3F9CF5FF18B45E2D699C89A5A0D6EFBDF05F27B",
+  "FoldManifestSha256": "18CAA8D74EC51BC0F4BEBCE7CE9FC32CAF4F0EDCF20827B4B9EA067843EE0DD7",
+  "Status": "H1D10B2 APROBADO — GATES DE INTEGRIDAD; NO PROMOCION",
+  "Models": [
+    {
+      "Fold": 0,
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10B\\header-local\\header-fold-0.pt",
+      "Sha256": "C46D069A1DFA2536640E312A2600DDFBC97F301511AA45037C746E99028C576E",
+      "Bytes": 16404419
+    },
+    {
+      "Fold": 1,
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10B\\header-local\\header-fold-1.pt",
+      "Sha256": "D6A40F9EB293FBFEEC6583E39A06DF04613B098C75107A62F673A1B73C751E87",
+      "Bytes": 16404419
+    },
+    {
+      "Fold": 2,
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10B\\header-local\\header-fold-2.pt",
+      "Sha256": "DD31BADD9C72D35B655488CF11A513493FF7C4E2E8DD97D03EB7FCFB8B56444D",
+      "Bytes": 16404419
+    },
+    {
+      "Fold": 3,
+      "Path": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10B\\header-local\\header-fold-3.pt",
+      "Sha256": "D907F1B0B4ACE1731B1934A9C891F59872CFFACD18AF1F0E4BED803BA0B0B9E2",
+      "Bytes": 16404419
+    }
+  ],
+  "EpochsPerFold": {
+    "0": {
+      "Classifier": 8,
+      "LastBlockAndClassifier": 12
+    },
+    "1": {
+      "Classifier": 8,
+      "LastBlockAndClassifier": 12
+    },
+    "2": {
+      "Classifier": 8,
+      "LastBlockAndClassifier": 12
+    },
+    "3": {
+      "Classifier": 8,
+      "LastBlockAndClassifier": 12
+    }
+  },
+  "FoldDetails": [
+    {
+      "Fold": 0,
+      "TrainDocuments": 676,
+      "ValidationDocuments": 225,
+      "ClassWeightsOtroFactura": [
+        6.035714626312256,
+        0.5451613068580627
+      ],
+      "CheckpointParityError": 1.7881393432617188e-07
+    },
+    {
+      "Fold": 1,
+      "TrainDocuments": 672,
+      "ValidationDocuments": 229,
+      "ClassWeightsOtroFactura": [
+        6.71999979019165,
+        0.5401929020881653
+      ],
+      "CheckpointParityError": 2.980232238769531e-07
+    },
+    {
+      "Fold": 2,
+      "TrainDocuments": 678,
+      "ValidationDocuments": 223,
+      "ClassWeightsOtroFactura": [
+        6.053571701049805,
+        0.5450160503387451
+      ],
+      "CheckpointParityError": 1.1920928955078125e-07
+    },
+    {
+      "Fold": 3,
+      "TrainDocuments": 677,
+      "ValidationDocuments": 224,
+      "ClassWeightsOtroFactura": [
+        5.938596725463867,
+        0.5459677577018738
+      ],
+      "CheckpointParityError": 0.0
+    }
+  ],
+  "Limitations": [
+    "Development strong labels are not independent human certification.",
+    "734 independent-evidence samples reported separately.",
+    "Fixed transfer-learning schedule; only last block is fine-tuned.",
+    "Frozen ImageNet cache is shared, not fit to these documents.",
+    "No operational threshold selection or production promotion."
+  ],
+  "SmokeTest": {
+    "Python": "3.11.3 (tags/v3.11.3:f3909b8, Apr  4 2023, 23:49:59) [MSC v.1934 64 bit (AMD64)]",
+    "Executable": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10B\\header-local\\.venv\\Scripts\\python.exe",
+    "Venv": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10B\\header-local\\.venv",
+    "ImportedVersions": {
+      "torch": "2.13.0+cpu",
+      "torchvision": "0.28.0+cpu",
+      "numpy": "2.4.6",
+      "pillow": "12.3.0"
+    },
+    "InstalledVersions": {
+      "Jinja2": "3.1.6",
+      "torchvision": "0.28.0",
+      "setuptools": "84.0.0",
+      "mpmath": "1.3.0",
+      "filelock": "3.32.5",
+      "fsspec": "2026.7.0",
+      "typing_extensions": "4.16.0",
+      "numpy": "2.4.6",
+      "flatbuffers": "25.12.19",
+      "onnxruntime": "1.29.0",
+      "networkx": "3.6.1",
+      "protobuf": "7.36.1",
+      "pillow": "12.3.0",
+      "torch": "2.13.0",
+      "sympy": "1.14.0",
+      "packaging": "26.3",
+      "onnxscript": "0.7.1",
+      "onnx": "1.22.0",
+      "ml_dtypes": "0.6.0",
+      "onnx-ir": "1.0.0",
+      "MarkupSafe": "3.0.3"
+    },
+    "CudaAvailable": false,
+    "Device": "cpu",
+    "LocalWeights": "C:\\Users\\omard\\.cache\\torch\\hub\\checkpoints\\efficientnet_b0_rwightman-7f5810bc.pth",
+    "LocalWeightsSha256": "7F5810BC96DEF8F7552D5B7E68D53C4786F81167D28291B21C0D90E1FCA14934",
+    "NetworkDisabled": true,
+    "Status": "PASSED",
+    "Sha256": "002865257C71829F722158FBCEDB282C220108C3B1CE07E08876E80BAEEA8EB2",
+    "HeaderAsset": "E:\\RecepcionDocumental-H1D10A-assets\\002865257C71829F722158FBCEDB282C220108C3B1CE07E08876E80BAEEA8EB2.header.png",
+    "HeaderSha256": "1CE5ED13E0D3CC858060FDFBC19B7CE6C0EBFC3F390944B95B53BB378409F54A",
+    "InputShape": [
+      1,
+      3,
+      384,
+      384
+    ],
+    "OutputShape": [
+      1,
+      1000
+    ],
+    "OutputFinite": true,
+    "Holdout": false,
+    "OutputSha256": "63AC83702CAD63F63F0399C797592738F95EF57D7402671936DB33412F1E207C"
+  },
+  "EnvironmentInstallManifest": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10B\\header-environment-install.json",
+  "ImportedDependencyVerification": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10B\\header-import-verification.json",
+  "PerformanceConclusion": "HEADER_ONLY is inferior to untouched TEXT_ONLY WORD on overall and independent evidence; not selected or promoted."
+}

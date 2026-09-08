@@ -1,0 +1,9 @@
+Scope,Variant,MatrixRowsFacturaOtroColsFacturaOtro
+AllStrongLabels,TEXT_ONLY,"[[825, 3], [50, 23]]"
+AllStrongLabels,WORD,"[[825, 3], [60, 13]]"
+AllStrongLabels,CHAR,"[[823, 5], [64, 9]]"
+AllStrongLabels,WORD_CHAR,"[[825, 3], [65, 8]]"
+IndependentEvidence,TEXT_ONLY,"[[671, 1], [39, 23]]"
+IndependentEvidence,WORD,"[[671, 1], [49, 13]]"
+IndependentEvidence,CHAR,"[[669, 3], [53, 9]]"
+IndependentEvidence,WORD_CHAR,"[[671, 1], [54, 8]]"

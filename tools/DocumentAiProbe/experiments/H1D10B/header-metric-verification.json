@@ -1,0 +1,37 @@
+{
+  "B1Parity": [
+    {
+      "Scope": "AllStrongLabels",
+      "Status": "PASS",
+      "Metrics": [
+        "Count",
+        "BalancedAccuracy",
+        "MacroF1",
+        "RocAuc",
+        "PrAucFactura",
+        "PrecisionFactura",
+        "RecallFactura",
+        "PrecisionOtroDocumento",
+        "RecallOtroDocumento",
+        "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro"
+      ]
+    },
+    {
+      "Scope": "IndependentEvidenceSubset",
+      "Status": "PASS",
+      "Metrics": [
+        "Count",
+        "BalancedAccuracy",
+        "MacroF1",
+        "RocAuc",
+        "PrAucFactura",
+        "PrecisionFactura",
+        "RecallFactura",
+        "PrecisionOtroDocumento",
+        "RecallOtroDocumento",
+        "ConfusionMatrixRowsFacturaOtro_ColsFacturaOtro"
+      ]
+    }
+  ],
+  "B1Modified": false
+}

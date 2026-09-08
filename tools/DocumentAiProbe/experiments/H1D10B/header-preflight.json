@@ -1,0 +1,83 @@
+{
+  "Status": "INPUT_GATES_PASSED; AWAITING_OFFLINE_ENVIRONMENT_DECISION",
+  "Documents": 901,
+  "Classes": {
+    "FACTURA": 828,
+    "OTRO_DOCUMENTO": 73
+  },
+  "Families": 154,
+  "HeadersFound": 901,
+  "HeaderHashesVerified": 901,
+  "MissingHeaders": 0,
+  "HeaderErrors": 0,
+  "Folds": [
+    {
+      "Fold": 0,
+      "Train": 676,
+      "Validation": 225,
+      "ValidationFamilies": 35,
+      "ValidationClasses": {
+        "FACTURA": 208,
+        "OTRO_DOCUMENTO": 17
+      }
+    },
+    {
+      "Fold": 1,
+      "Train": 672,
+      "Validation": 229,
+      "ValidationFamilies": 22,
+      "ValidationClasses": {
+        "FACTURA": 206,
+        "OTRO_DOCUMENTO": 23
+      }
+    },
+    {
+      "Fold": 2,
+      "Train": 678,
+      "Validation": 223,
+      "ValidationFamilies": 48,
+      "ValidationClasses": {
+        "FACTURA": 206,
+        "OTRO_DOCUMENTO": 17
+      }
+    },
+    {
+      "Fold": 3,
+      "Train": 677,
+      "Validation": 224,
+      "ValidationFamilies": 49,
+      "ValidationClasses": {
+        "FACTURA": 208,
+        "OTRO_DOCUMENTO": 16
+      }
+    }
+  ],
+  "ShaLeakage": 0,
+  "FamilyLeakage": 0,
+  "HoldoutLeakage": 0,
+  "SealedHash": "EF2C7A80A5616A5F009087020E3FB9988DD76B5BAED315F84D921AA605BCF7E0",
+  "SealedAssetsOpened": 0,
+  "TrainingExecuted": false,
+  "B1Hashes": {
+    "artifact-index.csv": "084A48A877E8B3FB1F15AA117119CA240A6DFB5B4B8669F3E3F46487C6069BD0",
+    "confusion-matrices.csv": "8F049DF9596667A2636221E988E573163D5AC1325AB7157CC57024758FD023E8",
+    "dataset-manifest.csv": "218BE86D1CE38A015A7CA9ECDAF5362CD1E7B5D683468764DB9BDB564BEEAFC6",
+    "family-errors.csv": "0E17BA492B839C73B907FE382479BF6441FC85EB31C26E9839B450DBA41B84DC",
+    "fold-manifest.csv": "18CAA8D74EC51BC0F4BEBCE7CE9FC32CAF4F0EDCF20827B4B9EA067843EE0DD7",
+    "metrics.json": "9E4625A73B9ADBCDE36B79E8FBE83D97628AC5C48C179E58030CDE99B5271620",
+    "model-comparison.csv": "FCA1EFBE4AC6AC4E2C22D2D3CC095B6F6310F742E7438B2DB08C0BEB27FC9A5F",
+    "no-document-inventory.csv": "64EA2F0A319CE8E0C5BD1E58572E5F7B4DC8BC74327399CF64DE26126B6B3651",
+    "oof-predictions.csv": "6A179834502F40BF597FD281BAF07D82709FDD2FE913EA7CB6EF697B070FEE4B",
+    "resultado.md": "733F6F820E6DA7386AFBB217A6DE4CC6478633AF506010A4E23914896FE9EC78",
+    "Run-H1D10B1.py": "6920289252D3B32B3D0E160D2C8314565147EB5067BE8631CF9F3E9B2716E2B9",
+    "text-only-word-development.joblib": "9D9BBE858F9E0EE24EFCCB2FF1C4B104B5444150FBF273961898BBB631A2AA39",
+    "text.zip": "3F9446B508C73409849F6F6B95234FDE58BCDEBD700D7CF27BD2F07E1733C656",
+    "training-manifest.json": "F941BA705086A9CD92E0E0D2B5828C223F07BF566EB26DB8F72856E4E0E39FEC"
+  },
+  "B1Preserved": true,
+  "BankManifestSha256": "F89D3B529516D3384AC0A1B31AD3A94452ED269ADE26099E873A8F2C7DAD76E5",
+  "CachedWeights": {
+    "Path": "C:\\Users\\omard\\.cache\\torch\\hub\\checkpoints\\efficientnet_b0_rwightman-7f5810bc.pth",
+    "Sha256": "7F5810BC96DEF8F7552D5B7E68D53C4786F81167D28291B21C0D90E1FCA14934"
+  }
+}

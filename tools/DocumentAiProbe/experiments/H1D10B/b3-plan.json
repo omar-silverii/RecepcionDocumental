@@ -1,0 +1,53 @@
+{
+  "Seed": 20260907,
+  "Folds": "B1 existing fold-manifest.csv, unchanged",
+  "Input": "Only H1D10A HeaderTextAsset for HEADER_TEXT_ONLY",
+  "Word": {
+    "ngram_range": [
+      1,
+      2
+    ],
+    "min_df": 2,
+    "max_df": 0.995,
+    "max_features": 80000
+  },
+  "Char": {
+    "analyzer": "char_wb",
+    "ngram_range": [
+      3,
+      5
+    ],
+    "min_df": 2,
+    "max_features": 120000
+  },
+  "CombinedMaxFeatures": {
+    "word": 70000,
+    "char": 100000
+  },
+  "CommonVectorizer": {
+    "lowercase": true,
+    "strip_accents": "unicode",
+    "sublinear_tf": true,
+    "norm": "l2"
+  },
+  "Classifier": {
+    "C": 1.0,
+    "class_weight": "balanced",
+    "solver": "liblinear",
+    "max_iter": 2500
+  },
+  "Selection": "Independent-evidence macro F1, then independent balanced accuracy, then global macro F1; ties prefer WORD, CHAR, WORD_CHAR",
+  "DiagnosticThreshold": 0.5,
+  "PriorityFormula": "0.40*(1-min(p_text,p_header)) + 0.25*abs(p_text-p_header) + 0.15*max(1-2*abs(p_text-.5),1-2*abs(p_header-.5)) + 0.10/(1+FamilyTrainingCount) + 0.10*max_cosine_to_training_OTRO",
+  "ReasonCutoffs": {
+    "LowFacturaScore": 0.35,
+    "ScoreDifference": 0.35,
+    "Uncertainty": 0.8,
+    "FamilyTrainingCountAtMost": 2,
+    "SemanticCosine": 0.5
+  },
+  "BlindOrder": "SHA-sorted selected sample, shuffled with random.Random(202609073); unrelated to priority order",
+  "NoLabelChanges": true,
+  "NoHoldoutInference": true,
+  "NoImageModels": true
+}

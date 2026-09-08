@@ -1,0 +1,21 @@
+{
+  "SourcePath": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10B\\text-only-word-development.joblib",
+  "SourceSha256": "9D9BBE858F9E0EE24EFCCB2FF1C4B104B5444150FBF273961898BBB631A2AA39",
+  "SourceSklearn": "1.8.0",
+  "ExecutionSklearn": "1.3.2",
+  "VersionWarnings": [
+    "Trying to unpickle estimator TfidfTransformer from version 1.8.0 when using version 1.3.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+    "Trying to unpickle estimator TfidfVectorizer from version 1.8.0 when using version 1.3.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+    "Trying to unpickle estimator LogisticRegression from version 1.8.0 when using version 1.3.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+    "Trying to unpickle estimator Pipeline from version 1.8.0 when using version 1.3.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations"
+  ],
+  "State": "Exact learned vocabulary, IDF, coefficients and intercept; no fitting or changed weights",
+  "Features": 17786,
+  "WeightsPath": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10B\\b3-local\\text-only-b1-frozen.npz",
+  "WeightsSha256": "C5E27C64D7D40940D2385CA17F2742B1276F74D70BC855970CA29673E0723DFF",
+  "VocabularyPath": "C:\\Users\\omard\\source\\repos\\RecepcionDocumental\\RecepcionDocumental\\tools\\DocumentAiProbe\\experiments\\H1D10B\\b3-local\\text-only-b1-vocabulary.json",
+  "VocabularySha256": "210F4FFA1A91D524108A9B1A1486131928AC567EBB623F0ED2812B160835EA1F",
+  "ReviewSamplesVerified": 682,
+  "IndependentFormulaMaxAbsError": 1.8318679906315083e-15,
+  "HoldoutUsed": false
+}
