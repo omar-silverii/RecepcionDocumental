@@ -1,0 +1,58 @@
+{
+  "Experiment": "H1D10D4",
+  "Purpose": "Audit existing text models as fallback and characterize semantic residual before selecting new technology",
+  "SealedAssetsRead": false,
+  "TrainingExecuted": false,
+  "ProductionModified": false,
+  "GroundTruthModified": false,
+  "ModelsPromoted": false,
+  "NewModelInferenceExecuted": false,
+  "ExistingOOFPredictionsReused": true,
+  "VisualReferenceIsGroundTruth": false,
+  "IndependentRows": 734,
+  "D3IndependentDecisions": 728,
+  "D3IndependentAbstentions": 6,
+  "D3AbstentionExpectedLabels": {
+    "OTRO_DOCUMENTO": 6
+  },
+  "D3AbstentionTextOnlyPredictions05": {
+    "FACTURA": 6
+  },
+  "D3AbstentionHeaderTextPredictions05": {
+    "FACTURA": 6
+  },
+  "D3AbstentionTextOnlyPFacturaMin": 0.642502055,
+  "D3AbstentionTextOnlyPFacturaMax": 0.768376112,
+  "D3AbstentionHeaderTextPFacturaMin": 0.576571258,
+  "D3AbstentionHeaderTextPFacturaMax": 0.770843878,
+  "NaiveD3PlusText05Decisions": 734,
+  "NaiveD3PlusText05Correct": 728,
+  "NaiveD3PlusText05Wrong": 6,
+  "NaiveD3PlusText05Precision": 0.9918256130790191,
+  "ResidualTop150Rows": 86,
+  "ResidualTop150Families": 46,
+  "ResidualDiagnosticGroups": {
+    "SEMANTIC_CORREO_ADMINISTRATIVO": 32,
+    "SEMANTIC_TRANSFERENCIA_ANTICIPO": 30,
+    "OTHER_ADMIN_OR_GENERIC_DOCUMENT": 14,
+    "KNOWN_FISCAL_OR_RECEIPT_EVIDENCE_GAP": 5,
+    "STRUCTURED_BANK_DOCUMENT": 4,
+    "STRUCTURED_TAX_OR_PAYMENT_DOCUMENT": 1
+  },
+  "ResidualSemanticNeed": {
+    "LIKELY_SEMANTIC_LANGUAGE_CONTEXT": 62,
+    "LIKELY_SEMANTIC_OR_STRUCTURE": 19,
+    "DETERMINISTIC_EVIDENCE_GAP_FIRST": 5
+  },
+  "LanguageContextRows": 62,
+  "LanguageContextFamilies": 27,
+  "LanguageContextTextOnlyBelow05": 62,
+  "LanguageContextTextOnlyAtOrBelow035": 56,
+  "LowPFacturaCandidateZone035Rows": 56,
+  "LowPFacturaCandidateZone035Families": 24,
+  "Top4FamiliesRows": 36,
+  "Top4FamiliesShare": 0.4186046511627907,
+  "Top10FamiliesRows": 50,
+  "Top10FamiliesShare": 0.5813953488372093,
+  "Interpretation": "TEXT_ONLY retains useful ranking signal, especially for language/context cases, but fails exactly on all six independent D3 hard-negative abstentions at threshold 0.5. Therefore it is not validated as an automatic fallback. Low-PFactura cohorts are useful for candidate selection only until a semantic model is evaluated family-aware with real ground truth."
+}
