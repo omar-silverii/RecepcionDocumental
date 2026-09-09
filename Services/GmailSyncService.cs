@@ -65,10 +65,10 @@ namespace RecepcionDocumental.Services
         private const int HistoryPageSize = 100;
         private const string InitialSearchQuery = "newer_than:30d";
 
-        public static async Task<GmailSyncResult> SynchronizeAsync(string origin="WEB")
+        public static async Task<GmailSyncResult> SynchronizeAsync(string origin = "WEB")
         {
             var total = Stopwatch.StartNew();
-            try { return await GmailSyncExecution.RunAsync(origin,(account,lease)=>SynchronizeCoreAsync(total,account,lease)); }
+            try { return await GmailSyncExecution.RunAsync(origin, (account, lease) => SynchronizeCoreAsync(total, account, lease)); }
             catch (Exception ex)
             {
                 Logs.LogError("GmailSyncService | Operación=Sincronización | " + Logs.DescribirExcepcion(ex));
@@ -76,7 +76,7 @@ namespace RecepcionDocumental.Services
             }
         }
 
-        private static async Task<GmailSyncResult> SynchronizeCoreAsync(Stopwatch total,GmailSyncAccount account,GmailSyncLease lease)
+        private static async Task<GmailSyncResult> SynchronizeCoreAsync(Stopwatch total, GmailSyncAccount account, GmailSyncLease lease)
         {
             if (account == null) throw new InvalidOperationException("No hay una cuenta Gmail activa.");
             if (account.ProtectedRefreshToken == null || account.ProtectedRefreshToken.Length == 0) throw new InvalidOperationException("La cuenta Gmail activa no tiene autorización persistida.");
@@ -245,6 +245,7 @@ namespace RecepcionDocumental.Services
                         result.ContenedoresZip += analysis.ContainersZip;
                         result.ArchivosZipAnalizados += analysis.ZipFilesAnalyzed;
                         result.Descartados += analysis.Discarded;
+                        foreach (var aiDiscard in analysis.AiDiscards) AiDiscardRepository.TrySave(record, part.PartId, aiDiscard);
                         if (analysis.Candidates.Count == 0) continue;
                         if (!databaseMessageId.HasValue)
                         {
@@ -262,10 +263,10 @@ namespace RecepcionDocumental.Services
                             var stored = DocumentStorage.Save(candidate.SourcePath, candidate.Selection.Classification, record.MessageDateUtc, message.Id, candidate.OriginalName, candidate.OriginHash);
                             if (DocumentRepository.Save(databaseMessageId.Value, part.PartId, candidate, stored))
                             {
-                                if(candidate.VisualShadow!=null&&candidate.VisualShadow.Attempted)
+                                if (candidate.VisualShadow != null && candidate.VisualShadow.Attempted)
                                 {
-                                    var documentId=DocumentRepository.GetId(databaseMessageId.Value,part.PartId,candidate.OriginHash);
-                                    if(documentId.HasValue)VisualShadowRepository.Save(documentId.Value,candidate.VisualShadow);
+                                    var documentId = DocumentRepository.GetId(databaseMessageId.Value, part.PartId, candidate.OriginHash);
+                                    if (documentId.HasValue) VisualShadowRepository.Save(documentId.Value, candidate.VisualShadow);
                                     else Logs.LogError("VisualShadow | Operación=Persistir | Estado=ERROR | Codigo=DOCUMENT_ID_NOT_FOUND");
                                 }
                                 result.AdjuntosDescargados++;
