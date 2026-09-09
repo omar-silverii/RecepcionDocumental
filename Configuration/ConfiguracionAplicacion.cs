@@ -8,7 +8,8 @@ namespace RecepcionDocumental.Configuration
     {
         public ConfiguracionAplicacion(string nombreProyecto, string rutaLogs, string rutaTrabajo, string rutaFacturas, string rutaRevisar,
             int zipMaxEntradas, long zipMaxBytesPorArchivo, long zipMaxBytesDescomprimidos, int zipMaxProfundidad,
-            string gmailRedirectUri, bool visionShadowEnabled = false, string visionShadowModelVersion = "H1D9B-CANDIDATE-001")
+            string gmailRedirectUri, bool visionShadowEnabled = false, string visionShadowModelVersion = "H1D9B-CANDIDATE-001",
+            bool familyAiEnabled = false, string familyAiModelVersion = "H1D10D5-FAMILY-001")
         {
             NombreProyecto = ValidarNombreProyecto(nombreProyecto);
             RutaLogs = ValidarRuta("Rutas/Logs", rutaLogs);
@@ -22,6 +23,8 @@ namespace RecepcionDocumental.Configuration
             GmailRedirectUri = ValidarUriHttps("Gmail/RedirectUri", gmailRedirectUri);
             VisionShadowEnabled = visionShadowEnabled;
             VisionShadowModelVersion = string.IsNullOrWhiteSpace(visionShadowModelVersion) ? "H1D9B-CANDIDATE-001" : Normalizar(visionShadowModelVersion);
+            FamilyAiEnabled = familyAiEnabled;
+            FamilyAiModelVersion = string.IsNullOrWhiteSpace(familyAiModelVersion) ? "H1D10D5-FAMILY-001" : Normalizar(familyAiModelVersion);
             if (ZipMaxBytesDescomprimidos < ZipMaxBytesPorArchivo)
                 throw new ConfiguracionAplicacionException("Zip/MaxBytesDescomprimidos no puede ser menor que Zip/MaxBytesPorArchivo.");
         }
@@ -38,6 +41,8 @@ namespace RecepcionDocumental.Configuration
         public string GmailRedirectUri { get; private set; }
         public bool VisionShadowEnabled { get; private set; }
         public string VisionShadowModelVersion { get; private set; }
+        public bool FamilyAiEnabled { get; private set; }
+        public string FamilyAiModelVersion { get; private set; }
 
         public void PrepararRutasOperativas()
         {

@@ -46,7 +46,8 @@ namespace RecepcionDocumental.Services
     }
 
     internal sealed class ZipBudget { public int Entries; public long TotalBytes; }
-    internal sealed class PdfOcrAnalysisResult { public InvoiceSelection Selection; public ArcaQrEvidence RasterQr=new ArcaQrEvidence(); public int RasterQrDurationMilliseconds; public int RasterizationCount; public int PagesRendered; public bool FirstPageRendered; public string FirstPageVisualFailureReason; public OcrImageData FirstRasterImage; }
+    internal sealed class PdfOcrAnalysisResult { public InvoiceSelection Selection; public InvoiceSelection OcrSelection; public string OcrText; public bool OcrHasUsefulText; public ArcaQrEvidence RasterQr=new ArcaQrEvidence(); public int RasterQrDurationMilliseconds; public int RasterizationCount; public int PagesRendered; public bool FirstPageRendered; public string FirstPageVisualFailureReason; public OcrImageData FirstRasterImage; }
+    internal sealed class OcrSelectionAnalysis { public InvoiceSelection Selection; public string Text; public bool HasUsefulText; }
 
     public static class DocumentAnalysisService
     {
@@ -134,7 +135,7 @@ namespace RecepcionDocumental.Services
         {
             InvoiceSelection selection;
             var qr = new ArcaQrEvidence();
-            var qrSource = "NINGUNO";var rasterQrDuration=0;var rasterizationCount=0;var pagesRenderedForOcr=0;var pagesRenderedForShadow=0;var firstPageRenderedByOcr=false;var firstPageReusedByShadow=false;string firstPageVisualFailureReason=null;var embeddedQrDetected=false;var rasterQrDetected=false;var rasterQrValid=false;int? rasterTipo=null;OcrImageData visualRaster=null;
+            var qrSource = "NINGUNO";var rasterQrDuration=0;var rasterizationCount=0;var pagesRenderedForOcr=0;var pagesRenderedForShadow=0;var firstPageRenderedByOcr=false;var firstPageReusedByShadow=false;string firstPageVisualFailureReason=null;var embeddedQrDetected=false;var rasterQrDetected=false;var rasterQrValid=false;int? rasterTipo=null;OcrImageData visualRaster=null;string residualOcrText=null;bool residualOcrHasUsefulText=false;InvoiceSelection residualOcrSelection=null;
             if (string.Equals(Path.GetExtension(name), ".pdf", StringComparison.OrdinalIgnoreCase))
             {
                 qr = MdocPdfQrDetector.Detect(path);
@@ -148,7 +149,7 @@ namespace RecepcionDocumental.Services
                 {
                     var ocrReason = pdf.HasUsefulText ? "MDOC_REVISAR" : "MDOC_SIN_TEXTO";
                     Logs.LogProc("DocumentAnalysis | OCR requerido=Sí | Motivo=" + ocrReason);
-                    var ocrAnalysis = AnalyzePdfWithOcr(path, pdf, workspace);visualRaster=ocrAnalysis.FirstRasterImage;firstPageRenderedByOcr=ocrAnalysis.FirstPageRendered;firstPageVisualFailureReason=ocrAnalysis.FirstPageVisualFailureReason;var ocrSelection=ocrAnalysis.Selection;rasterQrDuration=ocrAnalysis.RasterQrDurationMilliseconds;rasterizationCount=ocrAnalysis.RasterizationCount;pagesRenderedForOcr=ocrAnalysis.PagesRendered;rasterQrDetected=ocrAnalysis.RasterQr.QrDetected;rasterQrValid=ocrAnalysis.RasterQr.IsValid;rasterTipo=ocrAnalysis.RasterQr.TipoComprobante;
+                    var ocrAnalysis = AnalyzePdfWithOcr(path, pdf, workspace);visualRaster=ocrAnalysis.FirstRasterImage;firstPageRenderedByOcr=ocrAnalysis.FirstPageRendered;firstPageVisualFailureReason=ocrAnalysis.FirstPageVisualFailureReason;var ocrSelection=ocrAnalysis.Selection;residualOcrSelection=ocrAnalysis.OcrSelection;residualOcrText=ocrAnalysis.OcrText;residualOcrHasUsefulText=ocrAnalysis.OcrHasUsefulText;rasterQrDuration=ocrAnalysis.RasterQrDurationMilliseconds;rasterizationCount=ocrAnalysis.RasterizationCount;pagesRenderedForOcr=ocrAnalysis.PagesRendered;rasterQrDetected=ocrAnalysis.RasterQr.QrDetected;rasterQrValid=ocrAnalysis.RasterQr.IsValid;rasterTipo=ocrAnalysis.RasterQr.TipoComprobante;
                     textSelection = FusePdfSelections(mdocSelection, ocrSelection);
                     Logs.LogProc("DocumentAnalysis | OCR resultado=" + ocrSelection.Classification + " | FusionAccion=" + FusionAction(mdocSelection, ocrSelection));
                     if(qr.IsValid&&ocrAnalysis.RasterQr.IsValid&&qr.TipoComprobante!=ocrAnalysis.RasterQr.TipoComprobante)
@@ -163,6 +164,8 @@ namespace RecepcionDocumental.Services
                 else Logs.LogProc("DocumentAnalysis | OCR requerido=No | Motivo=MDOC_CONCLUYENTE | FusionAccion=MDOC_CONSERVADO");
                 if(qr.IsValid&&qrSource=="NINGUNO")qrSource="EMBEDDED";
                 selection = ArcaQrDecoder.Combine(qr, textSelection);
+                if (ConfiguracionSistema.Actual.FamilyAiEnabled && string.Equals(selection.Classification, "REVISAR", StringComparison.Ordinal) && residualOcrHasUsefulText)
+                    selection = ApplyResidualFamilyAi(selection, residualOcrSelection, residualOcrText, qr);
             }
             else if (IsImage(name)) selection = AnalyzeImageWithOcr(path, Path.GetExtension(name));
             else selection = InvoiceSelector.SelectNonPdf(name);
@@ -207,7 +210,7 @@ namespace RecepcionDocumental.Services
                     Logs.LogError("PDFRaster | Operación=Rasterizar | Estado=FalloEstructural | Motivo=" + Logs.SanitizarMensaje(raster.FailureReason));
                 output.Selection=InvoiceSelector.Review("OCR_RENDER_ERROR", raster.FailureReason ?? pdf.FailureReason ?? "No se pudo obtener una imagen procesable para OCR.", null);return output;
             }
-            var rasterQr=RasterQrDetector.Detect(raster.Images);output.RasterQr=rasterQr.Evidence;output.RasterQrDurationMilliseconds=rasterQr.DurationMilliseconds;output.Selection=SelectOcr(raster.Images,"PDF_RASTER");return output;
+            var rasterQr=RasterQrDetector.Detect(raster.Images);output.RasterQr=rasterQr.Evidence;output.RasterQrDurationMilliseconds=rasterQr.DurationMilliseconds;var ocr=SelectOcrDetailed(raster.Images,"PDF_RASTER");output.OcrSelection=ocr.Selection;output.OcrText=ocr.Text;output.OcrHasUsefulText=ocr.HasUsefulText;output.Selection=ocr.Selection;return output;
         }
 
         private static InvoiceSelection AnalyzeImageWithOcr(string path, string extension)
@@ -217,35 +220,69 @@ namespace RecepcionDocumental.Services
         }
 
         private static InvoiceSelection SelectOcr(IEnumerable<OcrImageData> images, string type)
+        { return SelectOcrDetailed(images, type).Selection; }
+
+        private static OcrSelectionAnalysis SelectOcrDetailed(IEnumerable<OcrImageData> images, string type)
         {
             var candidates = images == null ? new List<OcrImageData>() : images.ToList();
-            return SelectOcrWithHeaderFallback(DocumentOcrService.Recognize(candidates), () => DocumentOcrService.RecognizeHeader(candidates), type);
+            return SelectOcrWithHeaderFallbackDetailed(DocumentOcrService.Recognize(candidates), () => DocumentOcrService.RecognizeHeader(candidates), type);
         }
 
         private static InvoiceSelection SelectOcrWithHeaderFallback(OcrResult ocr, Func<OcrResult> recognizeHeader, string type)
+        { return SelectOcrWithHeaderFallbackDetailed(ocr, recognizeHeader, type).Selection; }
+
+        private static OcrSelectionAnalysis SelectOcrWithHeaderFallbackDetailed(OcrResult ocr, Func<OcrResult> recognizeHeader, string type)
         {
+            var output = new OcrSelectionAnalysis { Text = ocr == null ? string.Empty : ocr.Text, HasUsefulText = ocr != null && ocr.HasUsefulText };
             Logs.LogProc("DocumentAnalysis | OCR ejecutado=Sí | Tipo=" + type + " | Imagenes=" + ocr.ImagesProcessed + " | DuracionMs=" + ocr.DurationMilliseconds + " | TextoCaracteres=" + (ocr.Text ?? string.Empty).Length);
             if (!ocr.Success)
             {
                 Logs.LogProc("DocumentAnalysis | SegundoPaseEncabezado=No | Tipo=" + type);
                 if (ocr.SystemFailure) Logs.LogError("DocumentAnalysis | Operación=OCR | Error=" + (ocr.FailureReason ?? "Fallo estructural del motor OCR."));
-                return InvoiceSelector.Review("OCR_ERROR", ocr.FailureReason ?? "El OCR no pudo procesar el documento.", null);
+                output.Selection = InvoiceSelector.Review("OCR_ERROR", ocr.FailureReason ?? "El OCR no pudo procesar el documento.", null);
+                return output;
             }
             var selection = InvoiceSelector.SelectOcrText(ocr.Text, ocr.HasUsefulText);
             if (!string.Equals(selection.Classification, "REVISAR", StringComparison.Ordinal))
             {
                 Logs.LogProc("DocumentAnalysis | SegundoPaseEncabezado=No | Tipo=" + type);
-                return selection;
+                output.Selection = selection;
+                return output;
             }
             var header = recognizeHeader();
             Logs.LogProc("DocumentAnalysis | SegundoPaseEncabezado=Sí | Tipo=" + type + " | Imagenes=" + header.ImagesProcessed + " | DuracionMs=" + header.DurationMilliseconds + " | TextoCaracteres=" + (header.Text ?? string.Empty).Length);
             if (!header.Success)
             {
                 if (header.SystemFailure) Logs.LogError("DocumentAnalysis | Operación=OCR_Encabezado | Error=" + (header.FailureReason ?? "Fallo estructural del motor OCR."));
-                return selection;
+                output.Selection = selection;
+                return output;
             }
             var combined = DocumentOcrService.Combine(ocr, header);
-            return InvoiceSelector.SelectOcrText(combined.Text, combined.HasUsefulText);
+            output.Text = combined.Text;
+            output.HasUsefulText = combined.HasUsefulText;
+            output.Selection = InvoiceSelector.SelectOcrText(combined.Text, combined.HasUsefulText);
+            return output;
+        }
+
+        private static InvoiceSelection ApplyResidualFamilyAi(InvoiceSelection current, InvoiceSelection ocrSelection, string ocrText, ArcaQrEvidence qr)
+        {
+            var ai = FamilyDocumentAiService.Evaluate(ocrText);
+            if (ai.Status != "OK")
+            {
+                Logs.LogError("FamilyAI | Estado=ERROR | Modelo=" + Logs.SanitizarMensaje(ai.ModelVersion) + " | Codigo=" + Logs.SanitizarMensaje(ai.ErrorCode));
+                return current;
+            }
+            Logs.LogProc("FamilyAI | Estado=OK | Modelo=" + ai.ModelVersion + " | Familia=" + ai.Family + " | Confianza=" + (ai.Confidence.HasValue ? ai.Confidence.Value.ToString("0.#########", System.Globalization.CultureInfo.InvariantCulture) : "") + " | UmbralSuperado=" + ai.AboveDecisionThreshold + " | Features=" + ai.RecognizedFeatures);
+            if (!ai.AboveDecisionThreshold || !ai.Confidence.HasValue) return current;
+            string safetyReason;
+            if (!FamilyDocumentAiSafetyPolicy.CanDiscard(ai.Family, ocrText, ocrSelection, qr, out safetyReason))
+            {
+                Logs.LogProc("FamilyAI | Decision=REVISAR | SafetyGate=" + Logs.SanitizarMensaje(safetyReason));
+                return current;
+            }
+            var confidence = (byte)Math.Max(0, Math.Min(100, (int)Math.Round(ai.Confidence.Value * 100d, MidpointRounding.AwayFromZero)));
+            Logs.LogProc("FamilyAI | Decision=DESCARTAR | Familia=" + ai.Family + " | SafetyGate=" + Logs.SanitizarMensaje(safetyReason));
+            return new InvoiceSelection { Classification = "DESCARTAR", DetectionMethod = "IA_DOCUMENTAL+OCR", Confidence = confidence, Reason = "IA documental propia identificó la familia " + ai.Family + " con evidencia compatible (" + safetyReason + ")." };
         }
 
         private static void AddUnanalyzableContainer(string path, string name, string mime, string chain, bool root, string reason, AttachmentAnalysis result)

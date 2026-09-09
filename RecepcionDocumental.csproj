@@ -172,6 +172,8 @@
     <Content Include="App_Data\Tessdata\spa.traineddata" />
     <Content Include="App_Data\DocumentAi\Models\H1D9B-CANDIDATE-001\candidate.onnx" />
     <Content Include="App_Data\DocumentAi\Models\H1D9B-CANDIDATE-001\runtime-manifest.json" />
+    <Content Include="App_Data\DocumentAi\FamilyModels\H1D10D5-FAMILY-001\family-model.json" />
+    <Content Include="App_Data\DocumentAi\FamilyModels\H1D10D5-FAMILY-001\runtime-manifest.json" />
     <Content Include="packages\Microsoft.ML.OnnxRuntime.1.29.0\runtimes\win-x64\native\onnxruntime.dll">
       <Link>bin\onnxruntime.dll</Link>
     </Content>
@@ -329,6 +331,8 @@
     <Compile Include="Services\DocumentStorage.cs" />
     <Compile Include="Services\DocumentReviewService.cs" />
     <Compile Include="Services\InvoiceSelector.cs" />
+    <Compile Include="Services\FamilyDocumentAiService.cs" />
+    <Compile Include="Services\FamilyDocumentAiSafetyPolicy.cs" />
     <Compile Include="Services\MdocPdfTextExtractor.cs" />
     <Compile Include="Services\MdocPdfQrDetector.cs" />
     <Compile Include="Services\MdocPdfImageExtractor.cs" />

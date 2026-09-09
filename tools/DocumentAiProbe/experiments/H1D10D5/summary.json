@@ -1,0 +1,65 @@
+{
+  "hito": "H1D10D5",
+  "model_version": "H1D10D5-FAMILY-001",
+  "preprocessing_version": "D5_SANITIZE_003",
+  "threshold": 0.8,
+  "negative_documents": 901,
+  "negative_families": 154,
+  "positive_documents": 7,
+  "positive_groups": 6,
+  "negative_cv_max_family_probability": 0.4868837736299133,
+  "negative_cv_ge_threshold": 0,
+  "live": [
+    {
+      "id": "C04",
+      "label": "RECIBO_HABERES",
+      "NOTIFICACION_BANCARIA": 0.0018877420269115442,
+      "OTRO_BASE": 0.09121892678175081,
+      "RECIBO_HABERES": 0.9068933311913377,
+      "pred": "RECIBO_HABERES",
+      "passes_threshold": true
+    },
+    {
+      "id": "C05",
+      "label": "NOTIFICACION_BANCARIA",
+      "NOTIFICACION_BANCARIA": 0.8663741685198638,
+      "OTRO_BASE": 0.1327566172766444,
+      "RECIBO_HABERES": 0.000869214203491791,
+      "pred": "NOTIFICACION_BANCARIA",
+      "passes_threshold": true
+    }
+  ],
+  "c04_without_2026_salary_training": {
+    "NOTIFICACION_BANCARIA": 0.02592417376785504,
+    "OTRO_BASE": 0.4641564058540182,
+    "RECIBO_HABERES": 0.5099194203781268
+  },
+  "d2_residual_audited": 92,
+  "d2_residual_ge_threshold": 0,
+  "d2_residual_max_family_probability": 0.49248600445794527,
+  "model_sha256": "F8EB7568FAC1613F13FB91ACB4A06A86D827A9A142C29544515F9195642C2A8B",
+  "deidentification_drop_words": [
+    "agil",
+    "argentina",
+    "black",
+    "bna",
+    "caba",
+    "dario",
+    "edi",
+    "escalada",
+    "estilo",
+    "faecys",
+    "insignia",
+    "nacion",
+    "omar",
+    "osecac",
+    "platinum",
+    "regional",
+    "remedios",
+    "roca",
+    "signature",
+    "silveri",
+    "silverii",
+    "tucuman"
+  ]
+}

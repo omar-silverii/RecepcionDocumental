@@ -19,3 +19,7 @@ RedirectUri=https://localhost:44320/Gmail_OAuthCallback.aspx
 [VisionShadow]
 Enabled=false
 ModelVersion=H1D9B-CANDIDATE-001
+
+[FamilyAi]
+Enabled=true
+ModelVersion=H1D10D5-FAMILY-001

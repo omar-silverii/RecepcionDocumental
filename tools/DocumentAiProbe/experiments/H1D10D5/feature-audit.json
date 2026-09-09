@@ -1,0 +1,250 @@
+{
+  "pass": true,
+  "dropword_vocab_violations": [],
+  "top_positive_features": {
+    "RECIBO_HABERES": [
+      {
+        "term": "cod descripcion",
+        "weight": 21.62256984775869
+      },
+      {
+        "term": "antiguedad",
+        "weight": 20.451748781793455
+      },
+      {
+        "term": "importe cod",
+        "weight": 19.015839593986744
+      },
+      {
+        "term": "basico",
+        "weight": 18.61340177572858
+      },
+      {
+        "term": "ap",
+        "weight": 15.50349999408906
+      },
+      {
+        "term": "total reconocida",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "total hab",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "tiempo completo",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "tiempo",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "tarea",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "reconocida ano",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "reconocida",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "pago lugar",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "pago basico",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "mod contratacion",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "mod",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "mes es",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "mens",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "localidad provincia",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "liquidado",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "lapso liquidado",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "laboral mens",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "jornal lapso",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "jornal",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "indeterminado",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "haberes descuentos",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "hab",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "gratif extr",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "gratif",
+        "weight": 15.34185965096607
+      },
+      {
+        "term": "fec ingreso",
+        "weight": 15.34185965096607
+      }
+    ],
+    "NOTIFICACION_BANCARIA": [
+      {
+        "term": "cuenta cuenta",
+        "weight": 29.203609042357034
+      },
+      {
+        "term": "vigentes",
+        "weight": 24.96218186067293
+      },
+      {
+        "term": "previsional",
+        "weight": 24.96218186067293
+      },
+      {
+        "term": "paquetes de",
+        "weight": 24.96218186067293
+      },
+      {
+        "term": "paquetes",
+        "weight": 24.96218186067293
+      },
+      {
+        "term": "con tc",
+        "weight": 24.96218186067293
+      },
+      {
+        "term": "cuenta previsional",
+        "weight": 21.952841383823078
+      },
+      {
+        "term": "cartera",
+        "weight": 19.827085982748912
+      },
+      {
+        "term": "tc",
+        "weight": 19.58597660621429
+      },
+      {
+        "term": "de servicios",
+        "weight": 19.364900273306237
+      },
+      {
+        "term": "vigentes cartera",
+        "weight": 17.711414202138975
+      },
+      {
+        "term": "tc paquetes",
+        "weight": 17.711414202138975
+      },
+      {
+        "term": "tc cuenta",
+        "weight": 17.711414202138975
+      },
+      {
+        "term": "servicios vigentes",
+        "weight": 17.711414202138975
+      },
+      {
+        "term": "servicios no",
+        "weight": 17.711414202138975
+      },
+      {
+        "term": "previsional con",
+        "weight": 17.711414202138975
+      },
+      {
+        "term": "platino",
+        "weight": 17.711414202138975
+      },
+      {
+        "term": "oro cuenta",
+        "weight": 17.711414202138975
+      },
+      {
+        "term": "no vigentes",
+        "weight": 17.711414202138975
+      },
+      {
+        "term": "internacional gold",
+        "weight": 17.711414202138975
+      },
+      {
+        "term": "internacional",
+        "weight": 17.711414202138975
+      },
+      {
+        "term": "cuenta platino",
+        "weight": 17.711414202138975
+      },
+      {
+        "term": "cuenta oro",
+        "weight": 17.711414202138975
+      },
+      {
+        "term": "cuenta con",
+        "weight": 17.711414202138975
+      },
+      {
+        "term": "adicionales la",
+        "weight": 17.711414202138975
+      },
+      {
+        "term": "la cuenta",
+        "weight": 16.700902662459736
+      },
+      {
+        "term": "oro",
+        "weight": 16.70024918720679
+      },
+      {
+        "term": "gold",
+        "weight": 16.66136730234645
+      },
+      {
+        "term": "haberes",
+        "weight": 16.512902732506124
+      },
+      {
+        "term": "administracion de",
+        "weight": 15.978986304847789
+      }
+    ]
+  }
+}

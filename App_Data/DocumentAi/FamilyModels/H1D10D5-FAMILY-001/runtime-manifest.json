@@ -1,0 +1,10 @@
+{
+  "model_version": "H1D10D5-FAMILY-001",
+  "status": "ACTIVE",
+  "model_file": "family-model.json",
+  "sha256": "F8EB7568FAC1613F13FB91ACB4A06A86D827A9A142C29544515F9195642C2A8B",
+  "preprocessing_version": "D5_SANITIZE_003",
+  "decision_threshold": 0.8,
+  "purpose": "Residual document-family classifier used only after deterministic resolver returns REVISAR.",
+  "safety": "Fail-closed; learned family must also pass FamilyDocumentAiSafetyPolicy."
+}

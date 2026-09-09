@@ -1,0 +1,73 @@
+{
+  "pass": true,
+  "rows": [
+    {
+      "case": "C04",
+      "family": "RECIBO_HABERES",
+      "fiscal_count": 1,
+      "ocr_confidence": null,
+      "strong_fiscal_anchor": false,
+      "semantic_groups": 6,
+      "group_hits": [
+        [
+          "SUELDO",
+          "REMUNERATIVO"
+        ],
+        [
+          "EMPLEADOR"
+        ],
+        [
+          "JUBILACION",
+          "OBRA SOCIAL",
+          "CARGAS SOCIALES",
+          "ART"
+        ],
+        [
+          "DESCUENTOS",
+          "SUELDO NETO",
+          "SUELDO BASICO"
+        ],
+        [
+          "ANTIGUEDAD",
+          "CUIL"
+        ],
+        [
+          "COMPOSICION SALARIAL"
+        ]
+      ],
+      "safety_gate_pass": true
+    },
+    {
+      "case": "C05",
+      "family": "NOTIFICACION_BANCARIA",
+      "fiscal_count": 1,
+      "ocr_confidence": null,
+      "strong_fiscal_anchor": false,
+      "semantic_groups": 5,
+      "group_hits": [
+        [
+          "COMISION",
+          "COMISIONES",
+          "CARGO",
+          "CARGOS"
+        ],
+        [
+          "BANCO"
+        ],
+        [
+          "CLIENTE",
+          "CARTERA CONSUMO"
+        ],
+        [
+          "CUENTA CORRIENTE"
+        ],
+        [
+          "ENTRARAN EN VIGOR",
+          "COMUNICARLE"
+        ],
+        []
+      ],
+      "safety_gate_pass": true
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "pass": true,
+  "rows": [
+    {
+      "case": "C04",
+      "expected_family": "RECIBO_HABERES",
+      "actual_family": "RECIBO_HABERES",
+      "expected_probability": 0.9068933311913377,
+      "actual_probability": 0.9068933311913377,
+      "delta": 0.0,
+      "features": 196,
+      "pass": true
+    },
+    {
+      "case": "C05",
+      "expected_family": "NOTIFICACION_BANCARIA",
+      "actual_family": "NOTIFICACION_BANCARIA",
+      "expected_probability": 0.8663741685198638,
+      "actual_probability": 0.8663741685198646,
+      "delta": 7.771561172376096e-16,
+      "features": 260,
+      "pass": true
+    }
+  ]
+}
