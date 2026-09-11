@@ -7,7 +7,7 @@ using System.Data.SqlClient;
 namespace RecepcionDocumental.Data
 {
     public sealed class DashboardResumen { public int CuentasActivas { get; set; } public int Mensajes { get; set; } public int Adjuntos { get; set; } }
-    public sealed class GmailCuentaInfo { public int Id { get; set; } public string Email { get; set; } public bool Activo { get; set; } public DateTime? UltimaConsultaUtc { get; set; } public bool TieneRefreshToken { get; set; } }
+    public sealed class GmailCuentaInfo { public int Id { get; set; } public string Email { get; set; } public bool Activo { get; set; } public DateTime? UltimaConsultaUtc { get; set; } public bool TieneRefreshToken { get; set; } public bool TieneCursor { get; set; } }
     public sealed class GmailMensajeInfo { public long Id { get; set; } public string GmailMessageId { get; set; } public DateTime FechaMensajeUtc { get; set; } public string Remitente { get; set; } public string Asunto { get; set; } public string Snippet { get; set; } public string CuentaEmail { get; set; } public int CantidadAdjuntos { get; set; } public string Estado { get; set; } }
 
     public static class GmailRepository
@@ -25,7 +25,7 @@ namespace RecepcionDocumental.Data
         public static bool TryGetCuenta(out GmailCuentaInfo cuenta)
         {
             cuenta = null;
-            const string sql = @"SELECT TOP (1) Id, Email, Activo, UltimaConsultaUtc, CASE WHEN RefreshTokenProtegido IS NULL THEN 0 ELSE 1 END FROM dbo.GmailCuenta ORDER BY Activo DESC, Id;";
+            const string sql = @"SELECT TOP (1) Id, Email, Activo, UltimaConsultaUtc, CASE WHEN RefreshTokenProtegido IS NULL THEN 0 ELSE 1 END, CASE WHEN UltimoHistoryId IS NULL OR LTRIM(RTRIM(UltimoHistoryId))=N'' THEN 0 ELSE 1 END FROM dbo.GmailCuenta ORDER BY Activo DESC, Id;";
             try { using (var cn = new SqlConnection(ConnectionString)) using (var cmd = new SqlCommand(sql, cn)) { cn.Open(); using (var r = cmd.ExecuteReader()) if (r.Read()) cuenta = MapCuenta(r); } return true; }
             catch (SqlException) { return false; }
         }
@@ -33,7 +33,7 @@ namespace RecepcionDocumental.Data
         public static bool TryGetCuentaPorEmail(string email, out GmailCuentaInfo cuenta)
         {
             cuenta = null;
-            const string sql = @"SELECT Id, Email, Activo, UltimaConsultaUtc, CASE WHEN RefreshTokenProtegido IS NULL THEN 0 ELSE 1 END FROM dbo.GmailCuenta WHERE Email = @Email;";
+            const string sql = @"SELECT Id, Email, Activo, UltimaConsultaUtc, CASE WHEN RefreshTokenProtegido IS NULL THEN 0 ELSE 1 END, CASE WHEN UltimoHistoryId IS NULL OR LTRIM(RTRIM(UltimoHistoryId))=N'' THEN 0 ELSE 1 END FROM dbo.GmailCuenta WHERE Email = @Email;";
             try
             {
                 using (var cn = new SqlConnection(ConnectionString))
@@ -177,7 +177,7 @@ WHERE m.Id=@Id;";
 
         private static GmailCuentaInfo MapCuenta(SqlDataReader r)
         {
-            return new GmailCuentaInfo { Id = r.GetInt32(0), Email = r.GetString(1), Activo = r.GetBoolean(2), UltimaConsultaUtc = r.IsDBNull(3) ? (DateTime?)null : r.GetDateTime(3), TieneRefreshToken = r.GetInt32(4) == 1 };
+            return new GmailCuentaInfo { Id = r.GetInt32(0), Email = r.GetString(1), Activo = r.GetBoolean(2), UltimaConsultaUtc = r.IsDBNull(3) ? (DateTime?)null : r.GetDateTime(3), TieneRefreshToken = r.GetInt32(4) == 1, TieneCursor = r.GetInt32(5) == 1 };
         }
     }
 }

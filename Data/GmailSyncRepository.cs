@@ -140,7 +140,7 @@ COMMIT TRANSACTION;";
         {
             using (var cn = new SqlConnection(ConnectionString)) using (var cmd = new SqlCommand(sql, cn))
             {
-                cmd.Parameters.Add("@MensajeId", SqlDbType.BigInt).Value=messageId; cmd.Parameters.Add("@AttachmentId",SqlDbType.NVarChar,255).Value=DbValue(attachment.GmailAttachmentId); cmd.Parameters.Add("@PartId",SqlDbType.NVarChar,255).Value=attachment.GmailPartId; cmd.Parameters.Add("@Nombre",SqlDbType.NVarChar,500).Value=attachment.OriginalName; cmd.Parameters.Add("@Mime",SqlDbType.NVarChar,255).Value=DbValue(attachment.MimeType); cmd.Parameters.Add("@Tamanio",SqlDbType.BigInt).Value=attachment.SizeBytes.HasValue?(object)attachment.SizeBytes.Value:DBNull.Value; cmd.Parameters.Add("@Ruta",SqlDbType.NVarChar,2000).Value=DbValue(attachment.LocalPath); cmd.Parameters.Add("@Hash",SqlDbType.Char,64).Value=DbValue(attachment.HashSha256); cmd.Parameters.Add("@Fecha",SqlDbType.DateTime2).Value=attachment.DownloadedUtc.HasValue?(object)attachment.DownloadedUtc.Value:DBNull.Value; cmd.Parameters.Add("@Estado",SqlDbType.NVarChar,50).Value=attachment.Status;
+                cmd.Parameters.Add("@MensajeId", SqlDbType.BigInt).Value = messageId; cmd.Parameters.Add("@AttachmentId", SqlDbType.NVarChar, 255).Value = DbValue(attachment.GmailAttachmentId); cmd.Parameters.Add("@PartId", SqlDbType.NVarChar, 255).Value = attachment.GmailPartId; cmd.Parameters.Add("@Nombre", SqlDbType.NVarChar, 500).Value = attachment.OriginalName; cmd.Parameters.Add("@Mime", SqlDbType.NVarChar, 255).Value = DbValue(attachment.MimeType); cmd.Parameters.Add("@Tamanio", SqlDbType.BigInt).Value = attachment.SizeBytes.HasValue ? (object)attachment.SizeBytes.Value : DBNull.Value; cmd.Parameters.Add("@Ruta", SqlDbType.NVarChar, 2000).Value = DbValue(attachment.LocalPath); cmd.Parameters.Add("@Hash", SqlDbType.Char, 64).Value = DbValue(attachment.HashSha256); cmd.Parameters.Add("@Fecha", SqlDbType.DateTime2).Value = attachment.DownloadedUtc.HasValue ? (object)attachment.DownloadedUtc.Value : DBNull.Value; cmd.Parameters.Add("@Estado", SqlDbType.NVarChar, 50).Value = attachment.Status;
                 cn.Open(); cmd.ExecuteNonQuery();
             }
         }
@@ -152,12 +152,35 @@ COMMIT TRANSACTION;";
             { cmd.Parameters.Add("@Id", SqlDbType.Int).Value = accountId; cmd.Parameters.Add("@HistoryId", SqlDbType.NVarChar, 50).Value = string.IsNullOrWhiteSpace(historyId) ? (object)DBNull.Value : historyId; cn.Open(); cmd.ExecuteNonQuery(); }
         }
 
+        public static bool InitializeCursorIfEmpty(int accountId, string historyId)
+        {
+            if (string.IsNullOrWhiteSpace(historyId))
+                throw new ArgumentException("HistoryId es obligatorio para inicializar la recepción.", "historyId");
+
+            const string sql = @"
+UPDATE dbo.GmailCuenta
+SET UltimoHistoryId=@HistoryId,
+    FechaModificacion=SYSUTCDATETIME()
+WHERE Id=@Id
+  AND (UltimoHistoryId IS NULL OR LTRIM(RTRIM(UltimoHistoryId))=N'');
+SELECT @@ROWCOUNT;";
+
+            using (var cn = new SqlConnection(ConnectionString))
+            using (var cmd = new SqlCommand(sql, cn))
+            {
+                cmd.Parameters.Add("@Id", SqlDbType.Int).Value = accountId;
+                cmd.Parameters.Add("@HistoryId", SqlDbType.NVarChar, 50).Value = historyId.Trim();
+                cn.Open();
+                return Convert.ToInt32(cmd.ExecuteScalar()) == 1;
+            }
+        }
+
         public static IList<GmailAttachmentInfo> GetAttachments(long messageId)
         {
             var result = new List<GmailAttachmentInfo>();
             const string sql = @"SELECT Id,NombreOriginal,MimeType,TamanioBytes,Estado,FechaDescargaUtc FROM dbo.GmailAdjunto WHERE GmailMensajeId=@Id ORDER BY Id;";
             using (var cn = new SqlConnection(ConnectionString)) using (var cmd = new SqlCommand(sql, cn))
-            { cmd.Parameters.Add("@Id", SqlDbType.BigInt).Value = messageId; cn.Open(); using (var r=cmd.ExecuteReader()) while(r.Read()) result.Add(new GmailAttachmentInfo { Id=r.GetInt64(0), NombreOriginal=r.GetString(1), MimeType=r.IsDBNull(2)?null:r.GetString(2), TamanioBytes=r.IsDBNull(3)?(long?)null:r.GetInt64(3), Estado=r.GetString(4), FechaDescargaUtc=r.IsDBNull(5)?(DateTime?)null:r.GetDateTime(5) }); }
+            { cmd.Parameters.Add("@Id", SqlDbType.BigInt).Value = messageId; cn.Open(); using (var r = cmd.ExecuteReader()) while (r.Read()) result.Add(new GmailAttachmentInfo { Id = r.GetInt64(0), NombreOriginal = r.GetString(1), MimeType = r.IsDBNull(2) ? null : r.GetString(2), TamanioBytes = r.IsDBNull(3) ? (long?)null : r.GetInt64(3), Estado = r.GetString(4), FechaDescargaUtc = r.IsDBNull(5) ? (DateTime?)null : r.GetDateTime(5) }); }
             return result;
         }
 

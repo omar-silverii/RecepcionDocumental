@@ -76,6 +76,47 @@ namespace RecepcionDocumental.Services
             }
         }
 
+        public static async Task<bool> InitializeFromNowAsync()
+        {
+            using (var lease = GmailSyncLease.TryAcquire())
+            {
+                if (lease == null)
+                    throw new InvalidOperationException("Hay una sincronización de Gmail en ejecución. Esperá a que termine e intentá nuevamente.");
+
+                lease.AssertHeld();
+                var account = GmailSyncRepository.GetActiveAccount();
+                if (account == null)
+                    throw new InvalidOperationException("No hay una cuenta Gmail activa.");
+                if (account.ProtectedRefreshToken == null || account.ProtectedRefreshToken.Length == 0)
+                    throw new InvalidOperationException("La cuenta Gmail activa no tiene autorización persistida.");
+
+                if (!string.IsNullOrWhiteSpace(account.LastHistoryId))
+                    return false;
+
+                GoogleOAuthSettings settings;
+                string configurationError;
+                if (!GoogleOAuthSettings.TryLoad(out settings, out configurationError))
+                    throw new InvalidOperationException(configurationError);
+
+                var refreshToken = RefreshTokenProtector.Unprotect(account.ProtectedRefreshToken);
+
+                using (var client = GmailOAuthService.CreateAuthorizedClient(settings, account.Email, refreshToken))
+                {
+                    var profile = await client.Service.Users.GetProfile("me").ExecuteAsync();
+                    var historyId = profile.HistoryId.HasValue ? profile.HistoryId.Value.ToString() : null;
+                    if (string.IsNullOrWhiteSpace(historyId))
+                        throw new InvalidOperationException("Gmail no devolvió un cursor válido para iniciar la recepción.");
+
+                    lease.AssertHeld();
+                    var initialized = GmailSyncRepository.InitializeCursorIfEmpty(account.Id, historyId);
+                    if (initialized)
+                        Logs.LogProc("GmailSyncService | Recepción inicializada desde ahora | CuentaId=" + account.Id);
+
+                    return initialized;
+                }
+            }
+        }
+
         private static async Task<GmailSyncResult> SynchronizeCoreAsync(Stopwatch total, GmailSyncAccount account, GmailSyncLease lease)
         {
             if (account == null) throw new InvalidOperationException("No hay una cuenta Gmail activa.");
