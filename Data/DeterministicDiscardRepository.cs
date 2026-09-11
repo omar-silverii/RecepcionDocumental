@@ -49,6 +49,7 @@ WHERE NOT EXISTS
             catch (SqlException ex)
             {
                 Logs.LogError("DeterministicDiscardAudit | Operación=Persistir | Estado=ERROR | " + Logs.DescribirExcepcion(ex));
+                throw;
             }
         }
 
