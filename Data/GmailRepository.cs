@@ -81,12 +81,71 @@ END;";
             mensajes = new List<GmailMensajeInfo>();
             const string sql = @"SELECT m.Id,m.GmailMessageId,m.FechaMensajeUtc,m.Remitente,m.Asunto,m.Snippet,c.Email,
 CASE WHEN d.Cantidad>0 THEN d.Cantidad ELSE a.Cantidad END,
-CASE WHEN d.Cantidad>0 THEN N'Procesado' WHEN a.ConErrores=1 THEN N'Con errores' WHEN a.Descargados=1 THEN N'Descargado' ELSE N'Pendiente' END
+CASE WHEN d.Cantidad>0 OR ia.Cantidad>0 OR det.Cantidad>0 THEN N'Procesado' WHEN a.ConErrores=1 THEN N'Con errores' WHEN a.Descargados=1 THEN N'Descargado' ELSE N'Pendiente' END
 FROM dbo.GmailMensaje m INNER JOIN dbo.GmailCuenta c ON c.Id=m.GmailCuentaId
 OUTER APPLY (SELECT COUNT(*) Cantidad FROM dbo.DocumentoRecepcion d WHERE d.GmailMensajeId=m.Id) d
+OUTER APPLY (SELECT COUNT(*) Cantidad FROM dbo.DocumentoDescarteIa di WHERE di.GmailMessageId=m.GmailMessageId) ia
+OUTER APPLY (SELECT COUNT(*) Cantidad FROM dbo.DocumentoDescarteDeterministico dd WHERE dd.GmailMessageId=m.GmailMessageId) det
 OUTER APPLY (SELECT COUNT(*) Cantidad,MAX(CASE WHEN ga.Estado=N'Error' THEN 1 ELSE 0 END) ConErrores,MAX(CASE WHEN ga.Estado=N'Descargado' THEN 1 ELSE 0 END) Descargados FROM dbo.GmailAdjunto ga WHERE ga.GmailMensajeId=m.Id) a
 ORDER BY m.FechaMensajeUtc DESC,m.Id DESC;";
             try { using (var cn = new SqlConnection(ConnectionString)) using (var cmd = new SqlCommand(sql, cn)) { cn.Open(); using (var r = cmd.ExecuteReader()) while (r.Read()) mensajes.Add(MapMensaje(r)); } return true; }
+            catch (SqlException) { return false; }
+        }
+
+
+        public static bool TryGetMensajes(DateTime desdeUtc, DateTime hastaUtcExclusivo, string remitente, string estado, string texto, out IList<GmailMensajeInfo> mensajes)
+        {
+            mensajes = new List<GmailMensajeInfo>();
+            const string sql = @"
+WITH Bandeja AS
+(
+    SELECT m.Id,m.GmailMessageId,m.FechaMensajeUtc,m.Remitente,m.Asunto,m.Snippet,c.Email,
+           CASE WHEN d.Cantidad>0 THEN d.Cantidad ELSE a.Cantidad END CantidadAdjuntos,
+           CASE WHEN d.Cantidad>0 OR ia.Cantidad>0 OR det.Cantidad>0 THEN N'Procesado'
+                WHEN a.ConErrores=1 THEN N'Con errores'
+                WHEN a.Descargados=1 THEN N'Descargado'
+                ELSE N'Pendiente' END Estado
+    FROM dbo.GmailMensaje m
+    INNER JOIN dbo.GmailCuenta c ON c.Id=m.GmailCuentaId
+    OUTER APPLY (SELECT COUNT(*) Cantidad FROM dbo.DocumentoRecepcion d WHERE d.GmailMensajeId=m.Id) d
+    OUTER APPLY (SELECT COUNT(*) Cantidad FROM dbo.DocumentoDescarteIa di WHERE di.GmailMessageId=m.GmailMessageId) ia
+    OUTER APPLY (SELECT COUNT(*) Cantidad FROM dbo.DocumentoDescarteDeterministico dd WHERE dd.GmailMessageId=m.GmailMessageId) det
+    OUTER APPLY
+    (
+        SELECT COUNT(*) Cantidad,
+               MAX(CASE WHEN ga.Estado=N'Error' THEN 1 ELSE 0 END) ConErrores,
+               MAX(CASE WHEN ga.Estado=N'Descargado' THEN 1 ELSE 0 END) Descargados
+        FROM dbo.GmailAdjunto ga
+        WHERE ga.GmailMensajeId=m.Id
+    ) a
+    WHERE m.FechaMensajeUtc>=@DesdeUtc
+      AND m.FechaMensajeUtc<@HastaUtc
+      AND (@Remitente IS NULL OR m.Remitente LIKE N'%' + @Remitente + N'%')
+      AND (@Texto IS NULL OR m.Asunto LIKE N'%' + @Texto + N'%' OR m.GmailMessageId LIKE N'%' + @Texto + N'%')
+)
+SELECT Id,GmailMessageId,FechaMensajeUtc,Remitente,Asunto,Snippet,Email,CantidadAdjuntos,Estado
+FROM Bandeja
+WHERE @Estado IS NULL OR Estado=@Estado
+ORDER BY FechaMensajeUtc DESC,Id DESC;";
+
+            try
+            {
+                using (var cn = new SqlConnection(ConnectionString))
+                using (var cmd = new SqlCommand(sql, cn))
+                {
+                    cmd.Parameters.Add("@DesdeUtc", SqlDbType.DateTime2).Value = desdeUtc;
+                    cmd.Parameters.Add("@HastaUtc", SqlDbType.DateTime2).Value = hastaUtcExclusivo;
+                    cmd.Parameters.Add("@Remitente", SqlDbType.NVarChar, 500).Value = DbText(remitente);
+                    cmd.Parameters.Add("@Estado", SqlDbType.NVarChar, 50).Value = DbText(estado);
+                    cmd.Parameters.Add("@Texto", SqlDbType.NVarChar, 1000).Value = DbText(texto);
+
+                    cn.Open();
+                    using (var r = cmd.ExecuteReader())
+                        while (r.Read())
+                            mensajes.Add(MapMensaje(r));
+                }
+                return true;
+            }
             catch (SqlException) { return false; }
         }
 
@@ -95,9 +154,11 @@ ORDER BY m.FechaMensajeUtc DESC,m.Id DESC;";
             mensaje = null;
             const string sql = @"SELECT m.Id,m.GmailMessageId,m.FechaMensajeUtc,m.Remitente,m.Asunto,m.Snippet,c.Email,
 CASE WHEN d.Cantidad>0 THEN d.Cantidad ELSE a.Cantidad END,
-CASE WHEN d.Cantidad>0 THEN N'Procesado' WHEN a.ConErrores=1 THEN N'Con errores' WHEN a.Descargados=1 THEN N'Descargado' ELSE N'Pendiente' END
+CASE WHEN d.Cantidad>0 OR ia.Cantidad>0 OR det.Cantidad>0 THEN N'Procesado' WHEN a.ConErrores=1 THEN N'Con errores' WHEN a.Descargados=1 THEN N'Descargado' ELSE N'Pendiente' END
 FROM dbo.GmailMensaje m INNER JOIN dbo.GmailCuenta c ON c.Id=m.GmailCuentaId
 OUTER APPLY (SELECT COUNT(*) Cantidad FROM dbo.DocumentoRecepcion d WHERE d.GmailMensajeId=m.Id) d
+OUTER APPLY (SELECT COUNT(*) Cantidad FROM dbo.DocumentoDescarteIa di WHERE di.GmailMessageId=m.GmailMessageId) ia
+OUTER APPLY (SELECT COUNT(*) Cantidad FROM dbo.DocumentoDescarteDeterministico dd WHERE dd.GmailMessageId=m.GmailMessageId) det
 OUTER APPLY (SELECT COUNT(*) Cantidad,MAX(CASE WHEN ga.Estado=N'Error' THEN 1 ELSE 0 END) ConErrores,MAX(CASE WHEN ga.Estado=N'Descargado' THEN 1 ELSE 0 END) Descargados FROM dbo.GmailAdjunto ga WHERE ga.GmailMensajeId=m.Id) a
 WHERE m.Id=@Id;";
             try { using (var cn = new SqlConnection(ConnectionString)) using (var cmd = new SqlCommand(sql, cn)) { cmd.Parameters.Add("@Id", SqlDbType.BigInt).Value = id; cn.Open(); using (var r = cmd.ExecuteReader()) if (r.Read()) mensaje = MapMensaje(r); } return true; }
@@ -107,6 +168,11 @@ WHERE m.Id=@Id;";
         private static GmailMensajeInfo MapMensaje(SqlDataReader r)
         {
             return new GmailMensajeInfo { Id = r.GetInt64(0), GmailMessageId = r.GetString(1), FechaMensajeUtc = r.GetDateTime(2), Remitente = r.GetString(3), Asunto = r.IsDBNull(4) ? "(Sin asunto)" : r.GetString(4), Snippet = r.IsDBNull(5) ? null : r.GetString(5), CuentaEmail = r.GetString(6), CantidadAdjuntos = r.GetInt32(7), Estado = r.GetString(8) };
+        }
+
+        private static object DbText(string value)
+        {
+            return string.IsNullOrWhiteSpace(value) ? (object)DBNull.Value : value.Trim();
         }
 
         private static GmailCuentaInfo MapCuenta(SqlDataReader r)

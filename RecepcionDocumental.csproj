@@ -347,7 +347,6 @@
     <Compile Include="Services\GoogleOAuthSettings.cs" />
     <Compile Include="Gmail_Bandeja.aspx.cs">
       <DependentUpon>Gmail_Bandeja.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Gmail_Bandeja.aspx.designer.cs">
       <DependentUpon>Gmail_Bandeja.aspx</DependentUpon>
