@@ -246,6 +246,7 @@ namespace RecepcionDocumental.Services
                         result.ArchivosZipAnalizados += analysis.ZipFilesAnalyzed;
                         result.Descartados += analysis.Discarded;
                         foreach (var aiDiscard in analysis.AiDiscards) AiDiscardRepository.TrySave(record, part.PartId, aiDiscard);
+                        foreach (var deterministicDiscard in analysis.DeterministicDiscards) DeterministicDiscardRepository.TrySave(record, part.PartId, deterministicDiscard);
                         if (analysis.Candidates.Count == 0) continue;
                         if (!databaseMessageId.HasValue)
                         {

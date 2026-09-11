@@ -25,11 +25,12 @@ namespace RecepcionDocumental.Data
         public string ResultadoRevision { get; set; }
         public string EtiquetaRevision { get; set; }
         public bool EsDescarteIa { get; set; }
+        public bool EsDescarteDeterministico { get; set; }
         public string EstadoEfectivo { get { return ResultadoRevision ?? Clasificacion; } }
-        public string ClasificacionMostrada { get { return EsDescarteIa ? "DESCARTADO IA" : (ResultadoRevision == "DESCARTAR" ? "REVISADO" : Clasificacion); } }
-        public string ResultadoHumanoMostrado { get { if (EsDescarteIa) return "—"; if (ResultadoRevision == null) return "Pendiente"; return ResultadoRevision + (EtiquetaRevision == null ? "" : " — " + EtiquetaRevision) + (ResultadoRevision == "FACTURA" ? " — CONFIRMADA MANUALMENTE" : ""); } }
-        public bool PendienteRevision { get { return !EsDescarteIa && Clasificacion == "REVISAR" && ResultadoRevision == null; } }
-        public bool PuedeVer { get { return !EsDescarteIa; } }
+        public string ClasificacionMostrada { get { if (EsDescarteIa) return "DESCARTADO IA"; if (EsDescarteDeterministico) return "DESCARTADO AUTOMÁTICO"; return ResultadoRevision == "DESCARTAR" ? "REVISADO" : Clasificacion; } }
+        public string ResultadoHumanoMostrado { get { if (EsDescarteIa || EsDescarteDeterministico) return "—"; if (ResultadoRevision == null) return "Pendiente"; return ResultadoRevision + (EtiquetaRevision == null ? "" : " — " + EtiquetaRevision) + (ResultadoRevision == "FACTURA" ? " — CONFIRMADA MANUALMENTE" : ""); } }
+        public bool PendienteRevision { get { return !EsDescarteIa && !EsDescarteDeterministico && Clasificacion == "REVISAR" && ResultadoRevision == null; } }
+        public bool PuedeVer { get { return !EsDescarteIa && !EsDescarteDeterministico; } }
     }
 
     public sealed class MessageDocumentInfo
@@ -108,7 +109,11 @@ WHERE NOT EXISTS (SELECT 1 FROM dbo.DocumentoRecepcion WITH (UPDLOCK,SERIALIZABL
             {
                 cmd.Parameters.Add("@Classification", SqlDbType.NVarChar, 20).Value = Db(classification); cn.Open(); using (var r = cmd.ExecuteReader()) while (r.Read()) result.Add(new DocumentInfo { Id = r.GetInt64(0), Fecha = r.GetDateTime(1), Remitente = r.GetString(2), Asunto = r.IsDBNull(3) ? "(Sin asunto)" : r.GetString(3), NombreOriginal = r.GetString(4), Clasificacion = r.GetString(5), MetodoDeteccion = r.GetString(6), Confianza = r.IsDBNull(7) ? (byte?)null : r.GetByte(7), Motivo = r.IsDBNull(8) ? null : r.GetString(8), OrigenTipo = r.GetString(9), ResultadoRevision = r.IsDBNull(10) ? null : r.GetString(10), EtiquetaRevision = r.IsDBNull(11) ? null : r.GetString(11), FechaOrden = r.GetDateTime(12) });
             }
-            if (string.Equals(classification, "DESCARTAR", StringComparison.Ordinal)) foreach (var item in AiDiscardRepository.List()) result.Add(item);
+            if (string.Equals(classification, "DESCARTAR", StringComparison.Ordinal))
+            {
+                foreach (var item in DeterministicDiscardRepository.List()) result.Add(item);
+                foreach (var item in AiDiscardRepository.List()) result.Add(item);
+            }
             return result.OrderByDescending(x => x.FechaOrden).ThenByDescending(x => x.Id).ToList();
         }
 

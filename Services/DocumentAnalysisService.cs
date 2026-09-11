@@ -46,10 +46,20 @@ namespace RecepcionDocumental.Services
         public InvoiceSelection Selection { get; set; }
     }
 
+    public sealed class DeterministicDiscardEvidence
+    {
+        public string OriginalName { get; set; }
+        public string OriginType { get; set; }
+        public string InternalContainerPath { get; set; }
+        public string OriginHash { get; set; }
+        public InvoiceSelection Selection { get; set; }
+    }
+
     public sealed class AttachmentAnalysis
     {
         public IList<DocumentCandidate> Candidates { get; set; } = new List<DocumentCandidate>();
         public IList<AiDiscardEvidence> AiDiscards { get; set; } = new List<AiDiscardEvidence>();
+        public IList<DeterministicDiscardEvidence> DeterministicDiscards { get; set; } = new List<DeterministicDiscardEvidence>();
         public int ContainersZip { get; set; }
         public int ZipFilesAnalyzed { get; set; }
         public int Discarded { get; set; }
@@ -90,6 +100,7 @@ namespace RecepcionDocumental.Services
             result.ContainersZip++;
             var candidateStart = result.Candidates.Count;
             var aiDiscardStart = result.AiDiscards.Count;
+            var deterministicDiscardStart = result.DeterministicDiscards.Count;
             var discardedStart = result.Discarded;
             var filesStart = result.ZipFilesAnalyzed;
             var config = ConfiguracionSistema.Actual;
@@ -138,6 +149,7 @@ namespace RecepcionDocumental.Services
             {
                 while (result.Candidates.Count > candidateStart) result.Candidates.RemoveAt(result.Candidates.Count - 1);
                 while (result.AiDiscards.Count > aiDiscardStart) result.AiDiscards.RemoveAt(result.AiDiscards.Count - 1);
+                while (result.DeterministicDiscards.Count > deterministicDiscardStart) result.DeterministicDiscards.RemoveAt(result.DeterministicDiscards.Count - 1);
                 result.Discarded = discardedStart; result.ZipFilesAnalyzed = filesStart;
                 AddUnanalyzableContainer(containerPath, containerName, mimeType, chain, root, ex.Message, result);
             }
@@ -188,6 +200,8 @@ namespace RecepcionDocumental.Services
                 result.Discarded++;
                 if (string.Equals(selection.DetectionMethod, "IA_DOCUMENTAL+OCR", StringComparison.Ordinal))
                     result.AiDiscards.Add(new AiDiscardEvidence { OriginalName = SafeOriginalName(name), OriginType = originType, InternalContainerPath = internalPath, OriginHash = originHash, Selection = selection });
+                else
+                    result.DeterministicDiscards.Add(new DeterministicDiscardEvidence { OriginalName = SafeOriginalName(name), OriginType = originType, InternalContainerPath = internalPath, OriginHash = originHash, Selection = selection });
                 Logs.LogProc("DocumentAnalysis | Documento descartado | Metodo=" + selection.DetectionMethod);
                 return;
             }

@@ -176,6 +176,7 @@
     <Content Include="App_Data\DocumentAi\FamilyModels\H1D10D5-FAMILY-001\family-model.json" />
     <Content Include="App_Data\DocumentAi\FamilyModels\H1D10D5-FAMILY-001\runtime-manifest.json" />
     <Content Include="Database\012_DescarteIaAuditoria.sql" />
+    <Content Include="Database\013_DescarteDeterministicoAuditoria.sql" />
     <Content Include="packages\Microsoft.ML.OnnxRuntime.1.29.0\runtimes\win-x64\native\onnxruntime.dll">
       <Link>bin\onnxruntime.dll</Link>
     </Content>
@@ -301,6 +302,7 @@
       <DependentUpon>Contact.aspx</DependentUpon>
     </Compile>
     <Compile Include="Data\AiDiscardRepository.cs" />
+    <Compile Include="Data\DeterministicDiscardRepository.cs" />
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
