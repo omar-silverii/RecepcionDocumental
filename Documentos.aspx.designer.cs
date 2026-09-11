@@ -33,15 +33,6 @@ namespace RecepcionDocumental
         protected global::System.Web.UI.WebControls.Panel pnlError;
 
         /// <summary>
-        /// Control pnlVacio.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlVacio;
-
-        /// <summary>
         /// Control pnlResultado.
         /// </summary>
         /// <remarks>
@@ -87,21 +78,12 @@ namespace RecepcionDocumental
         protected global::System.Web.UI.WebControls.HyperLink lnkSample;
 
         /// <summary>
-        /// Control pnlTabla.
+        /// Control lstDocumentos.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel pnlTabla;
-
-        /// <summary>
-        /// Control rptDocumentos.
-        /// </summary>
-        /// <remarks>
-        /// Campo generado automáticamente.
-        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Repeater rptDocumentos;
+        protected global::RecepcionDocumental.Controls.WsListadoAgrupado lstDocumentos;
     }
 }

@@ -117,6 +117,64 @@ WHERE NOT EXISTS (SELECT 1 FROM dbo.DocumentoRecepcion WITH (UPDLOCK,SERIALIZABL
             return result.OrderByDescending(x => x.FechaOrden).ThenByDescending(x => x.Id).ToList();
         }
 
+
+        public static IList<DocumentInfo> List(string classification, DateTime desdeUtc, DateTime hastaUtcExclusivo, string remitente, string texto)
+        {
+            var result = new List<DocumentInfo>();
+            const string sql = @"SELECT d.Id,m.FechaMensajeUtc,m.Remitente,m.Asunto,d.NombreOriginal,d.Clasificacion,d.MetodoDeteccion,d.Confianza,d.MotivoClasificacion,d.OrigenTipo,d.ResultadoRevision,d.EtiquetaRevision,d.FechaClasificacionUtc
+FROM dbo.DocumentoRecepcion d
+INNER JOIN dbo.GmailMensaje m ON m.Id=d.GmailMensajeId
+WHERE m.FechaMensajeUtc>=@DesdeUtc
+  AND m.FechaMensajeUtc<@HastaUtc
+  AND (@Remitente IS NULL OR m.Remitente LIKE N'%' + @Remitente + N'%')
+  AND (@Texto IS NULL OR m.Asunto LIKE N'%' + @Texto + N'%' OR d.NombreOriginal LIKE N'%' + @Texto + N'%')
+  AND ((@Classification IS NULL AND ISNULL(d.ResultadoRevision,N'')<>N'DESCARTAR')
+    OR (@Classification=N'FACTURA' AND ISNULL(d.ResultadoRevision,d.Clasificacion)=N'FACTURA')
+    OR (@Classification=N'REVISAR' AND d.Clasificacion=N'REVISAR' AND d.ResultadoRevision IS NULL)
+    OR (@Classification=N'DESCARTAR' AND d.ResultadoRevision=N'DESCARTAR'))
+ORDER BY d.FechaClasificacionUtc DESC,d.Id DESC;";
+            using (var cn = new SqlConnection(ConnectionString))
+            using (var cmd = new SqlCommand(sql, cn))
+            {
+                cmd.Parameters.Add("@Classification", SqlDbType.NVarChar, 20).Value = Db(classification);
+                cmd.Parameters.Add("@DesdeUtc", SqlDbType.DateTime2).Value = desdeUtc;
+                cmd.Parameters.Add("@HastaUtc", SqlDbType.DateTime2).Value = hastaUtcExclusivo;
+                cmd.Parameters.Add("@Remitente", SqlDbType.NVarChar, 500).Value = Db(remitente);
+                cmd.Parameters.Add("@Texto", SqlDbType.NVarChar, 500).Value = Db(texto);
+                cn.Open();
+                using (var r = cmd.ExecuteReader())
+                {
+                    while (r.Read())
+                    {
+                        result.Add(new DocumentInfo
+                        {
+                            Id = r.GetInt64(0),
+                            Fecha = r.GetDateTime(1),
+                            Remitente = r.GetString(2),
+                            Asunto = r.IsDBNull(3) ? "(Sin asunto)" : r.GetString(3),
+                            NombreOriginal = r.GetString(4),
+                            Clasificacion = r.GetString(5),
+                            MetodoDeteccion = r.GetString(6),
+                            Confianza = r.IsDBNull(7) ? (byte?)null : r.GetByte(7),
+                            Motivo = r.IsDBNull(8) ? null : r.GetString(8),
+                            OrigenTipo = r.GetString(9),
+                            ResultadoRevision = r.IsDBNull(10) ? null : r.GetString(10),
+                            EtiquetaRevision = r.IsDBNull(11) ? null : r.GetString(11),
+                            FechaOrden = r.GetDateTime(12)
+                        });
+                    }
+                }
+            }
+
+            if (string.Equals(classification, "DESCARTAR", StringComparison.Ordinal))
+            {
+                foreach (var item in DeterministicDiscardRepository.List(desdeUtc, hastaUtcExclusivo, remitente, texto)) result.Add(item);
+                foreach (var item in AiDiscardRepository.List(desdeUtc, hastaUtcExclusivo, remitente, texto)) result.Add(item);
+            }
+
+            return result.OrderByDescending(x => x.FechaOrden).ThenByDescending(x => x.Id).ToList();
+        }
+
         public static IList<MessageDocumentInfo> ListByMessage(long messageId)
         {
             var result = new List<MessageDocumentInfo>();
