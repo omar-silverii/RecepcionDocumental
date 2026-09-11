@@ -262,7 +262,7 @@ namespace RecepcionDocumental.Services
                 return output;
             }
             var selection = InvoiceSelector.SelectOcrText(ocr.Text, ocr.HasUsefulText);
-            if (!string.Equals(selection.Classification, "REVISAR", StringComparison.Ordinal))
+            if (string.Equals(selection.Classification, "FACTURA", StringComparison.Ordinal))
             {
                 Logs.LogProc("DocumentAnalysis | SegundoPaseEncabezado=No | Tipo=" + type);
                 output.Selection = selection;
@@ -279,7 +279,7 @@ namespace RecepcionDocumental.Services
             var combined = DocumentOcrService.Combine(ocr, header);
             output.Text = combined.Text;
             output.HasUsefulText = combined.HasUsefulText;
-            output.Selection = InvoiceSelector.SelectOcrText(combined.Text, combined.HasUsefulText);
+            output.Selection = InvoiceSelector.SelectOcrText(ocr.Text, ocr.HasUsefulText, header.Text, header.MeanConfidence);
             return output;
         }
 
