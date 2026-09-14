@@ -52,6 +52,10 @@
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Documentos.aspx?clasificacion=FACTURA">Facturas</a></li>
                         <li class="nav-item"><a class="nav-link" runat="server" href="~/Documentos.aspx?clasificacion=REVISAR">Para revisar</a></li>
                     </ul>
+                    <ul class="navbar-nav">
+                        <li class="nav-item"><span class="nav-link disabled"><%: Context.User.Identity.Name %></span></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Logout.aspx">Salir</a></li>
+                    </ul>
                 </div>
             </div>
         </nav>

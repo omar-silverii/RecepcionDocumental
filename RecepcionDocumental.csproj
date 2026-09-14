@@ -178,6 +178,8 @@
     <Content Include="Controls\WsListadoAgrupado.ascx" />
     <Content Include="Database\012_DescarteIaAuditoria.sql" />
     <Content Include="Database\013_DescarteDeterministicoAuditoria.sql" />
+    <Content Include="Login.aspx" />
+    <Content Include="Logout.aspx" />
     <Content Include="packages\Microsoft.ML.OnnxRuntime.1.29.0\runtimes\win-x64\native\onnxruntime.dll">
       <Link>bin\onnxruntime.dll</Link>
     </Content>
@@ -320,6 +322,22 @@
     <Compile Include="Data\GmailRepository.cs" />
     <Compile Include="Data\DocumentRepository.cs" />
     <Compile Include="Data\InvoiceSampleRepository.cs" />
+    <Compile Include="Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Logout.aspx.cs">
+      <DependentUpon>Logout.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Logout.aspx.designer.cs">
+      <DependentUpon>Logout.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\LoginAttemptGuard.cs" />
+    <Compile Include="Security\SingleUserLoginService.cs" />
     <Compile Include="Services\InvoiceSampleService.cs" />
     <Compile Include="Data\VisualShadowRepository.cs" />
     <Compile Include="Configuration\ConfiguracionAplicacion.cs" />
