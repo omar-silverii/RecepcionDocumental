@@ -350,6 +350,7 @@
     <Compile Include="Services\GmailSyncExecution.cs" />
     <Compile Include="Security\RefreshTokenProtector.cs" />
     <Compile Include="Services\GmailOAuthService.cs" />
+    <Compile Include="Services\GmailApiExecution.cs" />
     <Compile Include="Services\GmailSyncService.cs" />
     <Compile Include="Services\AttachmentStorage.cs" />
     <Compile Include="Services\AttachmentWorkspace.cs" />

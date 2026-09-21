@@ -13,29 +13,29 @@ namespace RecepcionDocumental.Services
         public static DocumentStoredFile Save(string sourcePath, string classification, DateTime messageDateUtc, string gmailMessageId, string originalName, string originHash)
         {
             var root = classification == "FACTURA" ? ConfiguracionSistema.Actual.RutaFacturas : ConfiguracionSistema.Actual.RutaRevisar;
-            var directory = Path.Combine(root, messageDateUtc.ToString("yyyy"), messageDateUtc.ToString("MM"), messageDateUtc.ToString("dd"), SafeSegment(gmailMessageId));
+            var directory = Path.Combine(root, messageDateUtc.ToString("yyyy"), messageDateUtc.ToString("MM"), messageDateUtc.ToString("dd"));
             Directory.CreateDirectory(directory);
             var extension = SafeExtension(Path.GetExtension(originalName));
             var baseName = SafeSegment(Path.GetFileNameWithoutExtension(originalName)); if (string.IsNullOrWhiteSpace(baseName)) baseName = "documento";
             var finalPath = Path.Combine(directory, baseName + "_" + originHash.Substring(0, 12) + extension);
-            if (File.Exists(finalPath)) return Inspect(finalPath,false);
+            if (File.Exists(finalPath)) return Inspect(finalPath, false);
             var temporary = finalPath + ".tmp-" + Guid.NewGuid().ToString("N");
-            var created=false;
+            var created = false;
             try
             {
                 using (var input = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 using (var output = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None)) { input.CopyTo(output); output.Flush(true); }
-                try { File.Move(temporary, finalPath); created=true; }
+                try { File.Move(temporary, finalPath); created = true; }
                 catch (IOException) when (File.Exists(finalPath)) { File.Delete(temporary); }
-                return Inspect(finalPath,created);
+                return Inspect(finalPath, created);
             }
             finally { if (File.Exists(temporary)) File.Delete(temporary); }
         }
 
-        private static DocumentStoredFile Inspect(string path,bool createdByThisCall)
+        private static DocumentStoredFile Inspect(string path, bool createdByThisCall)
         {
             using (var stream = File.OpenRead(path)) using (var sha = SHA256.Create())
-                return new DocumentStoredFile { FullPath = path, Size = stream.Length, HashSha256 = BitConverter.ToString(sha.ComputeHash(stream)).Replace("-", string.Empty).ToLowerInvariant(), CreatedByThisCall=createdByThisCall };
+                return new DocumentStoredFile { FullPath = path, Size = stream.Length, HashSha256 = BitConverter.ToString(sha.ComputeHash(stream)).Replace("-", string.Empty).ToLowerInvariant(), CreatedByThisCall = createdByThisCall };
         }
 
         private static string SafeSegment(string value)

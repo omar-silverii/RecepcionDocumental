@@ -45,7 +45,10 @@ namespace RecepcionDocumental.Services
                     ApplicationName = "RecepcionDocumental"
                 }))
                 {
-                    var profile = await gmail.Users.GetProfile("me").ExecuteAsync();
+                    var profile = await GmailApiExecution.ExecuteAsync(
+                        () => gmail.Users.GetProfile("me").ExecuteAsync(),
+                        "GetProfile",
+                        false);
                     if (profile == null || string.IsNullOrWhiteSpace(profile.EmailAddress))
                         throw new InvalidOperationException("Google no devolvió una dirección de cuenta válida.");
 

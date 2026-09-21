@@ -102,7 +102,10 @@ namespace RecepcionDocumental.Services
 
                 using (var client = GmailOAuthService.CreateAuthorizedClient(settings, account.Email, refreshToken))
                 {
-                    var profile = await client.Service.Users.GetProfile("me").ExecuteAsync();
+                    var profile = await GmailApiExecution.ExecuteAsync(
+                        () => client.Service.Users.GetProfile("me").ExecuteAsync(),
+                        "GetProfile",
+                        false);
                     var historyId = profile.HistoryId.HasValue ? profile.HistoryId.Value.ToString() : null;
                     if (string.IsNullOrWhiteSpace(historyId))
                         throw new InvalidOperationException("Gmail no devolvió un cursor válido para iniciar la recepción.");
@@ -191,7 +194,10 @@ namespace RecepcionDocumental.Services
 
         private static async Task<GmailSyncBatch> GetInitialMessageIdsAsync(GmailService service)
         {
-            var profile = await service.Users.GetProfile("me").ExecuteAsync();
+            var profile = await GmailApiExecution.ExecuteAsync(
+                () => service.Users.GetProfile("me").ExecuteAsync(),
+                "GetProfile",
+                false);
             var completionHistoryId = profile.HistoryId.HasValue ? profile.HistoryId.Value.ToString() : null;
             if (string.IsNullOrWhiteSpace(completionHistoryId))
                 throw new InvalidOperationException("Gmail no devolvió un cursor para iniciar la sincronización.");
@@ -207,7 +213,10 @@ namespace RecepcionDocumental.Services
                 request.Q = InitialSearchQuery;
                 request.MaxResults = InitialPageSize;
                 request.PageToken = pageToken;
-                var response = await request.ExecuteAsync();
+                var response = await GmailApiExecution.ExecuteAsync(
+                    () => request.ExecuteAsync(),
+                    "Messages.List",
+                    false);
                 pages++;
                 foreach (var message in response.Messages ?? new List<Message>())
                 {
@@ -243,7 +252,10 @@ namespace RecepcionDocumental.Services
                 request.HistoryTypes = UsersResource.HistoryResource.ListRequest.HistoryTypesEnum.MessageAdded;
                 request.MaxResults = HistoryPageSize;
                 request.PageToken = pageToken;
-                var response = await request.ExecuteAsync();
+                var response = await GmailApiExecution.ExecuteAsync(
+                    () => request.ExecuteAsync(),
+                    "History.List",
+                    false);
                 pages++;
                 foreach (var history in response.History ?? new List<History>())
                     foreach (var added in history.MessagesAdded ?? new List<HistoryMessageAdded>())
@@ -259,7 +271,11 @@ namespace RecepcionDocumental.Services
         {
             var get = service.Users.Messages.Get("me", messageId);
             get.Format = UsersResource.MessagesResource.GetRequest.FormatEnum.Full;
-            var message = await get.ExecuteAsync();
+            var message = await GmailApiExecution.ExecuteAsync(
+                () => get.ExecuteAsync(),
+                "Messages.Get",
+                true,
+                messageId);
             var parts = new List<AttachmentPart>();
             CollectAttachmentParts(message.Payload, parts, "0");
             var messageHistoryId = message.HistoryId.HasValue ? message.HistoryId.Value.ToString() : null;
@@ -275,7 +291,13 @@ namespace RecepcionDocumental.Services
                     var data = part.InlineData;
                     if (!string.IsNullOrWhiteSpace(part.AttachmentId))
                     {
-                        var attachment = await service.Users.Messages.Attachments.Get("me", message.Id, part.AttachmentId).ExecuteAsync();
+                        var attachmentRequest = service.Users.Messages.Attachments.Get("me", message.Id, part.AttachmentId);
+                        var attachment = await GmailApiExecution.ExecuteAsync(
+                            () => attachmentRequest.ExecuteAsync(),
+                            "Attachments.Get",
+                            true,
+                            message.Id,
+                            part.PartId);
                         data = attachment.Data;
                     }
                     var bytes = DecodeBase64Url(data);
