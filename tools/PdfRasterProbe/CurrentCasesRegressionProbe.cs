@@ -35,6 +35,7 @@ namespace PdfRasterProbe
 
             var failures = new List<string>();
             CheckSyntheticSelectors(failures);
+            CheckImageSafetyPolicy(failures);
             CheckDocument(args[2], "image/jpeg", "FACTURA", null, failures, "Factura_real");
             CheckDocument(args[3], "image/jpeg", "DESCARTAR", "IA_VISUAL+OCR_GATE", failures, "Logo_real");
             CheckDocument(args[4], "application/pdf", "REVISAR", "MDOC_OCR_CONFLICTO", failures, "Nota_credito_real");
@@ -71,6 +72,21 @@ namespace PdfRasterProbe
         {
             var selection = InvoiceSelector.SelectOcrText(header, true, header, confidence);
             Check(string.Equals(selection.Classification, expected, StringComparison.Ordinal), name + " Expected=" + expected + " Actual=" + selection.Classification, failures);
+        }
+
+        private static void CheckImageSafetyPolicy(ICollection<string> failures)
+        {
+            foreach (var signal in new[] { "FACTURA", "CUIT", "CAE", "NOTA DE CREDITO", "COMPROBANTE DE PAGO", "RESPONSABLE INSCRIPTO", "INGRESOS BRUTOS", "TOTAL A PAGAR", "ORIGINAL" })
+            {
+                string evidence;
+                Check(InvoiceSelector.HasDocumentEvidenceForImageSafety(signal, out evidence), "ImageSafety protege " + signal, failures);
+            }
+            var visual = new VisualShadowResult { Status = "OK", Zone = "NO_FACTURA_FUERTE", PFactura = 0.01, PNoFactura = 0.99 };
+            var review = InvoiceSelector.Review("OCR_NO_CONCLUYENTE", "Prueba", null);
+            Check(ImageNonDocumentSafetyPolicy.Apply(review, string.Empty, visual).DetectionMethod == "IA_VISUAL+OCR_GATE", "ImageSafety descarta sin evidencia", failures);
+            Check(ImageNonDocumentSafetyPolicy.Apply(review, "RESPONSABLE INSCRIPTO", visual).Classification == "REVISAR", "ImageSafety conserva evidencia documental", failures);
+            Check(ImageNonDocumentSafetyPolicy.Apply(review, string.Empty, new VisualShadowResult { Status = "ERROR" }).Classification == "REVISAR", "ImageSafety falla abierto", failures);
+            Check(ImageNonDocumentSafetyPolicy.Apply(InvoiceSelector.Review("OCR_ERROR", "Prueba", null), string.Empty, visual).Classification == "REVISAR", "ImageSafety conserva OCR_ERROR", failures);
         }
 
         private static void CheckDocument(string path, string mime, string expectedClass, string expectedMethod, ICollection<string> failures, string name, bool mustNotDiscard = false)

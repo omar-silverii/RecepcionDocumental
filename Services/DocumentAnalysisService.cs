@@ -195,7 +195,7 @@ namespace RecepcionDocumental.Services
             else if (IsImage(name)) { imageOcrAnalysis = AnalyzeImageWithOcrDetailed(path, Path.GetExtension(name)); selection = imageOcrAnalysis.Selection; }
             else selection = InvoiceSelector.SelectNonPdf(name);
             SelectionReady:
-            if (imageOcrAnalysis != null || !string.Equals(selection.Classification, "DESCARTAR", StringComparison.Ordinal))
+            if (!string.Equals(selection.Classification, "DESCARTAR", StringComparison.Ordinal))
             {
                 var visualEvaluation = VisualDocumentShadowService.Evaluate(path, name, workspace, visualRaster, firstPageRenderedByOcr, firstPageVisualFailureReason);
                 visualShadow = visualEvaluation.Result;

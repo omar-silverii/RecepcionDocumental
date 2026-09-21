@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="CurrentCasesRegressionProbe.cs" />
+    <Compile Include="ImageNonDocumentGateCorpusProbe.cs" />
     <Compile Include="ProductFlowProbe.cs" />
     <Compile Include="GmailMimeProbe.cs" />
     <Compile Include="GmailCorpusProbe.cs" />

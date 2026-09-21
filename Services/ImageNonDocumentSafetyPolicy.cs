@@ -12,25 +12,25 @@ namespace RecepcionDocumental.Services
             if (!string.Equals(current.Classification, "REVISAR", StringComparison.Ordinal)) return current;
             if (string.Equals(current.DetectionMethod, "OCR_ERROR", StringComparison.Ordinal)) return current;
 
-            string evidence;
-            if (InvoiceSelector.HasDocumentEvidenceForImageSafety(ocrText, out evidence))
-            {
-                Logs.LogProc("ImageNonDocumentSafety | Accion=CONSERVAR | Motivo=EVIDENCIA_DOCUMENTAL | Evidencia=" + Logs.SanitizarMensaje(evidence));
-                return current;
-            }
-
             if (visual == null || !string.Equals(visual.Status, "OK", StringComparison.Ordinal)
                 || !string.Equals(visual.Zone, "NO_FACTURA_FUERTE", StringComparison.Ordinal)
                 || !visual.PFactura.HasValue || visual.PFactura.Value > VisualInvoiceShadowService.TNoFactura)
             {
-                Logs.LogProc("ImageNonDocumentSafety | Accion=CONSERVAR | Motivo=VISION_NO_CONCLUYENTE");
+                Logs.LogProc("ImageNonDocumentGate | Decision=CONSERVAR | Motivo=VISION_NO_CONCLUYENTE");
                 return current;
             }
 
-            var confidence = visual.PNoFactura.HasValue
-                ? (byte?)Math.Max(0, Math.Min(100, (int)Math.Round(visual.PNoFactura.Value * 100, MidpointRounding.AwayFromZero)))
-                : null;
-            Logs.LogProc("ImageNonDocumentSafety | Accion=DESCARTAR | Metodo=IA_VISUAL+OCR_GATE | Zona=" + visual.Zone
+            string evidence;
+            if (InvoiceSelector.HasDocumentEvidenceForImageSafety(ocrText, out evidence))
+            {
+                Logs.LogProc("ImageNonDocumentGate | Decision=CONSERVAR | Motivo=EVIDENCIA_DOCUMENTAL | Evidencia=" + Logs.SanitizarMensaje(evidence)
+                    + " | PFactura=" + visual.PFactura.Value.ToString("0.#########", CultureInfo.InvariantCulture));
+                return current;
+            }
+
+            var confidence = (byte)Math.Max(0, Math.Min(100, (int)Math.Round(
+                visual.PNoFactura.GetValueOrDefault(1d - visual.PFactura.Value) * 100d, MidpointRounding.AwayFromZero)));
+            Logs.LogProc("ImageNonDocumentGate | Decision=DESCARTAR | Metodo=IA_VISUAL+OCR_GATE | Zona=" + visual.Zone
                 + " | PFactura=" + visual.PFactura.Value.ToString("0.#########", CultureInfo.InvariantCulture)
                 + " | EvidenciaOCR=NINGUNA");
             return new InvoiceSelection
