@@ -14,6 +14,7 @@ namespace RecepcionDocumental.Data
     }
     public sealed class GmailSyncAuditInfo
     {
+        public long Id;
         public string Origen,Estado;
         public DateTime Inicio;
         public DateTime? Fin;
@@ -51,7 +52,7 @@ SELECT COUNT(*) FROM dbo.GmailSyncEjecucion WHERE Id=@Id AND Estado=@State AND E
         }
         public static GmailSyncAuditInfo Latest()
         {
-            try{using(var cn=Connection())using(var cmd=new SqlCommand("SELECT TOP(1) Origen,Estado,FechaInicioUtc,FechaFinUtc,MensajesEncontrados,Errores FROM dbo.GmailSyncEjecucion ORDER BY Id DESC;",cn)){cn.Open();using(var r=cmd.ExecuteReader())return r.Read()?new GmailSyncAuditInfo{Origen=r.GetString(0),Estado=r.GetString(1),Inicio=r.GetDateTime(2),Fin=r.IsDBNull(3)?(DateTime?)null:r.GetDateTime(3),Mensajes=r.GetInt32(4),Errores=r.GetInt32(5)}:null;}}
+            try{using(var cn=Connection())using(var cmd=new SqlCommand("SELECT TOP(1) Id,Origen,Estado,FechaInicioUtc,FechaFinUtc,MensajesEncontrados,Errores FROM dbo.GmailSyncEjecucion ORDER BY Id DESC;",cn)){cn.Open();using(var r=cmd.ExecuteReader())return r.Read()?new GmailSyncAuditInfo{Id=r.GetInt64(0),Origen=r.GetString(1),Estado=r.GetString(2),Inicio=r.GetDateTime(3),Fin=r.IsDBNull(4)?(DateTime?)null:r.GetDateTime(4),Mensajes=r.GetInt32(5),Errores=r.GetInt32(6)}:null;}}
             catch(Exception ex){ReportingFailure(ex);return null;}
         }
         private static void ReportingFailure(Exception ex,string code="ReportingFailure"){try{Logs.LogError("GmailSyncAudit | "+code+" | Error="+ex.GetType().Name);}catch{} }

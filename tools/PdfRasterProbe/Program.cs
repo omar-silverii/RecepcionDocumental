@@ -19,6 +19,7 @@ namespace PdfRasterProbe
 
         private static int Main(string[] args)
         {
+            if(args.Length>0&&args[0]=="--current-cases")return CurrentCasesRegressionProbe.Run(args);
             if(args.Length>0&&args[0]=="--h1d9e-backfill")return H1D9EBackfill.Run(args);
             if(args.Length>0&&args[0]=="--h1d9e-backfill-inner")return H1D9EBackfill.RunInner(args);
             if(args.Length>0&&args[0]=="--h1e1")return H1E1SyncProbe.Run(args);

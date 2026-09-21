@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
+using System.Web.Script.Services;
+using System.Web.Services;
 using System.Web.UI;
 using RecepcionDocumental.Controls;
 using RecepcionDocumental.Data;
@@ -9,6 +12,13 @@ using RecepcionDocumental.Services;
 
 namespace RecepcionDocumental
 {
+    public sealed class GmailSyncStatusView
+    {
+        public long Id { get; set; }
+        public bool EnEjecucion { get; set; }
+        public string Texto { get; set; }
+    }
+
     public partial class Gmail_Bandeja : Page
     {
         protected override void OnInit(EventArgs e)
@@ -31,10 +41,50 @@ namespace RecepcionDocumental
         protected void Buscar_Click(object sender, EventArgs e)
         {
             pnlResultado.Visible = false;
+            var previous = GmailSyncAuditRepository.Latest();
+            var previousId = previous == null ? 0 : previous.Id;
             var launch = GmailManualSyncLauncher.Start();
             LoadPageData();
-            if (launch.Started) ShowNotice(launch.Message);
+            if (launch.Started)
+            {
+                btnBuscar.Enabled = false;
+                hidSyncPolling.Value = "1";
+                hidSyncBaseline.Value = previousId.ToString(CultureInfo.InvariantCulture);
+                litSyncStatus.Text = Server.HtmlEncode("BUSCANDO / EN EJECUCIÓN");
+                ShowNotice(launch.Message);
+            }
             else ShowError(launch.Message);
+        }
+
+        [WebMethod(EnableSession = false)]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public static GmailSyncStatusView GetSyncStatus()
+        {
+            return BuildSyncStatus(GmailSyncAuditRepository.Latest());
+        }
+
+        public static GmailSyncStatusView BuildSyncStatus(GmailSyncAuditInfo latest)
+        {
+            if (latest == null)
+                return new GmailSyncStatusView { Texto = "Todavía no hay ejecuciones de recepción registradas." };
+
+            var running = string.Equals(latest.Estado, "EJECUTANDO", StringComparison.OrdinalIgnoreCase);
+            var localStart = DateTime.SpecifyKind(latest.Inicio, DateTimeKind.Utc).ToLocalTime();
+            string text;
+            if (running)
+                text = "BUSCANDO / EN EJECUCIÓN desde " + localStart.ToString("HH:mm:ss") + " | Origen: " + latest.Origen;
+            else if (string.Equals(latest.Estado, "COMPLETADA", StringComparison.OrdinalIgnoreCase))
+                text = "Búsqueda completada | Mensajes: " + latest.Mensajes + " | Errores: " + latest.Errores;
+            else if (string.Equals(latest.Estado, "COMPLETADA_CON_ERRORES", StringComparison.OrdinalIgnoreCase))
+                text = "Búsqueda completada con errores | Mensajes: " + latest.Mensajes + " | Errores: " + latest.Errores;
+            else if (string.Equals(latest.Estado, "FALLIDA", StringComparison.OrdinalIgnoreCase))
+                text = "Búsqueda fallida | Errores: " + latest.Errores;
+            else if (string.Equals(latest.Estado, "OMITIDA_YA_EN_EJECUCION", StringComparison.OrdinalIgnoreCase))
+                text = "Búsqueda omitida: ya había otra ejecución en curso.";
+            else
+                text = "Última recepción: " + localStart.ToString("dd/MM/yyyy HH:mm") + " | " + latest.Estado + " | Mensajes: " + latest.Mensajes + " | Errores: " + latest.Errores;
+
+            return new GmailSyncStatusView { Id = latest.Id, EnEjecucion = running, Texto = text };
         }
 
         private void Listado_FiltersChanged(object sender, EventArgs e)
@@ -64,18 +114,17 @@ namespace RecepcionDocumental
             pnlDatabaseWarning.Visible = false;
 
             var latest = GmailSyncAuditRepository.Latest();
-            var syncStatus = latest == null
-                ? "Todavía no hay ejecuciones de recepción registradas."
-                : string.Equals(latest.Estado, "EJECUTANDO", StringComparison.OrdinalIgnoreCase)
-                    ? "Búsqueda en ejecución desde " + latest.Inicio.ToLocalTime().ToString("HH:mm:ss") + " | Origen: " + latest.Origen
-                    : "Última recepción: " + latest.Inicio.ToLocalTime().ToString("dd/MM/yyyy HH:mm") + " | " + latest.Estado + " | " + latest.Origen + " | Mensajes: " + latest.Mensajes + " | Errores: " + latest.Errores;
-            litSyncStatus.Text = Server.HtmlEncode(syncStatus);
+            var syncStatus = BuildSyncStatus(latest);
+            litSyncStatus.Text = Server.HtmlEncode(syncStatus.Texto);
+            hidSyncPolling.Value = syncStatus.EnEjecucion ? "1" : "0";
+            hidSyncBaseline.Value = (syncStatus.EnEjecucion ? Math.Max(0, syncStatus.Id - 1) : syncStatus.Id).ToString(CultureInfo.InvariantCulture);
 
             try
             {
                 var account = GmailSyncRepository.GetActiveAccount();
                 pnlSinCuenta.Visible = account == null;
                 btnBuscar.Visible = account != null;
+                btnBuscar.Enabled = account != null && !syncStatus.EnEjecucion;
 
                 DateTime desdeUtc;
                 DateTime hastaUtcExclusivo;

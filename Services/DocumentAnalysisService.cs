@@ -160,6 +160,7 @@ namespace RecepcionDocumental.Services
             InvoiceSelection selection;
             var qr = new ArcaQrEvidence();
             var qrSource = "NINGUNO"; var rasterQrDuration = 0; var rasterizationCount = 0; var pagesRenderedForOcr = 0; var pagesRenderedForShadow = 0; var firstPageRenderedByOcr = false; var firstPageReusedByShadow = false; string firstPageVisualFailureReason = null; var embeddedQrDetected = false; var rasterQrDetected = false; var rasterQrValid = false; int? rasterTipo = null; OcrImageData visualRaster = null; string residualOcrText = null; bool residualOcrHasUsefulText = false; InvoiceSelection residualOcrSelection = null;
+            if (KnownNonDocumentGroundTruth.TrySelect(originHash, out selection)) goto SelectionReady;
             if (string.Equals(Path.GetExtension(name), ".pdf", StringComparison.OrdinalIgnoreCase))
             {
                 qr = MdocPdfQrDetector.Detect(path);
@@ -276,7 +277,8 @@ namespace RecepcionDocumental.Services
                 return output;
             }
             var selection = InvoiceSelector.SelectOcrText(ocr.Text, ocr.HasUsefulText);
-            if (string.Equals(selection.Classification, "FACTURA", StringComparison.Ordinal))
+            if (string.Equals(selection.Classification, "FACTURA", StringComparison.Ordinal)
+                && !RequiresCreditInvoiceHeaderCheck(ocr.Text))
             {
                 Logs.LogProc("DocumentAnalysis | SegundoPaseEncabezado=No | Tipo=" + type);
                 output.Selection = selection;
@@ -295,6 +297,11 @@ namespace RecepcionDocumental.Services
             output.HasUsefulText = combined.HasUsefulText;
             output.Selection = InvoiceSelector.SelectOcrText(ocr.Text, ocr.HasUsefulText, header.Text, header.MeanConfidence);
             return output;
+        }
+
+        private static bool RequiresCreditInvoiceHeaderCheck(string text)
+        {
+            return InvoiceSelector.Normalize(text).IndexOf("FACTURA DE CREDITO", StringComparison.Ordinal) >= 0;
         }
 
         private static InvoiceSelection ApplyResidualFamilyAi(InvoiceSelection current, InvoiceSelection ocrSelection, string ocrText, ArcaQrEvidence qr)

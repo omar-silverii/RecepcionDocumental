@@ -8,16 +8,18 @@
             <h1>Bandeja de entrada</h1>
         </div>
         <div class="d-flex gap-2">
-            <asp:Button ID="btnBuscar" runat="server" Text="Buscar nuevos correos" CssClass="btn btn-primary" UseSubmitBehavior="false" OnClientClick="this.disabled=true;this.value='Buscando…';" OnClick="Buscar_Click" />
+            <asp:Button ID="btnBuscar" runat="server" ClientIDMode="Static" Text="Buscar nuevos correos" CssClass="btn btn-primary" UseSubmitBehavior="false" OnClientClick="this.disabled=true;this.value='Buscando…';" OnClick="Buscar_Click" />
             <a href="Gmail_Config.aspx" class="btn btn-outline-primary">Configurar cuenta</a>
         </div>
     </header>
 
-    <asp:Panel ID="pnlDatabaseWarning" runat="server" Visible="false" CssClass="alert alert-warning">
+    <asp:Panel ID="pnlDatabaseWarning" runat="server" ClientIDMode="Static" Visible="false" CssClass="alert alert-warning">
         <asp:Literal ID="litDatabaseWarning" runat="server" />
     </asp:Panel>
 
-    <p class="text-secondary mb-3"><asp:Literal ID="litSyncStatus" runat="server" /></p>
+    <asp:HiddenField ID="hidSyncPolling" runat="server" ClientIDMode="Static" />
+    <asp:HiddenField ID="hidSyncBaseline" runat="server" ClientIDMode="Static" />
+    <p id="syncStatusText" class="text-secondary mb-3" aria-live="polite"><asp:Literal ID="litSyncStatus" runat="server" /></p>
 
     <asp:Panel ID="pnlSinCuenta" runat="server" Visible="false" CssClass="alert alert-info">
         No hay una cuenta Gmail activa. <a href="Gmail_Config.aspx">Configurar cuenta</a>.
@@ -40,4 +42,52 @@
 
     <ws:ListadoAgrupado ID="lstMensajes" runat="server" />
 </main>
+<script type="text/javascript">
+    (function () {
+        var polling = document.getElementById('hidSyncPolling');
+        if (!polling || polling.value !== '1') return;
+
+        var baselineField = document.getElementById('hidSyncBaseline');
+        var baseline = baselineField ? parseInt(baselineField.value || '0', 10) : 0;
+        var stopped = false;
+
+        function schedule() {
+            if (!stopped) window.setTimeout(poll, 2500);
+        }
+
+        function poll() {
+            var request = new XMLHttpRequest();
+            request.open('POST', 'Gmail_Bandeja.aspx/GetSyncStatus', true);
+            request.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+            request.onreadystatechange = function () {
+                if (request.readyState !== 4) return;
+                if (request.status !== 200) { schedule(); return; }
+
+                var payload;
+                try { payload = JSON.parse(request.responseText).d; }
+                catch (error) { schedule(); return; }
+                if (!payload || payload.Id <= baseline) { schedule(); return; }
+
+                var status = document.getElementById('syncStatusText');
+                if (status) status.textContent = payload.Texto;
+                var button = document.getElementById('btnBuscar');
+
+                if (payload.EnEjecucion) {
+                    if (button) { button.disabled = true; button.value = 'Buscando…'; }
+                    schedule();
+                    return;
+                }
+
+                stopped = true;
+                if (button) { button.disabled = false; button.value = 'Buscar nuevos correos'; }
+                var notice = document.getElementById('pnlDatabaseWarning');
+                if (notice) notice.style.display = 'none';
+                window.setTimeout(function () { window.location.reload(); }, 500);
+            };
+            request.send('{}');
+        }
+
+        poll();
+    }());
+</script>
 </asp:Content>

@@ -103,19 +103,24 @@ namespace RecepcionDocumental.Services
         }
 
         // H1D10D1c/D3: promoción controlada de evidencia de encabezado ya validada
-        // experimentalmente. Nunca degrada una FACTURA ya detectada por el OCR completo;
-        // sólo puede resolver un REVISAR/DESCARTAR cuando el encabezado demuestra una
-        // estructura documental FACTURA fuerte.
+        // experimentalmente. Un título no-factura confiable puede degradar una evidencia
+        // FACTURA contradictoria a REVISAR, pero nunca descartarla.
         public static InvoiceSelection SelectOcrText(string text, bool hasUsefulText, string headerText, float headerConfidence)
         {
             var baseline = SelectOcrText(text, hasUsefulText);
-            if (string.Equals(baseline.Classification, "FACTURA", StringComparison.Ordinal)) return baseline;
             if (!hasUsefulText || string.IsNullOrWhiteSpace(headerText)) return baseline;
 
             var normalizedHeader = Normalize(headerText);
             var compactHeader = Compact(normalizedHeader);
             if (IsEmailLikeHeader(compactHeader)) return baseline;
-            if (headerConfidence >= 0.80f && HasSpecificNonInvoiceHeaderTitle(compactHeader)) return baseline;
+            if (HasKnownCorruptedNonInvoiceHeaderTitle(compactHeader)
+                || (headerConfidence >= 0.80f && HasSpecificNonInvoiceHeaderTitle(compactHeader)))
+            {
+                if (string.Equals(baseline.Classification, "FACTURA", StringComparison.Ordinal))
+                    return Review("OCR_TITULO_CONFLICTO", "El OCR general indica FACTURA, pero el encabezado confiable contiene un título de otro tipo documental.", null);
+                return baseline;
+            }
+            if (string.Equals(baseline.Classification, "FACTURA", StringComparison.Ordinal)) return baseline;
 
             string evidence;
             if (headerConfidence >= 0.80f && HasStrongFacturaHeader(headerText, out evidence))
@@ -199,6 +204,13 @@ namespace RecepcionDocumental.Services
                 || compactHeader.IndexOf("RECIBODECOBRO", StringComparison.Ordinal) >= 0
                 || compactHeader.IndexOf("RECIBODESUELDO", StringComparison.Ordinal) >= 0
                 || compactHeader.IndexOf("RECIBO", StringComparison.Ordinal) >= 0;
+        }
+
+        private static bool HasKnownCorruptedNonInvoiceHeaderTitle(string compactHeader)
+        {
+            // Variante estable observada en el corpus revisado: "NOTA DA CRBDILO".
+            return !string.IsNullOrEmpty(compactHeader)
+                && compactHeader.IndexOf("NOTADACRBDILO", StringComparison.Ordinal) >= 0;
         }
 
         private static string FindStrongSpecificNonInvoiceTitle(string text)
@@ -291,6 +303,8 @@ namespace RecepcionDocumental.Services
         {
             var found = 0;
             string previous = null;
+            var hasPointOfSale = false;
+            var hasVoucherNumber = false;
             for (var i = start; i < lines.Length && found < 4; i++)
             {
                 var compact = Compact(Normalize((lines[i] ?? string.Empty).Trim()));
@@ -308,6 +322,10 @@ namespace RecepcionDocumental.Services
                     && (previous == "N" || previous == "NRO" || previous == "NUMERO" || previous == "COMPNRO" || previous == "COMPROBANTE" || previous == "NROCOMPROBANTE")
                     && Regex.IsMatch(compact, @"^[0-9]{4,}$", RegexOptions.CultureInvariant))
                     return true;
+
+                hasPointOfSale = hasPointOfSale || Regex.IsMatch(compact, @"^(?:PUNTODEVENTA|PTOVTA)(?:NRO|NUMERO)?[0-9]{1,5}$", RegexOptions.CultureInvariant);
+                hasVoucherNumber = hasVoucherNumber || Regex.IsMatch(compact, @"^[ABCEM]COMP(?:ROBANTE)?(?:NRO|NUMERO)?[0-9]{4,8}$", RegexOptions.CultureInvariant);
+                if (hasPointOfSale && hasVoucherNumber) return true;
 
                 previous = compact;
             }
@@ -371,7 +389,9 @@ namespace RecepcionDocumental.Services
         private static bool HasNearbyIdentifier(string[] lines, int start)
         {
             var found = 0;
-            for (var i = start; i < lines.Length && found < 2; i++)
+            var hasPointOfSale = false;
+            var hasVoucherNumber = false;
+            for (var i = start; i < lines.Length && found < 4; i++)
             {
                 var compact = Compact(Normalize((lines[i] ?? string.Empty).Trim()));
                 if (compact.Length == 0) continue;
@@ -379,6 +399,10 @@ namespace RecepcionDocumental.Services
                 if (Regex.IsMatch(compact, @"^(?:[ABCEM])?(?:N|NRO|NUMERO|COD|CODIGO)?[0-9]{2,}", RegexOptions.CultureInvariant)) return true;
                 if (Regex.IsMatch(compact, @"^PUNTODEVENTA[0-9]+COMP(?:ROBANTE)?NRO[0-9]+", RegexOptions.CultureInvariant)) return true;
                 if (Regex.IsMatch(compact, @"^NUMERO[ABCEM]?[0-9]+", RegexOptions.CultureInvariant)) return true;
+
+                hasPointOfSale = hasPointOfSale || Regex.IsMatch(compact, @"^(?:PUNTODEVENTA|PTOVTA)(?:NRO|NUMERO)?[0-9]{1,5}$", RegexOptions.CultureInvariant);
+                hasVoucherNumber = hasVoucherNumber || Regex.IsMatch(compact, @"^[ABCEM]COMP(?:ROBANTE)?(?:NRO|NUMERO)?[0-9]{4,8}$", RegexOptions.CultureInvariant);
+                if (hasPointOfSale && hasVoucherNumber) return true;
             }
             return false;
         }
