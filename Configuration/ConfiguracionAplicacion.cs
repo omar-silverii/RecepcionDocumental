@@ -10,6 +10,16 @@ namespace RecepcionDocumental.Configuration
             int zipMaxEntradas, long zipMaxBytesPorArchivo, long zipMaxBytesDescomprimidos, int zipMaxProfundidad,
             string gmailRedirectUri, bool visionShadowEnabled = false, string visionShadowModelVersion = "H1D9B-CANDIDATE-001",
             bool familyAiEnabled = false, string familyAiModelVersion = "H1D10D5-FAMILY-001")
+            : this(nombreProyecto, rutaLogs, rutaTrabajo, rutaFacturas, rutaRevisar,
+                zipMaxEntradas, zipMaxBytesPorArchivo, zipMaxBytesDescomprimidos, zipMaxProfundidad,
+                gmailRedirectUri, visionShadowEnabled, visionShadowModelVersion, familyAiEnabled, familyAiModelVersion, null)
+        {
+        }
+
+        public ConfiguracionAplicacion(string nombreProyecto, string rutaLogs, string rutaTrabajo, string rutaFacturas, string rutaRevisar,
+            int zipMaxEntradas, long zipMaxBytesPorArchivo, long zipMaxBytesDescomprimidos, int zipMaxProfundidad,
+            string gmailRedirectUri, bool visionShadowEnabled, string visionShadowModelVersion,
+            bool familyAiEnabled, string familyAiModelVersion, string runnerPath)
         {
             NombreProyecto = ValidarNombreProyecto(nombreProyecto);
             RutaLogs = ValidarRuta("Rutas/Logs", rutaLogs);
@@ -25,6 +35,7 @@ namespace RecepcionDocumental.Configuration
             VisionShadowModelVersion = string.IsNullOrWhiteSpace(visionShadowModelVersion) ? "H1D9B-CANDIDATE-001" : Normalizar(visionShadowModelVersion);
             FamilyAiEnabled = familyAiEnabled;
             FamilyAiModelVersion = string.IsNullOrWhiteSpace(familyAiModelVersion) ? "H1D10D5-FAMILY-001" : Normalizar(familyAiModelVersion);
+            RunnerPath = ValidarRutaArchivoOpcional("Sync/RunnerPath", runnerPath);
             if (ZipMaxBytesDescomprimidos < ZipMaxBytesPorArchivo)
                 throw new ConfiguracionAplicacionException("Zip/MaxBytesDescomprimidos no puede ser menor que Zip/MaxBytesPorArchivo.");
         }
@@ -43,6 +54,7 @@ namespace RecepcionDocumental.Configuration
         public string VisionShadowModelVersion { get; private set; }
         public bool FamilyAiEnabled { get; private set; }
         public string FamilyAiModelVersion { get; private set; }
+        public string RunnerPath { get; private set; }
 
         public void PrepararRutasOperativas()
         {
@@ -63,6 +75,16 @@ namespace RecepcionDocumental.Configuration
         {
             var ruta = Normalizar(valor);
             if (string.IsNullOrWhiteSpace(ruta)) throw new ConfiguracionAplicacionException("La clave " + clave + " es obligatoria.");
+            if (!Path.IsPathRooted(ruta)) throw new ConfiguracionAplicacionException("La clave " + clave + " debe contener una ruta absoluta.");
+            try { return Path.GetFullPath(ruta); }
+            catch (Exception ex) when (ex is ArgumentException || ex is NotSupportedException || ex is PathTooLongException)
+            { throw new ConfiguracionAplicacionException("La clave " + clave + " contiene una ruta inválida.", ex); }
+        }
+
+        private static string ValidarRutaArchivoOpcional(string clave, string valor)
+        {
+            var ruta = Normalizar(valor);
+            if (ruta.Length == 0) return null;
             if (!Path.IsPathRooted(ruta)) throw new ConfiguracionAplicacionException("La clave " + clave + " debe contener una ruta absoluta.");
             try { return Path.GetFullPath(ruta); }
             catch (Exception ex) when (ex is ArgumentException || ex is NotSupportedException || ex is PathTooLongException)

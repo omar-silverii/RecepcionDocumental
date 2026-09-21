@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI;
-using Google;
 using RecepcionDocumental.Controls;
 using RecepcionDocumental.Data;
 using RecepcionDocumental.Services;
@@ -13,8 +11,6 @@ namespace RecepcionDocumental
 {
     public partial class Gmail_Bandeja : Page
     {
-        private const string SyncSessionKey = "GmailSync.Running";
-
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -23,7 +19,6 @@ namespace RecepcionDocumental
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            Server.ScriptTimeout = 600;
             ConfigureList();
 
             if (!IsPostBack)
@@ -35,45 +30,17 @@ namespace RecepcionDocumental
 
         protected void Buscar_Click(object sender, EventArgs e)
         {
-            if (Session[SyncSessionKey] != null) { ShowError("Ya hay una búsqueda en curso para esta sesión."); return; }
-            Session[SyncSessionKey] = true;
-            RegisterAsyncTask(new PageAsyncTask(RunSyncAsync));
+            pnlResultado.Visible = false;
+            var launch = GmailManualSyncLauncher.Start();
+            LoadPageData();
+            if (launch.Started) ShowNotice(launch.Message);
+            else ShowError(launch.Message);
         }
 
         private void Listado_FiltersChanged(object sender, EventArgs e)
         {
             pnlResultado.Visible = false;
             LoadPageData();
-        }
-
-        private async Task RunSyncAsync()
-        {
-            try
-            {
-                var result = await GmailSyncService.SynchronizeAsync();
-                if (result.AlreadyRunning) { pnlResultado.Visible = false; ShowError("Ya hay una sincronización de Gmail en curso."); LoadPageData(); return; }
-                pnlResultado.Visible = true;
-                pnlResultado.CssClass = result.Errores == 0 ? "alert alert-success" : "alert alert-warning";
-                litEncontrados.Text = result.MensajesEncontrados.ToString();
-                litNuevos.Text = result.MensajesNuevos.ToString();
-                litAnalizados.Text = result.AdjuntosAnalizados.ToString();
-                litFacturas.Text = result.FacturasDetectadas.ToString();
-                litRevisar.Text = result.ParaRevisar.ToString();
-                litDescartados.Text = result.Descartados.ToString();
-                litDocumentosExistentes.Text = result.DocumentosExistentes.ToString();
-                litErrores.Text = result.Errores.ToString();
-                var notices = result.UsoFallbackInicial ? "<p class=\"mt-2 mb-0\">El cursor de Gmail había vencido; se aplicó la búsqueda inicial limitada.</p>" : string.Empty;
-                if (result.Errores > 0) notices += "<p class=\"mt-2 mb-0\">El cursor no se avanzó para permitir reintentar los elementos con error.</p>";
-                litFallback.Text = notices;
-                LoadPageData();
-            }
-            catch (GoogleApiException) { ShowError("Gmail no pudo completar la consulta. Revisá la autorización de la cuenta."); }
-            catch (UnauthorizedAccessException) { ShowError("La aplicación no tiene permisos para escribir en la carpeta de adjuntos."); }
-            catch (System.IO.IOException) { ShowError("No fue posible escribir los adjuntos en la carpeta configurada."); }
-            catch (System.Data.SqlClient.SqlException) { ShowError("No fue posible completar la operación en la base de datos. Verificá el script 003."); }
-            catch (InvalidOperationException ex) { ShowError(ex.Message); }
-            catch (Exception) { ShowError("No fue posible completar la búsqueda de correos."); }
-            finally { Session.Remove(SyncSessionKey); btnBuscar.Enabled = true; }
         }
 
         private void ConfigureList()
@@ -97,9 +64,12 @@ namespace RecepcionDocumental
             pnlDatabaseWarning.Visible = false;
 
             var latest = GmailSyncAuditRepository.Latest();
-            litSyncStatus.Text = Server.HtmlEncode(latest == null
+            var syncStatus = latest == null
                 ? "Todavía no hay ejecuciones de recepción registradas."
-                : "Última recepción: " + latest.Inicio.ToLocalTime().ToString("dd/MM/yyyy HH:mm") + " | " + latest.Estado + " | " + latest.Origen + " | Mensajes: " + latest.Mensajes + " | Errores: " + latest.Errores);
+                : string.Equals(latest.Estado, "EJECUTANDO", StringComparison.OrdinalIgnoreCase)
+                    ? "Búsqueda en ejecución desde " + latest.Inicio.ToLocalTime().ToString("HH:mm:ss") + " | Origen: " + latest.Origen
+                    : "Última recepción: " + latest.Inicio.ToLocalTime().ToString("dd/MM/yyyy HH:mm") + " | " + latest.Estado + " | " + latest.Origen + " | Mensajes: " + latest.Mensajes + " | Errores: " + latest.Errores;
+            litSyncStatus.Text = Server.HtmlEncode(syncStatus);
 
             try
             {
@@ -173,6 +143,14 @@ namespace RecepcionDocumental
         private void ShowError(string message)
         {
             pnlDatabaseWarning.Visible = true;
+            pnlDatabaseWarning.CssClass = "alert alert-warning";
+            litDatabaseWarning.Text = Server.HtmlEncode(message);
+        }
+
+        private void ShowNotice(string message)
+        {
+            pnlDatabaseWarning.Visible = true;
+            pnlDatabaseWarning.CssClass = "alert alert-success";
             litDatabaseWarning.Text = Server.HtmlEncode(message);
         }
     }

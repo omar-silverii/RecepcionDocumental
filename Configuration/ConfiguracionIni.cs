@@ -56,7 +56,8 @@ namespace RecepcionDocumental.Configuration
                 Obtener(valores, "Gmail/RedirectUri"), ObtenerBooleanoOpcional(valores, "VisionShadow/Enabled", false),
                 ObtenerOpcional(valores, "VisionShadow/ModelVersion", "H1D9B-CANDIDATE-001"),
                 ObtenerBooleanoOpcional(valores, "FamilyAi/Enabled", true),
-                ObtenerOpcional(valores, "FamilyAi/ModelVersion", "H1D10D5-FAMILY-001"));
+                ObtenerOpcional(valores, "FamilyAi/ModelVersion", "H1D10D5-FAMILY-001"),
+                ObtenerOpcional(valores, "Sync/RunnerPath", null));
         }
 
         private static string Obtener(IDictionary<string, string> valores, string clave)

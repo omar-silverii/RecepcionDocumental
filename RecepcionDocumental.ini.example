@@ -16,6 +16,9 @@ MaxProfundidad=2
 [Gmail]
 RedirectUri=https://localhost:44320/Gmail_OAuthCallback.aspx
 
+[Sync]
+RunnerPath=D:\RecepcionDocumental\Sync\RecepcionDocumental.SyncRunner.exe
+
 [VisionShadow]
 Enabled=false
 ModelVersion=H1D9B-CANDIDATE-001

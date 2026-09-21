@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Hosting;
+using RecepcionDocumental.Infrastructure;
 using Tesseract;
 
 namespace RecepcionDocumental.Services
@@ -147,10 +148,12 @@ namespace RecepcionDocumental.Services
 
         public static OcrResult Recognize(IEnumerable<OcrImageData> candidates)
         {
+            var images = (candidates ?? Enumerable.Empty<OcrImageData>()).ToList();
             var stopwatch = Stopwatch.StartNew();
             var output = new StringBuilder();
             var processed = 0;
             var confidence = 0f;
+            Log("OCR | Inicio | Imagenes=" + images.Count);
             try
             {
                 var dataPath = GetDataPath();
@@ -158,13 +161,18 @@ namespace RecepcionDocumental.Services
                     return TimedFailure("Falta el modelo OCR español.", true, stopwatch);
                 using (var engine = new TesseractEngine(dataPath, "spa", EngineMode.LstmOnly))
                 {
-                    foreach (var candidate in candidates ?? Enumerable.Empty<OcrImageData>())
+                    for (var index = 0; index < images.Count; index++)
                     {
+                        var candidate = images[index];
                         if (candidate == null || candidate.Bytes == null || candidate.Bytes.Length == 0) continue;
+                        Log("OCR | Pagina=" + (index + 1) + " | Inicio | Width=" + candidate.Width + " | Height=" + candidate.Height);
+                        var pageStopwatch = Stopwatch.StartNew();
                         using (var pix = Pix.LoadFromMemory(candidate.Bytes))
                         using (var page = engine.Process(pix, PageSegMode.Auto))
                         {
                             var text = page.GetText() ?? string.Empty;
+                            pageStopwatch.Stop();
+                            Log("OCR | Pagina=" + (index + 1) + " | Fin | DuracionMs=" + pageStopwatch.ElapsedMilliseconds + " | TextoCaracteres=" + text.Length);
                             var remaining = MaxTextCharacters - output.Length;
                             if (remaining > 0) output.Append(text.Length <= remaining ? text : text.Substring(0, remaining)).Append(' ');
                             confidence += page.GetMeanConfidence();
@@ -186,7 +194,15 @@ namespace RecepcionDocumental.Services
             }
             catch (Exception ex) when (IsOcrException(ex))
             { return TimedFailure("El motor OCR no pudo procesar el documento.", IsSystemFailure(ex), stopwatch); }
+            finally
+            {
+                stopwatch.Stop();
+                Log("OCR | Fin | ImagenesProcesadas=" + processed + " | DuracionMs=" + stopwatch.ElapsedMilliseconds);
+            }
         }
+
+        private static void Log(string message)
+        { if (Logs.EstaInicializado) Logs.LogProc(message); }
 
         private static bool HasUsefulText(string text)
         {

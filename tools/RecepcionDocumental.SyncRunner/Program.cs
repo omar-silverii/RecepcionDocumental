@@ -16,10 +16,10 @@ namespace RecepcionDocumental.SyncRunner
         private static extern bool SetDllDirectory(string path);
         private static int Main(string[] args)
         {
-            if(args.Length==3&&args[0]=="--inner")return Worker.Run(args[1],args[2]);
-            if(args.Length<1||args.Length>2){Console.Error.WriteLine("Uso: RecepcionDocumental.SyncRunner.exe <raíz-producto> [--verify-config|--probe-lock]");return 2;}
+            if(args.Length==3&&args[0]=="--inner")return IsValidMode(args[2])?Worker.Run(args[1],args[2]):2;
+            if(args.Length<1||args.Length>2){Console.Error.WriteLine("Uso: RecepcionDocumental.SyncRunner.exe <raíz-producto> [--sync|--sync-web|--verify-config|--probe-lock|--probe-lock-hold]");return 2;}
             var mode=args.Length==2?args[1]:"--sync";
-            if(mode!="--sync"&&mode!="--verify-config"&&mode!="--probe-lock"&&mode!="--probe-lock-hold")return 2;
+            if(!IsValidMode(mode))return 2;
             try
             {
                 var root=Path.GetFullPath(args[0]);
@@ -33,6 +33,8 @@ namespace RecepcionDocumental.SyncRunner
             }
             catch(Exception ex){Console.Error.WriteLine("SyncRunner | Failed="+ex.GetType().Name);return 1;}
         }
+        private static bool IsValidMode(string mode)
+        {return mode=="--sync"||mode=="--sync-web"||mode=="--verify-config"||mode=="--probe-lock"||mode=="--probe-lock-hold";}
     }
     internal static class Worker
     {
@@ -61,7 +63,8 @@ namespace RecepcionDocumental.SyncRunner
                         return 0;
                     }
                 }
-                return RunSynchronization(()=>GmailSyncService.SynchronizeAsync("SCHEDULER").GetAwaiter().GetResult());
+                var origin=mode=="--sync-web"?"WEB":"SCHEDULER";
+                return RunSynchronization(()=>GmailSyncService.SynchronizeAsync(origin).GetAwaiter().GetResult());
             }
             catch(Exception ex){return ReportFailure(ex);}
         }
