@@ -363,7 +363,7 @@
     <Compile Include="Services\DocumentStorage.cs" />
     <Compile Include="Services\DocumentReviewService.cs" />
     <Compile Include="Services\InvoiceSelector.cs" />
-    <Compile Include="Services\KnownNonDocumentGroundTruth.cs" />
+    <Compile Include="Services\ImageNonDocumentSafetyPolicy.cs" />
     <Compile Include="Services\FamilyDocumentAiService.cs" />
     <Compile Include="Services\FamilyDocumentAiSafetyPolicy.cs" />
     <Compile Include="Services\MdocPdfTextExtractor.cs" />

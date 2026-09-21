@@ -54,7 +54,7 @@ namespace RecepcionDocumental.Services
             else if (shadow == null) shadow = VisualInvoiceShadowService.CreateUnsupportedError();
             evaluation.Result = shadow;
             if (shadow.Status == "OK")
-                Logs.LogProc("VisualShadow | DocumentoConservado=true | Estado=OK | Modelo=" + shadow.ModelVersion + " | Zona=" + shadow.Zone + " | PFactura=" + shadow.PFactura.Value.ToString("0.#########", System.Globalization.CultureInfo.InvariantCulture) + " | RasterReutilizado=" + shadow.RasterReused + " | TotalMs=" + shadow.TotalMilliseconds);
+                Logs.LogProc("VisualShadow | EvidenciaEvaluada=true | Estado=OK | Modelo=" + shadow.ModelVersion + " | Zona=" + shadow.Zone + " | PFactura=" + shadow.PFactura.Value.ToString("0.#########", System.Globalization.CultureInfo.InvariantCulture) + " | RasterReutilizado=" + shadow.RasterReused + " | TotalMs=" + shadow.TotalMilliseconds);
             else Logs.LogError("VisualShadow | Estado=ERROR | Codigo=" + Logs.SanitizarMensaje(shadow.ErrorCode));
             return evaluation;
         }

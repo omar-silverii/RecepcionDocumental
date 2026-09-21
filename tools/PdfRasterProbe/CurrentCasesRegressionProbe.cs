@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using RecepcionDocumental;
 using RecepcionDocumental.Configuration;
 using RecepcionDocumental.Data;
@@ -14,9 +18,9 @@ namespace PdfRasterProbe
     {
         internal static int Run(string[] args)
         {
-            if (args.Length != 6)
+            if (args.Length != 7)
             {
-                Console.Error.WriteLine("Uso: --current-cases <temporal> <factura.jpg> <logo.jpg> <nota-credito.pdf> <nota-credito-conflictiva.pdf>");
+                Console.Error.WriteLine("Uso: --current-cases <temporal> <factura.jpg> <logo.jpg> <nota-credito.pdf> <nota-credito-conflictiva.pdf> <factura-dificil.jpg>");
                 return 2;
             }
 
@@ -24,7 +28,7 @@ namespace PdfRasterProbe
             var configuration = new ConfiguracionAplicacion(
                 "RecepcionDocumental", Path.Combine(root, "Logs"), Path.Combine(root, "Trabajo"),
                 Path.Combine(root, "Facturas"), Path.Combine(root, "Revisar"),
-                200, 52428800, 262144000, 3, "https://localhost/current-cases");
+                200, 52428800, 262144000, 3, "https://localhost/current-cases", true, "H1D9B-CANDIDATE-001");
             configuration.PrepararRutasOperativas();
             ConfiguracionSistema.Inicializar(configuration);
             Logs.Inicializar(configuration);
@@ -32,9 +36,11 @@ namespace PdfRasterProbe
             var failures = new List<string>();
             CheckSyntheticSelectors(failures);
             CheckDocument(args[2], "image/jpeg", "FACTURA", null, failures, "Factura_real");
-            CheckDocument(args[3], "image/jpeg", "DESCARTAR", "GROUND_TRUTH_NO_DOCUMENTO", failures, "Logo_real");
+            CheckDocument(args[3], "image/jpeg", "DESCARTAR", "IA_VISUAL+OCR_GATE", failures, "Logo_real");
             CheckDocument(args[4], "application/pdf", "REVISAR", "MDOC_OCR_CONFLICTO", failures, "Nota_credito_real");
             CheckDocument(args[5], "application/pdf", "REVISAR", null, failures, "Nota_credito_conflictiva_corpus");
+            CheckDocument(args[6], "image/jpeg", null, null, failures, "Factura_imagen_dificil", true);
+            CheckGeneralizationVariants(root, args[2], args[3], failures);
             CheckUiStates(failures);
 
             Console.WriteLine("CURRENT_CASES_REGRESSION | " + (failures.Count == 0 ? "APROBADO" : "NO_APROBADO") + " | Fallas=" + failures.Count);
@@ -67,25 +73,100 @@ namespace PdfRasterProbe
             Check(string.Equals(selection.Classification, expected, StringComparison.Ordinal), name + " Expected=" + expected + " Actual=" + selection.Classification, failures);
         }
 
-        private static void CheckDocument(string path, string mime, string expectedClass, string expectedMethod, ICollection<string> failures, string name)
+        private static void CheckDocument(string path, string mime, string expectedClass, string expectedMethod, ICollection<string> failures, string name, bool mustNotDiscard = false)
         {
             using (var workspace = new AttachmentWorkspace())
             {
                 var analysis = DocumentAnalysisService.Analyze(File.ReadAllBytes(path), Path.GetFileName(path), mime, workspace);
                 var candidate = analysis.Candidates.SingleOrDefault();
-                var selection = candidate == null
-                    ? analysis.DeterministicDiscards.Select(x => x.Selection).SingleOrDefault()
-                    : candidate.Selection;
+                var aiDiscard = analysis.AiDiscards.SingleOrDefault();
+                var deterministicDiscard = analysis.DeterministicDiscards.SingleOrDefault();
+                var selection = candidate != null ? candidate.Selection : aiDiscard != null ? aiDiscard.Selection : deterministicDiscard == null ? null : deterministicDiscard.Selection;
+                var visual = candidate != null ? candidate.VisualShadow : aiDiscard == null ? null : aiDiscard.VisualShadow;
                 Check(selection != null, name + " selección presente", failures);
                 if (selection == null) return;
-                Check(string.Equals(selection.Classification, expectedClass, StringComparison.Ordinal), name + " Expected=" + expectedClass + " Actual=" + selection.Classification, failures);
+                if (expectedClass != null) Check(string.Equals(selection.Classification, expectedClass, StringComparison.Ordinal), name + " Expected=" + expectedClass + " Actual=" + selection.Classification, failures);
+                if (mustNotDiscard) Check(!string.Equals(selection.Classification, "DESCARTAR", StringComparison.Ordinal), name + " no debe descartarse", failures);
                 if (expectedMethod != null)
                     Check(string.Equals(selection.DetectionMethod, expectedMethod, StringComparison.Ordinal), name + " Method=" + selection.DetectionMethod, failures);
                 Console.WriteLine("PASS | " + name + " | " + selection.Classification + " | " + selection.DetectionMethod
                     + " | Confianza=" + (selection.Confidence.HasValue ? selection.Confidence.Value.ToString() : "NULL")
+                    + " | PFactura=" + (visual != null && visual.PFactura.HasValue ? visual.PFactura.Value.ToString("0.#########") : "NULL")
+                    + " | Zona=" + (visual == null ? "NULL" : visual.Zone)
                     + " | Motivo=" + selection.Reason);
             }
         }
+
+        private static void CheckGeneralizationVariants(string root, string invoicePath, string logoPath, ICollection<string> failures)
+        {
+            var variants = Path.Combine(root, "Variants");
+            Directory.CreateDirectory(variants);
+            var logoVariants = CreateVariants(logoPath, variants, "logo", true);
+            var invoiceVariants = CreateVariants(invoicePath, variants, "invoice", false);
+            var logoHash = Hash(logoPath);
+            foreach (var path in logoVariants)
+            {
+                Check(!string.Equals(logoHash, Hash(path), StringComparison.OrdinalIgnoreCase), "Logo variante SHA distinto " + Path.GetFileName(path), failures);
+                CheckDocument(path, Mime(path), "DESCARTAR", "IA_VISUAL+OCR_GATE", failures, "Logo_variante_" + Path.GetFileNameWithoutExtension(path));
+            }
+            foreach (var path in invoiceVariants)
+                CheckDocument(path, Mime(path), null, null, failures, "Factura_variante_" + Path.GetFileNameWithoutExtension(path), true);
+        }
+
+        private static IList<string> CreateVariants(string source, string directory, string prefix, bool includeExtra)
+        {
+            var files = new List<string>();
+            using (var image = Image.FromFile(source))
+            {
+                var reencoded = Path.Combine(directory, prefix + "-reencoded.jpg");
+                SaveJpeg(image, reencoded, 82L); files.Add(reencoded);
+
+                var resized = Path.Combine(directory, prefix + "-resized.jpg");
+                using (var bitmap = Resize(image, Math.Max(1, image.Width * 3 / 4), Math.Max(1, image.Height * 3 / 4))) SaveJpeg(bitmap, resized, 90L);
+                files.Add(resized);
+
+                var png = Path.Combine(directory, prefix + "-png.png");
+                image.Save(png, ImageFormat.Png); files.Add(png);
+
+                if (includeExtra)
+                {
+                    var margin = Path.Combine(directory, prefix + "-margin.jpg");
+                    using (var bitmap = new Bitmap(image.Width + 40, image.Height + 40))
+                    using (var graphics = Graphics.FromImage(bitmap))
+                    { graphics.Clear(Color.White); graphics.DrawImage(image, 20, 20, image.Width, image.Height); SaveJpeg(bitmap, margin, 90L); }
+                    files.Add(margin);
+
+                    var metadata = Path.Combine(directory, prefix + "-metadata.jpg");
+                    using (var bitmap = new Bitmap(image)) { bitmap.SetResolution(72f, 72f); SaveJpeg(bitmap, metadata, 91L); }
+                    files.Add(metadata);
+                }
+            }
+            return files;
+        }
+
+        private static Bitmap Resize(Image image, int width, int height)
+        {
+            var bitmap = new Bitmap(width, height);
+            using (var graphics = Graphics.FromImage(bitmap))
+            { graphics.InterpolationMode = InterpolationMode.HighQualityBicubic; graphics.DrawImage(image, 0, 0, width, height); }
+            return bitmap;
+        }
+
+        private static void SaveJpeg(Image image, string path, long quality)
+        {
+            var codec = ImageCodecInfo.GetImageEncoders().Single(x => x.FormatID == ImageFormat.Jpeg.Guid);
+            using (var parameters = new EncoderParameters(1))
+            { parameters.Param[0] = new EncoderParameter(Encoder.Quality, quality); image.Save(path, codec, parameters); }
+        }
+
+        private static string Hash(string path)
+        {
+            using (var stream = File.OpenRead(path)) using (var sha = SHA256.Create())
+                return BitConverter.ToString(sha.ComputeHash(stream)).Replace("-", string.Empty);
+        }
+
+        private static string Mime(string path)
+        { return string.Equals(Path.GetExtension(path), ".png", StringComparison.OrdinalIgnoreCase) ? "image/png" : "image/jpeg"; }
 
         private static void CheckUiStates(ICollection<string> failures)
         {

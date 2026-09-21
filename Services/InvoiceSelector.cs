@@ -24,6 +24,7 @@ namespace RecepcionDocumental.Services
         };
         private static readonly string[] NegativeSignals = { "REMITO", "NOTA DE CREDITO", "NOTA DE DEBITO", "ORDEN DE COMPRA", "PRESUPUESTO", "RECIBO", "NOTA DE PEDIDO", "CREDENCIAL DE PAGO", "EXTRACTO DE CUENTAS", "RESUMEN DE OPERACIONES" };
         private static readonly string[] DeterministicNonInvoiceSignals = { "COMPROBANTE DE PAGO", "FONDO DE CESE LABORAL" };
+        private static readonly string[] ImageSafetyAdditionalDocumentSignals = { "RESPONSABLE INSCRIPTO", "INGRESOS BRUTOS", "TOTAL A PAGAR", "ORIGINAL" };
         private static readonly string[] InvoiceLetters = { "A", "B", "C", "M", "E" };
 
         public static InvoiceSelection SelectPdf(string text, bool hasUsefulText)
@@ -152,6 +153,34 @@ namespace RecepcionDocumental.Services
 
         public static InvoiceSelection Review(string method, string reason, byte? confidence)
         { return new InvoiceSelection { Classification = "REVISAR", DetectionMethod = method, Confidence = confidence, Reason = reason }; }
+
+        internal static bool HasDocumentEvidenceForImageSafety(string text, out string evidence)
+        {
+            evidence = null;
+            var normalized = Normalize(text);
+            var compact = Compact(normalized);
+
+            var explicitInvoice = ExplicitInvoices.FirstOrDefault(x => ContainsSignal(normalized, compact, x));
+            if (!string.IsNullOrEmpty(explicitInvoice)) { evidence = explicitInvoice; return true; }
+            if (ContainsPhrase(normalized, "FACTURA")) { evidence = "FACTURA"; return true; }
+
+            foreach (var group in FiscalSignals)
+            {
+                var fiscal = group.FirstOrDefault(x => ContainsFiscalSignal(text, normalized, compact, x));
+                if (!string.IsNullOrEmpty(fiscal)) { evidence = fiscal; return true; }
+            }
+
+            var negative = NegativeSignals.FirstOrDefault(x => ContainsSignal(normalized, compact, x));
+            if (!string.IsNullOrEmpty(negative)) { evidence = negative; return true; }
+            var deterministic = DeterministicNonInvoiceSignals.FirstOrDefault(x => ContainsSignal(normalized, compact, x));
+            if (!string.IsNullOrEmpty(deterministic)) { evidence = deterministic; return true; }
+            var additional = ImageSafetyAdditionalDocumentSignals.FirstOrDefault(x => ContainsSignal(normalized, compact, x));
+            if (!string.IsNullOrEmpty(additional)) { evidence = additional; return true; }
+
+            var title = FindStrongSpecificNonInvoiceTitle(text);
+            if (!string.IsNullOrEmpty(title)) { evidence = "TITULO:" + title; return true; }
+            return false;
+        }
 
         private static InvoiceSelection Discard(string method, string reason)
         { return new InvoiceSelection { Classification = "DESCARTAR", DetectionMethod = method, Confidence = null, Reason = reason }; }
