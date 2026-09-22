@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using Microsoft.ML.OnnxRuntime;
 using Newtonsoft.Json;
 using RecepcionDocumental.Configuration;
+using RecepcionDocumental.Infrastructure;
 
 namespace RecepcionDocumental.Services
 {
@@ -49,6 +50,7 @@ namespace RecepcionDocumental.Services
         private static readonly float[] Mean = { .485f, .456f, .406f };
         private static readonly float[] Std = { .229f, .224f, .225f };
         private static readonly Lazy<RuntimeState> Runtime = new Lazy<RuntimeState>(LoadRuntime, true);
+        [ThreadStatic] private static bool _instrumentRuntimeLoad;
         private static int _sessionsCreated;
 
         public static int SessionsCreated { get { return _sessionsCreated; } }
@@ -67,22 +69,24 @@ namespace RecepcionDocumental.Services
 
         public static VisualShadowResult EvaluateCanonicalPng(byte[] png, string visualSource, bool rasterReused)
         {
-            return EvaluateCanonicalPngCore(png, visualSource, rasterReused, null, GetConfiguredModelVersion());
+            return EvaluateCanonicalPngCore(png, visualSource, rasterReused, null, GetConfiguredModelVersion(), false);
         }
 
         public static VisualShadowResult EvaluateCanonicalPngForValidation(byte[] png,string modelDirectory)
-        { return EvaluateCanonicalPngCore(png,"VALIDATION",false,modelDirectory,ExpectedModelVersion); }
+        { return EvaluateCanonicalPngCore(png,"VALIDATION",false,modelDirectory,ExpectedModelVersion,false); }
 
         public static VisualShadowResult EvaluateConfiguredVersionForValidation(byte[] png,string modelVersion)
-        { return EvaluateCanonicalPngCore(png,"VERSION_VALIDATION",false,null,modelVersion); }
+        { return EvaluateCanonicalPngCore(png,"VERSION_VALIDATION",false,null,modelVersion,false); }
 
-        internal static VisualShadowResult EvaluateCanonicalPngCore(byte[] png, string visualSource, bool rasterReused, string modelDirectoryOverride,string modelVersion)
+        internal static VisualShadowResult EvaluateCanonicalPngCore(byte[] png, string visualSource, bool rasterReused, string modelDirectoryOverride,string modelVersion,bool instrumentSafetyGate)
         {
             var total = Stopwatch.StartNew();
             var result = Base(visualSource, rasterReused,modelVersion);
             try
             {
                 ValidateModelVersion(modelVersion);
+                RuntimeLog(instrumentSafetyGate, "VisualRuntime | InicioPreprocesamiento");
+                var preprocessingWatch = Stopwatch.StartNew();
                 int width, height;
                 var decode = Stopwatch.StartNew();
                 var source = DecodeRgbDirect(png, out width, out height);
@@ -105,7 +109,14 @@ namespace RecepcionDocumental.Services
                 var normalizeWatch = Stopwatch.StartNew();
                 var tensor = Normalize(target);
                 normalizeWatch.Stop(); result.NormalizeMilliseconds = Ms(normalizeWatch);
-                var state = modelDirectoryOverride == null ? Runtime.Value : LoadRuntime(modelDirectoryOverride,modelVersion);
+                preprocessingWatch.Stop();
+                RuntimeLog(instrumentSafetyGate, "VisualRuntime | PreprocesamientoFinalizado | DuracionMs=" + preprocessingWatch.ElapsedMilliseconds);
+                RuntimeLog(instrumentSafetyGate, "VisualRuntime | InicioCreacionSession");
+                var sessionWatch = Stopwatch.StartNew();
+                var state = modelDirectoryOverride == null ? GetRuntime(instrumentSafetyGate) : LoadRuntime(modelDirectoryOverride,modelVersion,instrumentSafetyGate);
+                sessionWatch.Stop();
+                RuntimeLog(instrumentSafetyGate, "VisualRuntime | SessionCreada | DuracionMs=" + sessionWatch.ElapsedMilliseconds);
+                RuntimeLog(instrumentSafetyGate, "VisualRuntime | InicioInferencia");
                 var onnxWatch = Stopwatch.StartNew();
                 float pFactura;
                 using (var input = OrtValue.CreateTensorValueFromMemory(tensor, new long[] { 1, 3, Size, Size }))
@@ -113,9 +124,11 @@ namespace RecepcionDocumental.Services
                 using (var output = state.Session.Run(options, new[] { "image" }, new[] { input }, new[] { "probabilities" }))
                     pFactura = output[0].GetTensorDataAsSpan<float>()[1];
                 onnxWatch.Stop(); result.OnnxMilliseconds = Ms(onnxWatch);
+                RuntimeLog(instrumentSafetyGate, "VisualRuntime | InferenciaFinalizada | DuracionMs=" + onnxWatch.ElapsedMilliseconds);
                 result.PFactura = pFactura; result.PNoFactura = 1d - pFactura;
                 result.Zone = pFactura <= TNoFactura ? "NO_FACTURA_FUERTE" : pFactura >= TFactura ? "FACTURA_FUERTE" : "INCIERTO_VISUAL";
                 result.Status = "OK";
+                RuntimeLog(instrumentSafetyGate, "VisualRuntime | PFactura=" + pFactura.ToString("0.#########", System.Globalization.CultureInfo.InvariantCulture) + " | Zone=" + result.Zone);
             }
             catch (Exception ex)
             {
@@ -126,10 +139,24 @@ namespace RecepcionDocumental.Services
         }
 
         public static VisualShadowResult EvaluateImageFile(string path)
+        { return EvaluateImageFile(path, false); }
+
+        public static VisualShadowResult EvaluateImageFileForSafetyGate(string path)
+        { return EvaluateImageFile(path, true); }
+
+        private static VisualShadowResult EvaluateImageFile(string path,bool instrumentSafetyGate)
         {
             var version=GetConfiguredModelVersion();var result = Base("IMAGE_CANONICAL_PNG", false,version);
             var versionError=CreateVersionErrorIfUnsupported("IMAGE_CANONICAL_PNG");if(versionError!=null)return versionError;
-            try { return EvaluateCanonicalPng(CanonicalizeImage(path), "IMAGE_CANONICAL_PNG", false); }
+            try
+            {
+                RuntimeLog(instrumentSafetyGate, "VisualRuntime | InicioCargaImagen");
+                var imageWatch = Stopwatch.StartNew();
+                var canonicalImage = CanonicalizeImage(path);
+                imageWatch.Stop();
+                RuntimeLog(instrumentSafetyGate, "VisualRuntime | ImagenCargada | DuracionMs=" + imageWatch.ElapsedMilliseconds);
+                return EvaluateCanonicalPngCore(canonicalImage, "IMAGE_CANONICAL_PNG", false, null, version, instrumentSafetyGate);
+            }
             catch (Exception ex) { result.Status = "ERROR"; result.ErrorCode = ErrorCode(ex); result.ErrorReason = SafeReason(ex); return result; }
         }
 
@@ -150,20 +177,32 @@ namespace RecepcionDocumental.Services
             }
         }
 
-        private static RuntimeState LoadRuntime() { var version=GetConfiguredModelVersion();ValidateModelVersion(version);return LoadRuntime(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data", "DocumentAi", "Models", version),version); }
-        private static RuntimeState LoadRuntime(string directory,string modelVersion)
+        private static RuntimeState GetRuntime(bool instrumentSafetyGate)
         {
+            var previous = _instrumentRuntimeLoad;
+            _instrumentRuntimeLoad = instrumentSafetyGate;
+            try { return Runtime.Value; }
+            finally { _instrumentRuntimeLoad = previous; }
+        }
+
+        private static RuntimeState LoadRuntime() { var version=GetConfiguredModelVersion();ValidateModelVersion(version);return LoadRuntime(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data", "DocumentAi", "Models", version),version,_instrumentRuntimeLoad); }
+        private static RuntimeState LoadRuntime(string directory,string modelVersion,bool instrumentSafetyGate)
+        {
+            RuntimeLog(instrumentSafetyGate, "VisualRuntime | ValidandoModelo");
             ValidateModelVersion(modelVersion);
             if (!Environment.Is64BitProcess) throw new BadImageFormatException("Visual shadow requiere un proceso x64.");
             var manifestPath = Path.Combine(directory, "runtime-manifest.json"); var modelPath = Path.Combine(directory, "candidate.onnx");
             if (!File.Exists(manifestPath)) throw new FileNotFoundException("No se encontró el manifest visual.");
             if (!File.Exists(modelPath)) throw new FileNotFoundException("No se encontró el modelo visual.");
+            RuntimeLog(instrumentSafetyGate, "VisualRuntime | ValidandoManifest");
             var manifest = JsonConvert.DeserializeObject<RuntimeManifest>(File.ReadAllText(manifestPath));
             if (!ManifestIsValid(manifest,modelVersion))
                 throw new InvalidDataException("El manifest visual no coincide con el contrato congelado.");
+            RuntimeLog(instrumentSafetyGate, "VisualRuntime | ManifestValidado");
             var info = new FileInfo(modelPath); if (info.Length != ExpectedModelBytes) throw new InvalidDataException("El tamaño del modelo visual es incorrecto.");
             using (var stream = File.OpenRead(modelPath)) using (var sha = SHA256.Create())
                 if (BitConverter.ToString(sha.ComputeHash(stream)).Replace("-", "") != ExpectedModelSha256) throw new InvalidDataException("El SHA-256 del modelo visual es incorrecto.");
+            RuntimeLog(instrumentSafetyGate, "VisualRuntime | ModeloValidado");
             OrtEnv.Instance().DisableTelemetryEvents();
             var sessionOptions = new SessionOptions();
             sessionOptions.LogId = "RecepcionDocumental.VisualShadow";
@@ -229,6 +268,7 @@ namespace RecepcionDocumental.Services
         private static float[] Normalize(byte[] bytes){var result=new float[Size*Size*3];for(int i=0;i<Size*Size;i++)for(int c=0;c<3;c++)result[c*Size*Size+i]=((bytes[i*3+c]/255f)-Mean[c])/Std[c];return result;}
         private static VisualShadowResult Base(string source,bool reused,string modelVersion=null){return new VisualShadowResult{Attempted=true,Status="ERROR",ModelVersion=string.IsNullOrWhiteSpace(modelVersion)?ExpectedModelVersion:modelVersion,ModelSha256=ExpectedModelSha256,PreprocessingVersion=PreprocessingVersion,VisualSource=source,RasterReused=reused};}
         private static int Ms(Stopwatch watch){return (int)Math.Min(int.MaxValue,watch.ElapsedMilliseconds);}
+        private static void RuntimeLog(bool enabled,string message){if(enabled)Logs.LogProc(message);}
         private static string ErrorCode(Exception ex){if(ex is ModelVersionUnsupportedException)return "MODEL_VERSION_UNSUPPORTED";if(ex is FileNotFoundException)return "MODEL_MISSING";if(ex is BadImageFormatException)return "PROCESS_OR_RUNTIME_X64";if(ex is InvalidDataException&&ex.Message.IndexOf("SHA-256",StringComparison.OrdinalIgnoreCase)>=0)return "MODEL_HASH_INVALID";if(ex is InvalidDataException)return "CONTRACT_INVALID";return "VISUAL_INFERENCE_ERROR";}
         private static string SafeReason(Exception ex){var text=ex.GetType().Name+": "+ex.Message;return text.Length<=1000?text:text.Substring(0,1000);}
         private sealed class Coeff{public int Start;public int[] Values;}

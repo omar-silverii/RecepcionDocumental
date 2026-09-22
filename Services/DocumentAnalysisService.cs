@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -198,14 +199,24 @@ namespace RecepcionDocumental.Services
             if (!string.Equals(selection.Classification, "DESCARTAR", StringComparison.Ordinal))
             {
                 VisualDocumentShadowEvaluation visualEvaluation;
+                Stopwatch visualSafetyGateWatch = null;
                 if (imageOcrAnalysis != null && string.Equals(selection.Classification, "REVISAR", StringComparison.Ordinal))
+                {
+                    Logs.LogProc("VisualSafetyGate | Inicio");
+                    visualSafetyGateWatch = Stopwatch.StartNew();
                     visualEvaluation = VisualDocumentShadowService.EvaluateImageForSafetyGate(path, name);
+                }
                 else
                     visualEvaluation = VisualDocumentShadowService.Evaluate(path, name, workspace, visualRaster, firstPageRenderedByOcr, firstPageVisualFailureReason);
                 visualShadow = visualEvaluation.Result;
                 rasterizationCount += visualEvaluation.RasterizerCalls; pagesRenderedForShadow = visualEvaluation.PagesRendered; firstPageReusedByShadow = visualEvaluation.FirstPageReused;
                 if (imageOcrAnalysis != null)
                     selection = ImageNonDocumentSafetyPolicy.Apply(selection, imageOcrAnalysis.Text, visualShadow);
+                if (visualSafetyGateWatch != null)
+                {
+                    visualSafetyGateWatch.Stop();
+                    Logs.LogProc("VisualSafetyGate | Fin | Decision=" + selection.Classification + " | DuracionMs=" + visualSafetyGateWatch.ElapsedMilliseconds);
+                }
             }
             Logs.LogProc("DocumentAnalysis | Documento clasificado | Clasificacion=" + selection.Classification + " | Metodo=" + selection.DetectionMethod);
             if (selection.Classification == "DESCARTAR")

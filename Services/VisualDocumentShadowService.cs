@@ -69,7 +69,7 @@ namespace RecepcionDocumental.Services
 
             var evaluation = new VisualDocumentShadowEvaluation();
             var visual = VisualInvoiceShadowService.CreateVersionErrorIfUnsupported("IMAGE_SAFETY_GATE");
-            if (visual == null) visual = VisualInvoiceShadowService.EvaluateImageFile(path);
+            if (visual == null) visual = VisualInvoiceShadowService.EvaluateImageFileForSafetyGate(path);
             evaluation.Result = visual;
             return evaluation;
         }
