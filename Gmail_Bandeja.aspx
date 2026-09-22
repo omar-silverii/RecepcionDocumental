@@ -1,6 +1,21 @@
 <%@ Page Title="Bandeja Gmail" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Gmail_Bandeja.aspx.cs" Inherits="RecepcionDocumental.Gmail_Bandeja" %>
 <%@ Register Src="~/Controls/WsListadoAgrupado.ascx" TagPrefix="ws" TagName="ListadoAgrupado" %>
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
+<style type="text/css">
+    .sync-overlay { display: none; position: fixed; inset: 0; z-index: 2147483647; background: rgba(16, 24, 40, .78); align-items: center; justify-content: center; padding: 1.5rem; }
+    .sync-overlay.is-active { display: flex; }
+    .sync-overlay-card { width: min(34rem, 100%); border-radius: .75rem; background: #fff; padding: 2rem; text-align: center; box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, .35); }
+    .sync-spinner { width: 3rem; height: 3rem; margin: 0 auto 1.25rem; border: .35rem solid #dbe4f0; border-top-color: #0d6efd; border-radius: 50%; animation: sync-spin .8s linear infinite; }
+    @keyframes sync-spin { to { transform: rotate(360deg); } }
+</style>
+<asp:Panel ID="pnlSyncOverlay" runat="server" ClientIDMode="Static" CssClass="sync-overlay" role="dialog" aria-modal="true" aria-labelledby="syncOverlayTitle" tabindex="-1">
+    <div class="sync-overlay-card">
+        <div class="sync-spinner" aria-hidden="true"></div>
+        <h2 id="syncOverlayTitle" class="h4">Buscando nuevos correos...</h2>
+        <p class="mb-2">El procesamiento puede tardar algunos minutos.</p>
+        <p id="syncOverlayStatus" class="text-secondary mb-0" aria-live="polite">Esperando confirmación del estado...</p>
+    </div>
+</asp:Panel>
 <main class="gmail-inbox-page">
     <header class="page-header d-flex justify-content-between align-items-end flex-wrap gap-3">
         <div>
@@ -8,7 +23,7 @@
             <h1>Bandeja de entrada</h1>
         </div>
         <div class="d-flex gap-2">
-            <asp:Button ID="btnBuscar" runat="server" ClientIDMode="Static" Text="Buscar nuevos correos" CssClass="btn btn-primary" UseSubmitBehavior="false" OnClientClick="this.disabled=true;this.value='Buscando…';" OnClick="Buscar_Click" />
+            <asp:Button ID="btnBuscar" runat="server" ClientIDMode="Static" Text="Buscar nuevos correos" CssClass="btn btn-primary" UseSubmitBehavior="false" OnClientClick="beginGmailSync();" OnClick="Buscar_Click" />
             <a href="Gmail_Config.aspx" class="btn btn-outline-primary">Configurar cuenta</a>
         </div>
     </header>
@@ -26,12 +41,12 @@
     </asp:Panel>
 
     <asp:Panel ID="pnlResultado" runat="server" Visible="false" CssClass="alert alert-success">
-        <h2 class="h5">Sincronización terminada</h2>
+        <h2 class="h5"><asp:Literal ID="litResultadoTitulo" runat="server" /></h2>
         <ul class="mb-0">
             <li>Mensajes encontrados: <asp:Literal ID="litEncontrados" runat="server" /></li>
-            <li>Mensajes relevantes nuevos: <asp:Literal ID="litNuevos" runat="server" /></li>
+            <li>Mensajes nuevos: <asp:Literal ID="litNuevos" runat="server" /></li>
             <li>Adjuntos analizados: <asp:Literal ID="litAnalizados" runat="server" /></li>
-            <li>Facturas detectadas: <asp:Literal ID="litFacturas" runat="server" /></li>
+            <li>Facturas: <asp:Literal ID="litFacturas" runat="server" /></li>
             <li>Para revisar: <asp:Literal ID="litRevisar" runat="server" /></li>
             <li>Descartados: <asp:Literal ID="litDescartados" runat="server" /></li>
             <li>Documentos existentes: <asp:Literal ID="litDocumentosExistentes" runat="server" /></li>
@@ -43,9 +58,40 @@
     <ws:ListadoAgrupado ID="lstMensajes" runat="server" />
 </main>
 <script type="text/javascript">
+    function setGmailSyncOverlay(active, text) {
+        var overlay = document.getElementById('pnlSyncOverlay');
+        if (!overlay) return;
+        if (active) {
+            overlay.classList.add('is-active');
+            document.body.style.overflow = 'hidden';
+            var status = document.getElementById('syncOverlayStatus');
+            if (status && text) status.textContent = text;
+            window.setTimeout(function () { overlay.focus(); }, 0);
+        } else {
+            overlay.classList.remove('is-active');
+            document.body.style.overflow = '';
+        }
+    }
+
+    function beginGmailSync() {
+        var button = document.getElementById('btnBuscar');
+        if (button) { button.disabled = true; button.value = 'Buscando…'; }
+        setGmailSyncOverlay(true, 'Iniciando búsqueda...');
+        return true;
+    }
+
     (function () {
+        var overlay = document.getElementById('pnlSyncOverlay');
+        document.addEventListener('keydown', function (event) {
+            if (overlay && overlay.classList.contains('is-active') && event.key === 'Tab') {
+                event.preventDefault(); overlay.focus();
+            }
+        }, true);
+
         var polling = document.getElementById('hidSyncPolling');
         if (!polling || polling.value !== '1') return;
+
+        setGmailSyncOverlay(true, 'Esperando confirmación del estado...');
 
         var baselineField = document.getElementById('hidSyncBaseline');
         var baseline = baselineField ? parseInt(baselineField.value || '0', 10) : 0;
@@ -61,12 +107,12 @@
             request.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
             request.onreadystatechange = function () {
                 if (request.readyState !== 4) return;
-                if (request.status !== 200) { schedule(); return; }
+                if (request.status !== 200) { setGmailSyncOverlay(true, 'Esperando confirmación del estado...'); schedule(); return; }
 
                 var payload;
                 try { payload = JSON.parse(request.responseText).d; }
-                catch (error) { schedule(); return; }
-                if (!payload || payload.Id <= baseline) { schedule(); return; }
+                catch (error) { setGmailSyncOverlay(true, 'Esperando confirmación del estado...'); schedule(); return; }
+                if (!payload || payload.Id <= baseline) { setGmailSyncOverlay(true, 'Esperando confirmación del estado...'); schedule(); return; }
 
                 var status = document.getElementById('syncStatusText');
                 if (status) status.textContent = payload.Texto;
@@ -74,14 +120,14 @@
 
                 if (payload.EnEjecucion) {
                     if (button) { button.disabled = true; button.value = 'Buscando…'; }
+                    setGmailSyncOverlay(true, payload.Texto);
                     schedule();
                     return;
                 }
 
+                if (!payload.EsTerminal) { setGmailSyncOverlay(true, 'Esperando confirmación del estado...'); schedule(); return; }
                 stopped = true;
-                if (button) { button.disabled = false; button.value = 'Buscar nuevos correos'; }
-                var notice = document.getElementById('pnlDatabaseWarning');
-                if (notice) notice.style.display = 'none';
+                setGmailSyncOverlay(true, payload.Texto);
                 window.setTimeout(function () { window.location.reload(); }, 500);
             };
             request.send('{}');

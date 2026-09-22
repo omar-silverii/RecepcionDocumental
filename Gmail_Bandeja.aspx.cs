@@ -16,6 +16,7 @@ namespace RecepcionDocumental
     {
         public long Id { get; set; }
         public bool EnEjecucion { get; set; }
+        public bool EsTerminal { get; set; }
         public string Texto { get; set; }
     }
 
@@ -47,9 +48,11 @@ namespace RecepcionDocumental
             LoadPageData();
             if (launch.Started)
             {
+                pnlResultado.Visible = false;
                 btnBuscar.Enabled = false;
                 hidSyncPolling.Value = "1";
                 hidSyncBaseline.Value = previousId.ToString(CultureInfo.InvariantCulture);
+                pnlSyncOverlay.CssClass = "sync-overlay is-active";
                 litSyncStatus.Text = Server.HtmlEncode("BUSCANDO / EN EJECUCIÓN");
                 ShowNotice(launch.Message);
             }
@@ -84,7 +87,15 @@ namespace RecepcionDocumental
             else
                 text = "Última recepción: " + localStart.ToString("dd/MM/yyyy HH:mm") + " | " + latest.Estado + " | Mensajes: " + latest.Mensajes + " | Errores: " + latest.Errores;
 
-            return new GmailSyncStatusView { Id = latest.Id, EnEjecucion = running, Texto = text };
+            return new GmailSyncStatusView { Id = latest.Id, EnEjecucion = running, EsTerminal = IsTerminalState(latest.Estado), Texto = text };
+        }
+
+        internal static bool IsTerminalState(string state)
+        {
+            return string.Equals(state, "COMPLETADA", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(state, "COMPLETADA_CON_ERRORES", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(state, "FALLIDA", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(state, "OMITIDA_YA_EN_EJECUCION", StringComparison.OrdinalIgnoreCase);
         }
 
         private void Listado_FiltersChanged(object sender, EventArgs e)
@@ -118,6 +129,8 @@ namespace RecepcionDocumental
             litSyncStatus.Text = Server.HtmlEncode(syncStatus.Texto);
             hidSyncPolling.Value = syncStatus.EnEjecucion ? "1" : "0";
             hidSyncBaseline.Value = (syncStatus.EnEjecucion ? Math.Max(0, syncStatus.Id - 1) : syncStatus.Id).ToString(CultureInfo.InvariantCulture);
+            pnlSyncOverlay.CssClass = syncStatus.EnEjecucion ? "sync-overlay is-active" : "sync-overlay";
+            BindFinalSummary(latest, syncStatus);
 
             try
             {
@@ -157,6 +170,27 @@ namespace RecepcionDocumental
                 lstMensajes.BindData(columns, rows);
             }
             catch (System.Data.SqlClient.SqlException) { ShowError("No se pudo consultar la estructura H1C. Ejecutá Database/003_GmailSync.sql."); }
+        }
+
+        private void BindFinalSummary(GmailSyncAuditInfo latest, GmailSyncStatusView status)
+        {
+            pnlResultado.Visible = latest != null && status.EsTerminal;
+            if (!pnlResultado.Visible) return;
+
+            var failed = string.Equals(latest.Estado, "FALLIDA", StringComparison.OrdinalIgnoreCase);
+            var withErrors = string.Equals(latest.Estado, "COMPLETADA_CON_ERRORES", StringComparison.OrdinalIgnoreCase);
+            var omitted = string.Equals(latest.Estado, "OMITIDA_YA_EN_EJECUCION", StringComparison.OrdinalIgnoreCase);
+            pnlResultado.CssClass = failed ? "alert alert-danger" : withErrors || omitted ? "alert alert-warning" : "alert alert-success";
+            litResultadoTitulo.Text = Server.HtmlEncode(failed ? "Búsqueda fallida" : omitted ? "Búsqueda omitida" : withErrors ? "Búsqueda completada con errores" : "Búsqueda completada");
+            litEncontrados.Text = latest.Mensajes.ToString(CultureInfo.InvariantCulture);
+            litNuevos.Text = latest.MensajesNuevos.ToString(CultureInfo.InvariantCulture);
+            litAnalizados.Text = latest.AdjuntosAnalizados.ToString(CultureInfo.InvariantCulture);
+            litFacturas.Text = latest.Facturas.ToString(CultureInfo.InvariantCulture);
+            litRevisar.Text = latest.Revisar.ToString(CultureInfo.InvariantCulture);
+            litDescartados.Text = latest.Descartados.ToString(CultureInfo.InvariantCulture);
+            litDocumentosExistentes.Text = latest.DocumentosExistentes.ToString(CultureInfo.InvariantCulture);
+            litErrores.Text = latest.Errores.ToString(CultureInfo.InvariantCulture);
+            litFallback.Text = latest.UsoFallbackInicial ? "<p class=\"mb-0 mt-2\">Se utilizó la búsqueda inicial de Gmail.</p>" : string.Empty;
         }
 
         private static WsListadoFila ToListRow(GmailMensajeInfo item)

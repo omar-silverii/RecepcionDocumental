@@ -28,12 +28,14 @@ namespace PdfRasterProbe
             var configuration = new ConfiguracionAplicacion(
                 "RecepcionDocumental", Path.Combine(root, "Logs"), Path.Combine(root, "Trabajo"),
                 Path.Combine(root, "Facturas"), Path.Combine(root, "Revisar"),
-                200, 52428800, 262144000, 3, "https://localhost/current-cases", true, "H1D9B-CANDIDATE-001");
+                200, 52428800, 262144000, 3, "https://localhost/current-cases");
             configuration.PrepararRutasOperativas();
             ConfiguracionSistema.Inicializar(configuration);
             Logs.Inicializar(configuration);
 
             var failures = new List<string>();
+            Check(!configuration.VisionShadowEnabled, "CONFIG_PRODUCTIVA VisionShadowEnabled=false", failures);
+            CheckProductiveModelAssets(failures);
             CheckSyntheticSelectors(failures);
             CheckImageSafetyPolicy(failures);
             CheckDocument(args[2], "image/jpeg", "FACTURA", null, failures, "Factura_real");
@@ -41,12 +43,40 @@ namespace PdfRasterProbe
             CheckDocument(args[4], "application/pdf", "REVISAR", "MDOC_OCR_CONFLICTO", failures, "Nota_credito_real");
             CheckDocument(args[5], "application/pdf", "REVISAR", null, failures, "Nota_credito_conflictiva_corpus");
             CheckDocument(args[6], "image/jpeg", null, null, failures, "Factura_imagen_dificil", true);
+            CheckThreeAttachmentIntegration(args[2], args[3], args[4], failures);
             CheckGeneralizationVariants(root, args[2], args[3], failures);
             CheckUiStates(failures);
+            CheckUiMarkup(failures);
 
             Console.WriteLine("CURRENT_CASES_REGRESSION | " + (failures.Count == 0 ? "APROBADO" : "NO_APROBADO") + " | Fallas=" + failures.Count);
             foreach (var failure in failures) Console.WriteLine("FAIL | " + failure);
             return failures.Count == 0 ? 0 : 1;
+        }
+
+        private static void CheckProductiveModelAssets(ICollection<string> failures)
+        {
+            var modelRoot = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data", "DocumentAi", "Models", "H1D9B-CANDIDATE-001");
+            Check(File.Exists(Path.Combine(modelRoot, "candidate.onnx")), "Modelo productivo candidate.onnx disponible", failures);
+            Check(File.Exists(Path.Combine(modelRoot, "runtime-manifest.json")), "Modelo productivo runtime-manifest.json disponible", failures);
+        }
+
+        private static void CheckThreeAttachmentIntegration(string invoice, string logo, string note, ICollection<string> failures)
+        {
+            var selections = new[] { AnalyzeSelection(invoice, "image/jpeg"), AnalyzeSelection(note, "application/pdf"), AnalyzeSelection(logo, "image/jpeg") };
+            Check(selections.Count(x => x != null && x.Classification == "FACTURA") == 1, "Integración tres adjuntos: 1 FACTURA", failures);
+            Check(selections.Count(x => x != null && x.Classification == "REVISAR") == 1, "Integración tres adjuntos: 1 REVISAR", failures);
+            Check(selections.Count(x => x != null && x.Classification == "DESCARTAR") == 1, "Integración tres adjuntos: 1 DESCARTAR", failures);
+            Check(selections.Single(x => x.Classification == "DESCARTAR").DetectionMethod == "IA_VISUAL+OCR_GATE", "Integración tres adjuntos: descarte por gate visual", failures);
+        }
+
+        private static InvoiceSelection AnalyzeSelection(string path, string mime)
+        {
+            using (var workspace = new AttachmentWorkspace())
+            {
+                var analysis = DocumentAnalysisService.Analyze(File.ReadAllBytes(path), Path.GetFileName(path), mime, workspace);
+                var candidate = analysis.Candidates.SingleOrDefault(); var ai = analysis.AiDiscards.SingleOrDefault(); var deterministic = analysis.DeterministicDiscards.SingleOrDefault();
+                return candidate != null ? candidate.Selection : ai != null ? ai.Selection : deterministic == null ? null : deterministic.Selection;
+            }
         }
 
         private static void CheckSyntheticSelectors(ICollection<string> failures)
@@ -192,17 +222,35 @@ namespace PdfRasterProbe
             var withErrors = Gmail_Bandeja.BuildSyncStatus(Audit(10, "COMPLETADA_CON_ERRORES", 3, 1));
             var failed = Gmail_Bandeja.BuildSyncStatus(Audit(10, "FALLIDA", 0, 1));
             var omitted = Gmail_Bandeja.BuildSyncStatus(Audit(10, "OMITIDA_YA_EN_EJECUCION", 0, 0));
-            Check(!initial.EnEjecucion, "UI_INICIAL", failures);
-            Check(running.EnEjecucion && running.Texto.StartsWith("BUSCANDO / EN EJECUCIÓN", StringComparison.Ordinal), "UI_EJECUTANDO", failures);
-            Check(!completed.EnEjecucion && completed.Texto.StartsWith("Búsqueda completada", StringComparison.Ordinal), "UI_COMPLETADA", failures);
-            Check(!withErrors.EnEjecucion && withErrors.Texto.StartsWith("Búsqueda completada con errores", StringComparison.Ordinal), "UI_COMPLETADA_CON_ERRORES", failures);
-            Check(!failed.EnEjecucion && failed.Texto.StartsWith("Búsqueda fallida", StringComparison.Ordinal), "UI_FALLIDA", failures);
-            Check(!omitted.EnEjecucion && omitted.Texto.StartsWith("Búsqueda omitida", StringComparison.Ordinal), "UI_OMITIDA", failures);
+            Check(!initial.EnEjecucion && !initial.EsTerminal, "UI_INICIAL overlay oculto", failures);
+            Check(running.EnEjecucion && !running.EsTerminal && running.Texto.StartsWith("BUSCANDO / EN EJECUCIÓN", StringComparison.Ordinal), "UI_EJECUTANDO overlay bloqueante", failures);
+            Check(!completed.EnEjecucion && completed.EsTerminal && completed.Texto.StartsWith("Búsqueda completada", StringComparison.Ordinal), "UI_COMPLETADA recarga final", failures);
+            Check(!withErrors.EnEjecucion && withErrors.EsTerminal && withErrors.Texto.StartsWith("Búsqueda completada con errores", StringComparison.Ordinal), "UI_COMPLETADA_CON_ERRORES recarga final", failures);
+            Check(!failed.EnEjecucion && failed.EsTerminal && failed.Texto.StartsWith("Búsqueda fallida", StringComparison.Ordinal), "UI_FALLIDA libera tras confirmar", failures);
+            Check(!omitted.EnEjecucion && omitted.EsTerminal && omitted.Texto.StartsWith("Búsqueda omitida", StringComparison.Ordinal), "UI_OMITIDA terminal", failures);
         }
 
         private static GmailSyncAuditInfo Audit(long id, string state, int messages, int errors)
         {
             return new GmailSyncAuditInfo { Id = id, Estado = state, Origen = "WEB", Inicio = DateTime.UtcNow, Mensajes = messages, Errores = errors };
+        }
+
+        private static void CheckUiMarkup(ICollection<string> failures)
+        {
+            var path = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Gmail_Bandeja.aspx"));
+            var markup = File.ReadAllText(path);
+            Check(markup.Contains("position: fixed") && markup.Contains("z-index: 2147483647"), "UI overlay cubre viewport y navbar", failures);
+            Check(markup.Contains("OnClientClick=\"beginGmailSync();\""), "UI click muestra overlay sin cancelar postback", failures);
+            Check(markup.Contains("request.status !== 200") && markup.Contains("Esperando confirmación del estado..."), "UI error polling conserva bloqueo", failures);
+            Check(markup.Contains("if (!payload.EsTerminal)") && Count(markup, "window.location.reload()") == 1, "UI recarga única sólo con estado terminal", failures);
+            Check(markup.Contains("event.key === 'Tab'") && markup.Contains("overlay.focus()"), "UI bloquea navegación por teclado", failures);
+        }
+
+        private static int Count(string value, string fragment)
+        {
+            var count = 0; var start = 0;
+            while ((start = value.IndexOf(fragment, start, StringComparison.Ordinal)) >= 0) { count++; start += fragment.Length; }
+            return count;
         }
 
         private static void Check(bool pass, string message, ICollection<string> failures)

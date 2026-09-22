@@ -59,7 +59,7 @@ namespace PdfRasterProbe
 
         private static void Initialize(string root)
         {
-            var configuration = new ConfiguracionAplicacion("RecepcionDocumental", Path.Combine(root, "Logs"), Path.Combine(root, "Trabajo"), Path.Combine(root, "Facturas"), Path.Combine(root, "Revisar"), 200, 52428800, 262144000, 3, "https://localhost/image-gate", true, "H1D9B-CANDIDATE-001");
+            var configuration = new ConfiguracionAplicacion("RecepcionDocumental", Path.Combine(root, "Logs"), Path.Combine(root, "Trabajo"), Path.Combine(root, "Facturas"), Path.Combine(root, "Revisar"), 200, 52428800, 262144000, 3, "https://localhost/image-gate");
             configuration.PrepararRutasOperativas(); ConfiguracionSistema.Inicializar(configuration); Logs.Inicializar(configuration);
         }
 

@@ -18,7 +18,8 @@ namespace RecepcionDocumental.Data
         public string Origen,Estado;
         public DateTime Inicio;
         public DateTime? Fin;
-        public int Mensajes,Errores;
+        public int Mensajes,MensajesNuevos,AdjuntosAnalizados,Facturas,Revisar,Descartados,DocumentosExistentes,Errores;
+        public bool UsoFallbackInicial;
     }
     public static class GmailSyncAuditRepository
     {
@@ -52,7 +53,7 @@ SELECT COUNT(*) FROM dbo.GmailSyncEjecucion WHERE Id=@Id AND Estado=@State AND E
         }
         public static GmailSyncAuditInfo Latest()
         {
-            try{using(var cn=Connection())using(var cmd=new SqlCommand("SELECT TOP(1) Id,Origen,Estado,FechaInicioUtc,FechaFinUtc,MensajesEncontrados,Errores FROM dbo.GmailSyncEjecucion ORDER BY Id DESC;",cn)){cn.Open();using(var r=cmd.ExecuteReader())return r.Read()?new GmailSyncAuditInfo{Id=r.GetInt64(0),Origen=r.GetString(1),Estado=r.GetString(2),Inicio=r.GetDateTime(3),Fin=r.IsDBNull(4)?(DateTime?)null:r.GetDateTime(4),Mensajes=r.GetInt32(5),Errores=r.GetInt32(6)}:null;}}
+            try{using(var cn=Connection())using(var cmd=new SqlCommand("SELECT TOP(1) Id,Origen,Estado,FechaInicioUtc,FechaFinUtc,MensajesEncontrados,MensajesNuevos,AdjuntosAnalizados,Facturas,Revisar,Descartados,DocumentosExistentes,Errores,UsoFallbackInicial FROM dbo.GmailSyncEjecucion ORDER BY Id DESC;",cn)){cn.Open();using(var r=cmd.ExecuteReader())return r.Read()?new GmailSyncAuditInfo{Id=r.GetInt64(0),Origen=r.GetString(1),Estado=r.GetString(2),Inicio=r.GetDateTime(3),Fin=r.IsDBNull(4)?(DateTime?)null:r.GetDateTime(4),Mensajes=r.GetInt32(5),MensajesNuevos=r.GetInt32(6),AdjuntosAnalizados=r.GetInt32(7),Facturas=r.GetInt32(8),Revisar=r.GetInt32(9),Descartados=r.GetInt32(10),DocumentosExistentes=r.GetInt32(11),Errores=r.GetInt32(12),UsoFallbackInicial=r.GetBoolean(13)}:null;}}
             catch(Exception ex){ReportingFailure(ex);return null;}
         }
         private static void ReportingFailure(Exception ex,string code="ReportingFailure"){try{Logs.LogError("GmailSyncAudit | "+code+" | Error="+ex.GetType().Name);}catch{} }

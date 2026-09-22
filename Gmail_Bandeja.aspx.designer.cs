@@ -14,6 +14,9 @@ namespace RecepcionDocumental
     public partial class Gmail_Bandeja
     {
 
+        /// <summary>Control pnlSyncOverlay.</summary>
+        protected global::System.Web.UI.WebControls.Panel pnlSyncOverlay;
+
         /// <summary>
         /// Control btnBuscar.
         /// </summary>
@@ -85,6 +88,9 @@ namespace RecepcionDocumental
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel pnlResultado;
+
+        /// <summary>Control litResultadoTitulo.</summary>
+        protected global::System.Web.UI.WebControls.Literal litResultadoTitulo;
 
         /// <summary>
         /// Control litEncontrados.

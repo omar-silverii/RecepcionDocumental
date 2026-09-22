@@ -58,5 +58,20 @@ namespace RecepcionDocumental.Services
             else Logs.LogError("VisualShadow | Estado=ERROR | Codigo=" + Logs.SanitizarMensaje(shadow.ErrorCode));
             return evaluation;
         }
+
+        public static VisualDocumentShadowEvaluation EvaluateImageForSafetyGate(string path, string name,
+            VisualDocumentShadowEvaluation existingEvaluation = null)
+        {
+            if (!IsImage(name))
+                return new VisualDocumentShadowEvaluation { Result = VisualInvoiceShadowService.CreateUnsupportedError() };
+            if (existingEvaluation != null && existingEvaluation.Result != null && existingEvaluation.Result.Attempted)
+                return existingEvaluation;
+
+            var evaluation = new VisualDocumentShadowEvaluation();
+            var visual = VisualInvoiceShadowService.CreateVersionErrorIfUnsupported("IMAGE_SAFETY_GATE");
+            if (visual == null) visual = VisualInvoiceShadowService.EvaluateImageFile(path);
+            evaluation.Result = visual;
+            return evaluation;
+        }
     }
 }

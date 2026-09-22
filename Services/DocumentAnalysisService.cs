@@ -197,7 +197,11 @@ namespace RecepcionDocumental.Services
             SelectionReady:
             if (!string.Equals(selection.Classification, "DESCARTAR", StringComparison.Ordinal))
             {
-                var visualEvaluation = VisualDocumentShadowService.Evaluate(path, name, workspace, visualRaster, firstPageRenderedByOcr, firstPageVisualFailureReason);
+                VisualDocumentShadowEvaluation visualEvaluation;
+                if (imageOcrAnalysis != null && string.Equals(selection.Classification, "REVISAR", StringComparison.Ordinal))
+                    visualEvaluation = VisualDocumentShadowService.EvaluateImageForSafetyGate(path, name);
+                else
+                    visualEvaluation = VisualDocumentShadowService.Evaluate(path, name, workspace, visualRaster, firstPageRenderedByOcr, firstPageVisualFailureReason);
                 visualShadow = visualEvaluation.Result;
                 rasterizationCount += visualEvaluation.RasterizerCalls; pagesRenderedForShadow = visualEvaluation.PagesRendered; firstPageReusedByShadow = visualEvaluation.FirstPageReused;
                 if (imageOcrAnalysis != null)
