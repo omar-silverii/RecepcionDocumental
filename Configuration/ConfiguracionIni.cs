@@ -57,7 +57,8 @@ namespace RecepcionDocumental.Configuration
                 ObtenerOpcional(valores, "VisionShadow/ModelVersion", "H1D9B-CANDIDATE-001"),
                 ObtenerBooleanoOpcional(valores, "FamilyAi/Enabled", true),
                 ObtenerOpcional(valores, "FamilyAi/ModelVersion", "H1D10D5-FAMILY-001"),
-                ObtenerOpcional(valores, "Sync/RunnerPath", null));
+                ObtenerOpcional(valores, "Sync/RunnerPath", null),
+                ObtenerBooleanoOpcional(valores, "VisualAI/OnnxEnabled", false));
         }
 
         private static string Obtener(IDictionary<string, string> valores, string clave)

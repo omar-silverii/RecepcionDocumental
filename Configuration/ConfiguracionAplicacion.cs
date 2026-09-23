@@ -9,17 +9,17 @@ namespace RecepcionDocumental.Configuration
         public ConfiguracionAplicacion(string nombreProyecto, string rutaLogs, string rutaTrabajo, string rutaFacturas, string rutaRevisar,
             int zipMaxEntradas, long zipMaxBytesPorArchivo, long zipMaxBytesDescomprimidos, int zipMaxProfundidad,
             string gmailRedirectUri, bool visionShadowEnabled = false, string visionShadowModelVersion = "H1D9B-CANDIDATE-001",
-            bool familyAiEnabled = false, string familyAiModelVersion = "H1D10D5-FAMILY-001")
+            bool familyAiEnabled = false, string familyAiModelVersion = "H1D10D5-FAMILY-001", bool onnxEnabled = true)
             : this(nombreProyecto, rutaLogs, rutaTrabajo, rutaFacturas, rutaRevisar,
                 zipMaxEntradas, zipMaxBytesPorArchivo, zipMaxBytesDescomprimidos, zipMaxProfundidad,
-                gmailRedirectUri, visionShadowEnabled, visionShadowModelVersion, familyAiEnabled, familyAiModelVersion, null)
+                gmailRedirectUri, visionShadowEnabled, visionShadowModelVersion, familyAiEnabled, familyAiModelVersion, null, onnxEnabled)
         {
         }
 
         public ConfiguracionAplicacion(string nombreProyecto, string rutaLogs, string rutaTrabajo, string rutaFacturas, string rutaRevisar,
             int zipMaxEntradas, long zipMaxBytesPorArchivo, long zipMaxBytesDescomprimidos, int zipMaxProfundidad,
             string gmailRedirectUri, bool visionShadowEnabled, string visionShadowModelVersion,
-            bool familyAiEnabled, string familyAiModelVersion, string runnerPath)
+            bool familyAiEnabled, string familyAiModelVersion, string runnerPath, bool onnxEnabled = true)
         {
             NombreProyecto = ValidarNombreProyecto(nombreProyecto);
             RutaLogs = ValidarRuta("Rutas/Logs", rutaLogs);
@@ -35,6 +35,7 @@ namespace RecepcionDocumental.Configuration
             VisionShadowModelVersion = string.IsNullOrWhiteSpace(visionShadowModelVersion) ? "H1D9B-CANDIDATE-001" : Normalizar(visionShadowModelVersion);
             FamilyAiEnabled = familyAiEnabled;
             FamilyAiModelVersion = string.IsNullOrWhiteSpace(familyAiModelVersion) ? "H1D10D5-FAMILY-001" : Normalizar(familyAiModelVersion);
+            OnnxEnabled = onnxEnabled;
             RunnerPath = ValidarRutaArchivoOpcional("Sync/RunnerPath", runnerPath);
             if (ZipMaxBytesDescomprimidos < ZipMaxBytesPorArchivo)
                 throw new ConfiguracionAplicacionException("Zip/MaxBytesDescomprimidos no puede ser menor que Zip/MaxBytesPorArchivo.");
@@ -54,6 +55,7 @@ namespace RecepcionDocumental.Configuration
         public string VisionShadowModelVersion { get; private set; }
         public bool FamilyAiEnabled { get; private set; }
         public string FamilyAiModelVersion { get; private set; }
+        public bool OnnxEnabled { get; private set; }
         public string RunnerPath { get; private set; }
 
         public void PrepararRutasOperativas()

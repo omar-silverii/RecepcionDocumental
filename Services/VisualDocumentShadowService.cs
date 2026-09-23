@@ -29,6 +29,7 @@ namespace RecepcionDocumental.Services
             OcrImageData visualRaster = null, bool firstPageRenderedByOcr = false, string firstPageVisualFailureReason = null)
         {
             var evaluation = new VisualDocumentShadowEvaluation();
+            if (!ConfiguracionSistema.Actual.OnnxEnabled) return evaluation;
             if (!ConfiguracionSistema.Actual.VisionShadowEnabled) return evaluation;
             var shadow = VisualInvoiceShadowService.CreateVersionErrorIfUnsupported("MODEL_VERSION_VALIDATION");
             if (shadow == null && string.Equals(Path.GetExtension(name), ".pdf", StringComparison.OrdinalIgnoreCase))
@@ -64,6 +65,11 @@ namespace RecepcionDocumental.Services
         {
             if (!IsImage(name))
                 return new VisualDocumentShadowEvaluation { Result = VisualInvoiceShadowService.CreateUnsupportedError() };
+            if (!ConfiguracionSistema.Actual.OnnxEnabled)
+            {
+                Logs.LogProc("VisualSafetyGate | ONNX deshabilitado por configuración | Decision=NO_EVALUAR");
+                return new VisualDocumentShadowEvaluation();
+            }
             if (existingEvaluation != null && existingEvaluation.Result != null && existingEvaluation.Result.Attempted)
                 return existingEvaluation;
 
