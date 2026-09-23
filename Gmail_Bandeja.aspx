@@ -96,24 +96,48 @@
         var baselineField = document.getElementById('hidSyncBaseline');
         var baseline = baselineField ? parseInt(baselineField.value || '0', 10) : 0;
         var stopped = false;
+        var pollingFailures = 0;
+        var emptyPolls = 0;
+        var syncStatusUrl = '<%= ResolveUrl("~/GmailSyncStatus.ashx") %>';
+
+        function refreshByGet() {
+            stopped = true;
+            window.location.replace(window.location.pathname + window.location.search);
+        }
 
         function schedule() {
             if (!stopped) window.setTimeout(poll, 2500);
         }
 
+        function pollingFailed() {
+            pollingFailures++;
+            setGmailSyncOverlay(true, 'Esperando confirmación del estado...');
+            if (pollingFailures >= 3) { refreshByGet(); return; }
+            schedule();
+        }
+
         function poll() {
             var request = new XMLHttpRequest();
-            request.open('POST', 'Gmail_Bandeja.aspx/GetSyncStatus', true);
-            request.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+            var handled = false;
+            request.open('GET', syncStatusUrl + '?baseline=' + encodeURIComponent(baseline) + '&_=' + new Date().getTime(), true);
+            request.timeout = 10000;
             request.onreadystatechange = function () {
-                if (request.readyState !== 4) return;
-                if (request.status !== 200) { setGmailSyncOverlay(true, 'Esperando confirmación del estado...'); schedule(); return; }
+                if (request.readyState !== 4 || handled) return;
+                handled = true;
+                if (request.status !== 200) { pollingFailed(); return; }
 
                 var payload;
-                try { payload = JSON.parse(request.responseText).d; }
-                catch (error) { setGmailSyncOverlay(true, 'Esperando confirmación del estado...'); schedule(); return; }
-                if (!payload || payload.Id <= baseline) { setGmailSyncOverlay(true, 'Esperando confirmación del estado...'); schedule(); return; }
+                try { payload = JSON.parse(request.responseText); }
+                catch (error) { pollingFailed(); return; }
+                if (!payload || payload.Id <= baseline) {
+                    emptyPolls++;
+                    if (emptyPolls >= 12) { refreshByGet(); return; }
+                    schedule();
+                    return;
+                }
 
+                pollingFailures = 0;
+                emptyPolls = 0;
                 var status = document.getElementById('syncStatusText');
                 if (status) status.textContent = payload.Texto;
                 var button = document.getElementById('btnBuscar');
@@ -125,12 +149,14 @@
                     return;
                 }
 
-                if (!payload.EsTerminal) { setGmailSyncOverlay(true, 'Esperando confirmación del estado...'); schedule(); return; }
+                if (!payload.EsTerminal) { schedule(); return; }
                 stopped = true;
                 setGmailSyncOverlay(true, payload.Texto);
-                window.setTimeout(function () { window.location.reload(); }, 500);
+                window.setTimeout(refreshByGet, 500);
             };
-            request.send('{}');
+            request.onerror = function () { if (!handled) { handled = true; pollingFailed(); } };
+            request.ontimeout = function () { if (!handled) { handled = true; pollingFailed(); } };
+            request.send(null);
         }
 
         poll();

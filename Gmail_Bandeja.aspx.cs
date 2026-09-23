@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web;
-using System.Web.Script.Services;
-using System.Web.Services;
 using System.Web.UI;
 using RecepcionDocumental.Controls;
 using RecepcionDocumental.Data;
@@ -17,6 +15,7 @@ namespace RecepcionDocumental
         public long Id { get; set; }
         public bool EnEjecucion { get; set; }
         public bool EsTerminal { get; set; }
+        public bool BloqueaUi { get; set; }
         public string Texto { get; set; }
     }
 
@@ -59,13 +58,6 @@ namespace RecepcionDocumental
             else ShowError(launch.Message);
         }
 
-        [WebMethod(EnableSession = false)]
-        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-        public static GmailSyncStatusView GetSyncStatus()
-        {
-            return BuildSyncStatus(GmailSyncAuditRepository.Latest());
-        }
-
         public static GmailSyncStatusView BuildSyncStatus(GmailSyncAuditInfo latest)
         {
             if (latest == null)
@@ -87,7 +79,8 @@ namespace RecepcionDocumental
             else
                 text = "Última recepción: " + localStart.ToString("dd/MM/yyyy HH:mm") + " | " + latest.Estado + " | Mensajes: " + latest.Mensajes + " | Errores: " + latest.Errores;
 
-            return new GmailSyncStatusView { Id = latest.Id, EnEjecucion = running, EsTerminal = IsTerminalState(latest.Estado), Texto = text };
+            var blocksUi = running && string.Equals(latest.Origen, "WEB", StringComparison.OrdinalIgnoreCase);
+            return new GmailSyncStatusView { Id = latest.Id, EnEjecucion = running, EsTerminal = IsTerminalState(latest.Estado), BloqueaUi = blocksUi, Texto = text };
         }
 
         internal static bool IsTerminalState(string state)
@@ -127,9 +120,9 @@ namespace RecepcionDocumental
             var latest = GmailSyncAuditRepository.Latest();
             var syncStatus = BuildSyncStatus(latest);
             litSyncStatus.Text = Server.HtmlEncode(syncStatus.Texto);
-            hidSyncPolling.Value = syncStatus.EnEjecucion ? "1" : "0";
-            hidSyncBaseline.Value = (syncStatus.EnEjecucion ? Math.Max(0, syncStatus.Id - 1) : syncStatus.Id).ToString(CultureInfo.InvariantCulture);
-            pnlSyncOverlay.CssClass = syncStatus.EnEjecucion ? "sync-overlay is-active" : "sync-overlay";
+            hidSyncPolling.Value = syncStatus.BloqueaUi ? "1" : "0";
+            hidSyncBaseline.Value = (syncStatus.BloqueaUi ? Math.Max(0, syncStatus.Id - 1) : syncStatus.Id).ToString(CultureInfo.InvariantCulture);
+            pnlSyncOverlay.CssClass = syncStatus.BloqueaUi ? "sync-overlay is-active" : "sync-overlay";
             BindFinalSummary(latest, syncStatus);
 
             try

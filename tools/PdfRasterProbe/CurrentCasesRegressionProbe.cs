@@ -223,7 +223,10 @@ namespace PdfRasterProbe
             var failed = Gmail_Bandeja.BuildSyncStatus(Audit(10, "FALLIDA", 0, 1));
             var omitted = Gmail_Bandeja.BuildSyncStatus(Audit(10, "OMITIDA_YA_EN_EJECUCION", 0, 0));
             Check(!initial.EnEjecucion && !initial.EsTerminal, "UI_INICIAL overlay oculto", failures);
-            Check(running.EnEjecucion && !running.EsTerminal && running.Texto.StartsWith("BUSCANDO / EN EJECUCIÓN", StringComparison.Ordinal), "UI_EJECUTANDO overlay bloqueante", failures);
+            Check(running.EnEjecucion && running.BloqueaUi && !running.EsTerminal && running.Texto.StartsWith("BUSCANDO / EN EJECUCIÓN", StringComparison.Ordinal), "UI_EJECUTANDO_WEB overlay bloqueante", failures);
+            var scheduler = Audit(11, "EJECUTANDO", 0, 0); scheduler.Origen = "SCHEDULER";
+            var schedulerStatus = Gmail_Bandeja.BuildSyncStatus(scheduler);
+            Check(schedulerStatus.EnEjecucion && !schedulerStatus.BloqueaUi && !schedulerStatus.EsTerminal, "UI_EJECUTANDO_SCHEDULER no bloquea UI", failures);
             Check(!completed.EnEjecucion && completed.EsTerminal && completed.Texto.StartsWith("Búsqueda completada", StringComparison.Ordinal), "UI_COMPLETADA recarga final", failures);
             Check(!withErrors.EnEjecucion && withErrors.EsTerminal && withErrors.Texto.StartsWith("Búsqueda completada con errores", StringComparison.Ordinal), "UI_COMPLETADA_CON_ERRORES recarga final", failures);
             Check(!failed.EnEjecucion && failed.EsTerminal && failed.Texto.StartsWith("Búsqueda fallida", StringComparison.Ordinal), "UI_FALLIDA libera tras confirmar", failures);
@@ -241,8 +244,9 @@ namespace PdfRasterProbe
             var markup = File.ReadAllText(path);
             Check(markup.Contains("position: fixed") && markup.Contains("z-index: 2147483647"), "UI overlay cubre viewport y navbar", failures);
             Check(markup.Contains("OnClientClick=\"beginGmailSync();\""), "UI click muestra overlay sin cancelar postback", failures);
-            Check(markup.Contains("request.status !== 200") && markup.Contains("Esperando confirmación del estado..."), "UI error polling conserva bloqueo", failures);
-            Check(markup.Contains("if (!payload.EsTerminal)") && Count(markup, "window.location.reload()") == 1, "UI recarga única sólo con estado terminal", failures);
+            Check(markup.Contains("GmailSyncStatus.ashx") && markup.Contains("request.timeout = 10000"), "UI polling usa endpoint estable y timeout", failures);
+            Check(markup.Contains("pollingFailures >= 3") && markup.Contains("window.location.replace"), "UI polling se recupera por GET sin reenviar POST", failures);
+            Check(markup.Contains("if (!payload.EsTerminal)") && !markup.Contains("window.location.reload()"), "UI estado terminal no reenvía POST", failures);
             Check(markup.Contains("event.key === 'Tab'") && markup.Contains("overlay.focus()"), "UI bloquea navegación por teclado", failures);
         }
 
