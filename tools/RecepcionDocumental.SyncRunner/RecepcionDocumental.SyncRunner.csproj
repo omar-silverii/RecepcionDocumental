@@ -5,9 +5,11 @@
   <OutputPath>bin\</OutputPath><AssemblyName>RecepcionDocumental.SyncRunner</AssemblyName>
  </PropertyGroup>
  <ItemGroup>
-  <Reference Include="System"/><Reference Include="System.Core"/><Reference Include="System.Configuration"/>
+  <Reference Include="System"/><Reference Include="System.Core"/><Reference Include="System.Configuration"/><Reference Include="System.Data"/>
+  <Reference Include="EdmsCFG"><HintPath>Lib\EdmsCFG.dll</HintPath><Private>True</Private></Reference>
   <Reference Include="RecepcionDocumental"><HintPath>..\..\bin\RecepcionDocumental.dll</HintPath><Private>False</Private></Reference>
-  <Compile Include="Program.cs"/>
+  <Compile Include="Program.cs"/><Compile Include="CorporateMonitor.cs"/>
+  <None Include="Edms_CFG.xml"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory></None>
  </ItemGroup>
  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
 </Project>

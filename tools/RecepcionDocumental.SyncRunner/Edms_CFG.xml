@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Edms>
+<Configuracion>
+<QueryTimeOut>600</QueryTimeOut>
+<SQLDBCN>Data Source=192.168.0.188;Initial Catalog=coldlibdesa;Persist Security Info=True;User ID=coldadm; pwd=computos</SQLDBCN>
+</Configuracion>
+</Edms>
